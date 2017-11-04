@@ -701,7 +701,7 @@ CURRENT_SENSOR_POWER:
 CURRENT_SENSOR_ENERGY:
   can_id: 0x528
   frequency: 20HZ
-  is_big_endian: true
+  is_big_endian: false
   segments:
     PACK_ENERGY:
       position: [16, 47]
