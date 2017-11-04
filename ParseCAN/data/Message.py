@@ -1,9 +1,14 @@
-import parse
+from ParseCAN import parse, meta
 
-class CANMessage:
+__all__ = ['message', 'messageTimed']
+
+
+class message(meta.message):
+
     attributes = ('can_id', 'data')
+
     def __init__(self, can_id, data):
-        # Store our attributes in the format we want them (numbers).
+        # Store our attributes in the format we want them.
         self.can_id = parse.number(can_id)
         self.data = parse.number(data)
 
@@ -12,7 +17,7 @@ class CANMessage:
         Returns the bit or range of bits within data.
         '''
         return int('0b' + '{0:064b}'.format(self.data)[index], 2)
-        #TODO: Sue python for negative step not working for no reason.
+        # TODO: Sue python for negative step not working for no reason.
 
     def __str__(self):
         '''
@@ -27,11 +32,13 @@ class CANMessage:
     def interpret(self, spec):
         return spec.interpret(self)
 
-class DAQMessage(CANMessage):
+
+class messageTimed(message):
     '''
     Represents a logged CAN message with well defined time, ID, and data.
     '''
     attributes = ('can_id', 'data', 'time')
+
     def __init__(self, can_id, data, time):
         '''
         Expects can_id, data in a string of capital hex format.

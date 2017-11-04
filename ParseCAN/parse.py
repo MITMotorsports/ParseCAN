@@ -1,13 +1,17 @@
+'''
+A module containing all the specifics about each file format.
+'''
 import re
 
 SI_MOD = {
-    'u' : 1e-6,
-    'm' : 1e-3,
-    '' : 1,
-    'k' : 1e3,
-    'K' : 1e3,
-    'M' : 1e6,
+    'u': 1e-6,
+    'm': 1e-3,
+    '': 1,
+    'k': 1e3,
+    'K': 1e3,
+    'M': 1e6,
 }
+
 
 def frequency(freq):
     '''
@@ -26,6 +30,7 @@ def frequency(freq):
     else:
         raise ValueError('Unrecognized frequency unit {}.'.format(unit))
 
+
 def number(num, reverse_endian=False):
     '''
     Parses a number. Reverses its endianess if `reverse_endian`.
@@ -39,12 +44,14 @@ def number(num, reverse_endian=False):
 
     return float(num) if '.' in num else int(num, 0)
 
+
 def log(line):
     return {
-        'time' : re.search(r'\(([0-9]+(.[0-9]+)?)\)', line).group(1),
-        'can_id' : '0x' + re.search(r'([0-9]+)#', line).group(1),
-        'data' : '0x' + re.search(r'#([0-9, A-F]+)', line).group(1),
+        'time': re.search(r'\(([0-9]+(.[0-9]+)?)\)', line).group(1),
+        'can_id': '0x' + re.search(r'([0-9]+)#', line).group(1),
+        'data': '0x' + re.search(r'#([0-9, A-F]+)', line).group(1),
     }
+
 
 def node(obj, attributes, nodesrc):
     '''

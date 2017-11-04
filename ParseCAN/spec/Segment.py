@@ -1,12 +1,13 @@
-from ValueType import ValueType
-from CANMessage import CANMessage
+from ParseCAN import spec, meta
 
-class SegmentType:
+
+class SegmentSpec:
     '''
     A specification for a segment of a larger data string.
     '''
 
     attributes = ('name', 'c_type', 'position', 'values')
+
     def __init__(self, name, c_type, unit, position, values=None):
         self.name = str(name)
         self.c_type = str(c_type)
@@ -17,45 +18,45 @@ class SegmentType:
         if values:
             for valnm in values:
                 if isinstance(values[valnm], (int, list)):
-                    self.upsert_valuetype(ValueType(valnm, values[valnm]))
+                    self.upsert_value(spec.value(valnm, values[valnm]))
                 else:
-                    self.upsert_valuetype(values[valnm])
+                    self.upsert_value(values[valnm])
 
-    def get_valuetype(self, val):
+    def get_value(self, val):
         '''
-        Given a ValueType return the corresponding
-        ValueType in self SegmentType.
+        Given a spec.value return the corresponding
+        spec.value in self SegmentSpec.
         '''
-        assert isinstance(val, ValueType)
+        assert isinstance(val, spec.value)
         return self.values[val.name]
 
-    def upsert_valuetype(self, valtype):
+    def upsert_value(self, valtype):
         '''
-        Attach, via upsert, a ValueType to self SegmentType.
+        Attach, via upsert, a spec.value to this segment spec.
         '''
-        assert isinstance(valtype, ValueType)
+        assert isinstance(valtype, spec.value)
         self.values[valtype.name] = valtype
 
     def interpret(self, message):
-        assert isinstance(message, CANMessage)
+        assert isinstance(message, meta.message)
 
         data = message[self.position[0]:self.position[1] + 1]
         return (self.data_name(data), data)
 
     def data_name(self, data):
         '''
-        Returns the first contained ValueType in which data is contained.
+        Returns the first contained spec.value in which data is contained.
         '''
         try:
             name = next(value for value in self.values if data in self.values[value])
         except StopIteration:
-            # Not found corresponding ValueType
+            # Not found corresponding spec.value
             name = None
         return name
 
     def __str__(self):
         '''
-        A comma separated representation of a SegmentType's values.
-        In the same order as SegmentType.attributes.
+        A comma separated representation of a SegmentSpec's values.
+        In the same order as SegmentSpec.attributes.
         '''
         return ', '.join(str(getattr(self, x)) for x in self.attributes)
