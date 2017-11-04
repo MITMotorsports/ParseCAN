@@ -1,5 +1,6 @@
-class ValueType:
-    attributes = ['name', 'range']
+class ValueSpec:
+    attributes = ('name', 'range')
+
     def __init__(self, name, value):
         assert isinstance(value, (tuple, list, int))
         self.name = str(name)
@@ -10,7 +11,7 @@ class ValueType:
 
     def __str__(self):
         '''
-        A comma separated representation of a ValueType's values.
-        In the same order as ValueType.attributes.
+        A comma separated representation of a ValueSpec's values.
+        In the same order as ValueSpec.attributes.
         '''
         return ', '.join(str(getattr(self, x)) for x in self.attributes)

@@ -1,0 +1,2 @@
+class message:
+    pass

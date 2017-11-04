@@ -1,13 +1,13 @@
-import parse
-from SegmentType import SegmentType
-from CANMessage import CANMessage
+from ParseCAN import spec, meta, parse
 
-class MessageType:
+
+class MessageSpec(meta.message):
     '''
     A specification describing an arbitrary CAN Message's format and contents.
     '''
 
     attributes = ('name', 'can_id', 'is_big_endian', 'frequency', 'segments')
+
     def __init__(self, name, can_id, is_big_endian, frequency=None, segments=None):
         self.name = str(name)
         self.can_id = parse.number(can_id)
@@ -17,33 +17,34 @@ class MessageType:
 
         for segnm in segments:
             if isinstance(segments[segnm], dict):
-                self.upsert_segmenttype(SegmentType(name=segnm, **segments[segnm]))
+                self.upsert_segment(spec.segment(name=segnm, **segments[segnm]))
             else:
-                self.upsert_segmenttype(segments[segnm])
+                self.upsert_segment(segments[segnm])
 
-    def get_segmenttype(self, seg):
+    def get_SegmentSpec(self, seg):
         '''
-        Given a SegmentType return the corresponding
-        SegmentType in self MessageType.
+        Given a SegmentSpec return the corresponding
+        SegmentSpec in self MessageSpec.
         '''
-        assert isinstance(seg, SegmentType)
+        assert isinstance(seg, spec.segment)
         return self.segments[seg.name]
 
-    def upsert_segmenttype(self, segtype):
+    def upsert_segment(self, segtype):
         '''
-        Attach, via upsert, a SegmentType to self MessageType.
+        Attach, via upsert, a SegmentSpec to self MessageSpec.
         '''
-        assert isinstance(segtype, SegmentType)
+        assert isinstance(segtype, spec.segment)
         self.segments[segtype.name] = segtype
 
     def interpret(self, message):
-        assert isinstance(message, CANMessage)
+        assert isinstance(message, meta.message)
 
-        return (self.name, {seg.name : seg.interpret(message) for seg in self.segments.values()})
+        names = self.segments.values()
+        return (self.name, {seg.name: seg.interpret(message) for seg in names})
 
     def __str__(self):
         '''
-        A comma separated representation of a MessageTypes's values.
-        In the same order as MessageTypes.attributes.
+        A comma separated representation of a MessageSpecs's values.
+        In the same order as MessageSpecs.attributes.
         '''
         return ', '.join(str(getattr(self, x)) for x in self.attributes)

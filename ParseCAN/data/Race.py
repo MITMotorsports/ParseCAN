@@ -1,6 +1,7 @@
+from itertools import chain
 from pathlib import Path
-from MessageType import MessageType
-from Log import Log
+import ParseCAN
+
 
 class Race:
     def __init__(self, srcpath, outdir=None, srcsuff='.log'):
@@ -15,15 +16,20 @@ class Race:
 
     def __iter__(self):
         '''
-        Returns a generator of Log objects within self.srcpath.
+        Returns a generator of Log objects within self.srcdir.
         '''
-        return (Log(logfile) for logfile in self.srcdir.glob('*' + self.srcsuff))
+        logfiles = self.srcdir.glob('*' + self.srcsuff)
+        return (ParseCAN.data.log(logfile) for logfile in logfiles)
+
+    def _iter_messages(self):
+        return chain.from_iterable(self)
+    messages = property(fget=_iter_messages, doc='All the messages in a race.')
 
     def __getattr__(self, index):
         '''
         Returns the log file with index i.
         '''
-
+        raise NotImplementedError
 
     def csv(self, outdir=None):
         '''
