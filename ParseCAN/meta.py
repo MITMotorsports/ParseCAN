@@ -1,2 +1,5 @@
 class message:
-    pass
+    '''
+    A meta-message may or may not contain properties other than a can_id.
+    '''
+    attributes = ('can_id')

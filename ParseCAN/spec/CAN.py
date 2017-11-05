@@ -2,6 +2,7 @@ import yaml
 from pathlib import Path
 from ParseCAN import data, spec, meta
 
+
 class CANSpec:
     '''
     A CAN specification.

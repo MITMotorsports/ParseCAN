@@ -26,7 +26,7 @@ def frequency(freq):
     if unit.lower().endswith('hz'):
         return num * SI_MOD[unit[:-2]]
     elif len(unit) == 0:
-        return num # Assuming no unit implies Hz
+        return num  # Assuming no unit implies Hz
     else:
         raise ValueError('Unrecognized frequency unit {}.'.format(unit))
 

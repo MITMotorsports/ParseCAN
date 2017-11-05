@@ -14,22 +14,27 @@ class Race:
         self.srcsuff = srcsuff
         self.outdir = Path(outdir) if outdir else self.srcdir.joinpath('out')
 
+    def logfiles(self):
+        return self.srcdir.glob('*' + self.srcsuff)
+
     def __iter__(self):
         '''
         Returns a generator of Log objects within self.srcdir.
         '''
-        logfiles = self.srcdir.glob('*' + self.srcsuff)
-        return (ParseCAN.data.log(logfile) for logfile in logfiles)
+        return (ParseCAN.data.log(logfile) for logfile in self.logfiles())
 
     def _iter_messages(self):
         return chain.from_iterable(self)
     messages = property(fget=_iter_messages, doc='All the messages in a race.')
 
-    def __getattr__(self, index):
-        '''
-        Returns the log file with index i.
-        '''
-        raise NotImplementedError
+    def interpret(self, spec):
+        return chain.from_iterable(msg.interpret(spec) for msg in self)
+
+    # def __getattr__(self, index):
+    #     '''
+    #     Returns the log file with index i.
+    #     '''
+    #     raise NotImplementedError
 
     def csv(self, outdir=None):
         '''
