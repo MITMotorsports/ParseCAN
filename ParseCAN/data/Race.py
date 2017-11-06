@@ -31,7 +31,11 @@ class Race:
         return chain.from_iterable(self)
 
     def interpret(self, spec):
-        return chain.from_iterable(msg.interpret(spec) for msg in self)
+        '''
+        An iterator of the interpretation of all the messages
+        in each of the logs in this race.
+        '''
+        return (spec.interpret(msg) for msg in self.messages)
 
     # def __getattr__(self, index):
     #     '''

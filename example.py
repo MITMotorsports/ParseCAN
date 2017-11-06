@@ -13,6 +13,6 @@ log.csv('./samples/log.csv')
 print('Generated csv in samples/log!')
 
 for msg in log:
-    print(msg.time, hex(msg.can_id), msg.interpret(spec))
+    print(msg.time, hex(msg.can_id), spec.interpret(msg))
 
 print('Here is the interpretation of fake.log.')
