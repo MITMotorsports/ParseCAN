@@ -1,4 +1,4 @@
-from ParseCAN import parse, meta
+from .. import parse, meta
 
 __all__ = ['message', 'messageTimed']
 

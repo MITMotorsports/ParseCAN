@@ -1,4 +1,4 @@
-from ParseCAN import spec, meta, parse
+from .. import spec, meta, parse
 
 
 class MessageSpec(meta.message):

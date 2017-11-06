@@ -1,6 +1,6 @@
 from itertools import chain
 from pathlib import Path
-import ParseCAN
+from .. import data
 
 
 class Race:
@@ -21,11 +21,14 @@ class Race:
         '''
         Returns a generator of Log objects within self.srcdir.
         '''
-        return (ParseCAN.data.log(logfile) for logfile in self.logfiles())
+        return (data.log(logfile) for logfile in self.logfiles())
 
-    def _iter_messages(self):
+    @property
+    def messages(self):
+        '''
+        An iterator of all the messages in each of the logs in this race.
+        '''
         return chain.from_iterable(self)
-    messages = property(fget=_iter_messages, doc='All the messages in a race.')
 
     def interpret(self, spec):
         return chain.from_iterable(msg.interpret(spec) for msg in self)

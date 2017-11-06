@@ -1,6 +1,6 @@
 import yaml
 from pathlib import Path
-from ParseCAN import data, spec, meta
+from .. import data, spec, meta
 
 
 class CANSpec:
