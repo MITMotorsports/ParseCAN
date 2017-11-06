@@ -1,4 +1,4 @@
-from ParseCAN import spec, meta
+from .. import spec, meta
 
 
 class SegmentSpec:

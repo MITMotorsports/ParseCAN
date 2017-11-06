@@ -1,5 +1,5 @@
-from ParseCAN.data.Race import Race as race
-from ParseCAN.data.Log import Log as log
-from ParseCAN.data.Message import *
+from .Race import Race as race
+from .Log import Log as log
+from .Message import *
 
-__all__ = ['Race', 'Log', 'Message']
+__all__ = ['race', 'log']

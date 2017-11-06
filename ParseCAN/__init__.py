@@ -1,4 +1,4 @@
-import ParseCAN.data
-import ParseCAN.spec
+from . import data
+from . import spec
 
 __all__ = ['data', 'spec']
