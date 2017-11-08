@@ -8,7 +8,7 @@ FRONT_CAN_NODE_DRIVER_OUTPUT:
   frequency: 50HZ
   is_big_endian: true
   segments:
-    REQUESTED_TORQUE:
+    TORQUE:
       position: [0, 15]
       c_type: int16_t
       unit: null
@@ -26,7 +26,7 @@ FRONT_CAN_NODE_DRIVER_OUTPUT:
       c_type: uint8_t
       unit: null
       values:
-        STEERING_TRAVEL_LEFTWARDS: [0x00, 0xFF]
+        STEERING_TRAVGL_LEFTWARDS: [0x00, 0xFF]
     THROTTLE_IMPLAUSIBLE:
       position: [32, 32]
       c_type: bool
@@ -64,7 +64,7 @@ REAR_CAN_NODE_HEARTBEAT:
   frequency: 1HZ
   is_big_endian: true
   segments:
-    IS_OK:
+    IS_ALIVE:
       position: [0, 0]
       c_type: bool
       unit: null
@@ -96,31 +96,31 @@ FRONT_CAN_NODE_RAW_VALUES:
   frequency: 10HZ
   is_big_endian: true
   segments:
-    RIGHT_THROTTLE_POT:
+    ACCEL_1_RAW:
       position: [0, 9]
       c_type: uint16_t
       unit: null
       values:
         RIGHT_THROTTLE_POT: [0x00, 0xFF]
-    LEFT_THROTTLE_POT:
+    ACCEL_2_RAW:
       position: [10, 19]
       c_type: uint16_t
       unit: null
       values:
         LEFT_THROTTLE_POT: [0x00, 0xFF]
-    FRONT_BRAKE_PRESSURE:
+    BRAKE_1_RAW:
       position: [20, 29]
       c_type: uint16_t
       unit: null
       values:
         FRONT_BRAKE_PRESSURE: [0x00, 0xFF]
-    REAR_BRAKE_PRESSURE:
+    BRAKE_2_RAW:
       position: [30, 39]
       c_type: uint16_t
       unit: null
       values:
         REAR_BRAKE_PRESSURE: [0x00, 0xFF]
-    STEERING_POT:
+    STEERING_RAW:
       position: [40, 49]
       c_type: uint16_t
       unit: null
@@ -156,7 +156,7 @@ VCU_BMS_HEARTBEAT:
   frequency: 1HZ
   is_big_endian: true
   segments:
-    STATE:
+    ALWAYS_TRUE:
       position: [0, 0]
       c_type: bool
       unit: null
@@ -435,7 +435,7 @@ BMS_HEARTBEAT:
         DISCHARGE: 0x4
         BATTERY_FAULT: 0x5
         BMS_FAULT: 0x6
-    SOC_PERCENTAGE:
+    SOC:
       position: [3, 12]
       c_type: uint16_t
       unit: null
@@ -469,7 +469,7 @@ BMS_CELL_TEMPS:
   frequency: 1HZ
   is_big_endian: true
   segments:
-    AVE_CELL_TEMP:
+    AVG_CELL_TEMP:
       position: [0, 14]
       c_type: int16_t
       unit: null
@@ -479,7 +479,7 @@ BMS_CELL_TEMPS:
       c_type: int16_t
       unit: null
       values:
-    MIN_CELL_TEMP_ID:
+    ID_MIN_CELL_TEMP:
       position: [30, 38]
       c_type: uint16_t
       unit: null
@@ -489,7 +489,7 @@ BMS_CELL_TEMPS:
       c_type: int16_t
       unit: null
       values:
-    MAX_CELL_TEMP_ID:
+    ID_MAX_CELL_TEMP:
       position: [54, 62]
       c_type: uint16_t
       unit: null
@@ -514,19 +514,19 @@ BMS_PACK_STATUS:
       values:
         POSITIVE_PACK_CURRENT: [0x000, 0x3FF]
         NEGATIVE_PACK_CURRENT: [0x400, 0x7FF]
-    AVE_CELL_VOLTAGE:
+    AVG_CELL_VOLTAGE:
       position: [20, 29]
       c_type: uint16_t
       unit: null
       values:
-        AVE_CELL_VOLTAGE: [0x000, 0x3FF]
+        AVG_CELL_VOLTAGE: [0x000, 0x3FF]
     MIN_CELL_VOLTAGE:
       position: [30, 39]
       c_type: uint16_t
       unit: null
       values:
         MIN_CELL_VOLTAGE: [0x000, 0x3FF]
-    MIN_CELL_VOLTAGE_ID:
+    ID_MIN_CELL_VOLTAGE:
       position: [40, 46]
       c_type: uint8_t
       unit: null
@@ -538,7 +538,7 @@ BMS_PACK_STATUS:
       unit: null
       values:
         MAX_CELL_VOLTAGE: [0x000, 0x3FF]
-    MAX_CELL_VOLTAGE_ID:
+    ID_MAX_CELL_VOLTAGE:
       position: [57, 63]
       c_type: uint8_t
       unit: null
@@ -551,7 +551,7 @@ BMS_ERRORS:
   frequency: 0.1HZ
   is_big_endian: true
   segments:
-    ERROR_TYPE:
+    TYPE:
       position: [0, 3]
       c_type: enum
       unit: null
@@ -582,7 +582,7 @@ DASH_HEARTBEAT:
   frequency: 1HZ
   is_big_endian: true
   segments:
-    HEARTBEAT_ON:
+    OK:
       position: [0, 0]
       c_type: bool
       unit: null
@@ -594,7 +594,7 @@ DASH_REQUEST:
   can_id: 0x71
   is_big_endian: true
   segments:
-    REQUEST_TYPE:
+    TYPE:
       position: [0, 3]
       c_type: enum
       unit: null
