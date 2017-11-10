@@ -3,7 +3,7 @@
 #           May need to listen to can_ids: None             #
 #############################################################
 
-Front_Can_Node_Driver_Output:
+FrontCanNode_DriverOutput:
   can_id: 0x030
   frequency: 50HZ
   is_big_endian: true
@@ -59,7 +59,7 @@ Front_Can_Node_Driver_Output:
       unit: null
       values:
 
-Rear_Can_Node_Heartbeat:
+RearCanNode_Heartbeat:
   can_id: 0x031
   frequency: 1HZ
   is_big_endian: true
@@ -72,18 +72,18 @@ Rear_Can_Node_Heartbeat:
         NOT_OK: 0x0
         OK: 0x1
 
-Rear_Can_Node_Wheel_Speed:
+RearCanNode_WheelSpeed:
   can_id: 0x032
   frequency: 50HZ
   is_big_endian: true
   segments:
-    rear_right_wheel_speed:
+    rear_right_wheel_speed_mRPM:
       position: [0, 31]
       c_type: uint32_t
       unit: null
       values:
         REAR_RIGHT_WHEEL_SPEED: [0x000, 0xFFFFFFFF]
-    rear_left_wheel_speed:
+    rear_left_wheel_speed_mRPM:
       position: [32, 63]
       c_type: uint32_t
       unit: null
@@ -91,7 +91,7 @@ Rear_Can_Node_Wheel_Speed:
         REAR_LEFT_WHEEL_SPEED: [0x000, 0xFFFFFFFF]
 
 #################### LOGGING_ONLY #########################
-Front_Can_Node_Raw_Values:
+FrontCanNode_RawValues:
   can_id: 0x230
   frequency: 10HZ
   is_big_endian: true
@@ -128,18 +128,18 @@ Front_Can_Node_Raw_Values:
         STEERING_POT: [0x00, 0xFF]
 
 #################### LOGGING_ONLY #########################
-Front_Can_Node_Wheel_Speed:
+FrontCanNode_WheelSpeed:
   can_id: 0x231
   frequency: 50HZ
   is_big_endian: true
   segments:
-    front_right_wheel_speed:
+    front_right_wheel_speed_mRPM:
       position: [0, 31]
       c_type: uint32_t
       unit: null
       values:
         FRONT_RIGHT_WHEEL_SPEED: [0x000, 0xFFFFFFFF]
-    front_left_wheel_speed:
+    front_left_wheel_speed_mRPM:
       position: [32, 63]
       c_type: uint32_t
       unit: null
@@ -151,19 +151,19 @@ Front_Can_Node_Wheel_Speed:
 #           May need to listen to can_ids: TODO             #
 #############################################################
 
-Vcu_Bms_Heartbeat:
+Vcu_BmsHeartbeat:
   can_id: 0x050
   frequency: 1HZ
   is_big_endian: true
   segments:
-    always_true:
+    alwaysTrue:
       position: [0, 0]
       c_type: bool
       unit: null
       values:
         DISCHARGE: 0x0
 
-Vcu_Dash_Heartbeat:
+Vcu_DashHeartbeat:
   can_id: 0x51
   frequency: 10HZ
   is_big_endian: true
@@ -464,7 +464,7 @@ Bms_Heartbeat:
         FAULT: 0x1
 
 #################### DASH_ONLY #########################
-Bms_Cell_Temps:
+Bms_CellTemps:
   can_id: 0x160
   frequency: 1HZ
   is_big_endian: true
@@ -496,7 +496,7 @@ Bms_Cell_Temps:
       values:
 
 #################### DASH_ONLY #########################
-Bms_Pack_Status:
+Bms_PackStatus:
   can_id: 0x161
   frequency: 10HZ
   is_big_endian: true
@@ -546,7 +546,7 @@ Bms_Pack_Status:
         MAX_CELL_VOLTAGE_ID: [0x00, 0x7F]
 
 #################### LOGGING_ONLY #########################
-Bms_Errors:
+Bms_Error:
   can_id: 0x260
   frequency: 0.1HZ
   is_big_endian: true
@@ -630,7 +630,7 @@ Mc_Response:
         CURRENT_CMD: 0x26
         CURRENT_CMD_AFTER_RAMP: 0x22
         CURRENT_ACTUAL: 0x20
-        CURRENT_ACTUAL_FILTERED: 0x5F
+        CURRENT_AFTER_DISPLAY: 0x5F
         CURRENT_LIMIT_ACTUAL: 0x48
         CURRENT_LIMIT_MOTOR_TEMP: 0xA2
         CURRENT_LIMIT_IGBT_TEMP: 0x58
@@ -659,12 +659,12 @@ Mc_Response:
 #############################################################
 
 # Units of mA
-Current_Sensor_Current:
+CurrentSensor_Current:
   can_id: 0x521
   frequency: 20HZ
   is_big_endian: true
   segments:
-    pack_current:
+    current_mA:
       position: [16, 47]
       c_type: int32_t
       unit: null
@@ -672,12 +672,12 @@ Current_Sensor_Current:
         PACK_CURRENT: [0x00000000, 0xFFFFFFFF]
 
 # Units of mV
-Current_Sensor_Voltage:
+CurrentSensor_Voltage:
   can_id: 0x522
   frequency: 20HZ
   is_big_endian: true
   segments:
-    pack_voltage:
+    voltage_mV:
       position: [16, 47]
       c_type: int32_t
       unit: null
@@ -685,12 +685,12 @@ Current_Sensor_Voltage:
         PACK_VOLTAGE: [0x00000000, 0xFFFFFFFF]
 
 # Units of W
-Current_Sensor_Power:
+CurrentSensor_Power:
   can_id: 0x526
   frequency: 20HZ
   is_big_endian: true
   segments:
-    pack_power:
+    power_W:
       position: [16, 47]
       c_type: int32_t
       unit: null
@@ -698,12 +698,12 @@ Current_Sensor_Power:
         PACK_POWER: [0x00000000, 0xFFFFFFFF]
 
 # Units of Wh
-Current_Sensor_Energy:
+CurrentSensor_Energy:
   can_id: 0x528
   frequency: 20HZ
   is_big_endian: false
   segments:
-    pack_energy:
+    energy_Wh:
       position: [16, 47]
       c_type: int32_t
       unit: null
