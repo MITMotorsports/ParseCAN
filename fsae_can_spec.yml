@@ -3,68 +3,68 @@
 #           May need to listen to can_ids: None             #
 #############################################################
 
-FRONT_CAN_NODE_DRIVER_OUTPUT:
+Front_Can_Node_Driver_Output:
   can_id: 0x030
   frequency: 50HZ
   is_big_endian: true
   segments:
-    TORQUE:
+    torque:
       position: [0, 15]
       c_type: int16_t
       unit: null
       values:
         POSITIVE_TORQUE: [0x0000, 0x7FFF]
         NEGATIVE_TORQUE: [0x8000, 0xFFFF]
-    BRAKE_PRESSURE:
+    brake_pressure:
       position: [16, 23]
       c_type: uint8_t
       unit: null
       values:
         BRAKE_PRESSURE: [0x00, 0xFF]
-    STEERING_POSITION:
+    steering_position:
       position: [24, 31]
       c_type: uint8_t
       unit: null
       values:
         STEERING_TRAVGL_LEFTWARDS: [0x00, 0xFF]
-    THROTTLE_IMPLAUSIBLE:
+    throttle_implausible:
       position: [32, 32]
       c_type: bool
       unit: null
       values:
         PLAUSIBLE: 0x0
         IMPLAUSIBLE: 0x1
-    BRAKE_THROTTLE_CONFLICT:
+    brake_throttle_conflict:
       position: [33, 33]
       c_type: bool
       unit: null
       values:
         NO_CONFLICT: 0x0
         CONFLICT: 0x1
-    BRAKE_ENGAGED:
+    brake_engaged:
       position: [34, 34]
       c_type: bool
       unit: null
       values:
         RELEASED: 0x0
         ENGAGED: 0x1
-    RESERVED:
+    reserved:
       position: [35, 39]
       c_type: null
       unit: null
       values:
-    TORQUE_BEFORE_CONTROL:
+    torque_before_control:
       position: [40, 55]
       c_type: int16_t
       unit: null
       values:
 
-REAR_CAN_NODE_HEARTBEAT:
+Rear_Can_Node_Heartbeat:
   can_id: 0x031
   frequency: 1HZ
   is_big_endian: true
   segments:
-    IS_ALIVE:
+    is_alive:
       position: [0, 0]
       c_type: bool
       unit: null
@@ -72,18 +72,18 @@ REAR_CAN_NODE_HEARTBEAT:
         NOT_OK: 0x0
         OK: 0x1
 
-REAR_CAN_NODE_WHEEL_SPEED:
+Rear_Can_Node_Wheel_Speed:
   can_id: 0x032
   frequency: 50HZ
   is_big_endian: true
   segments:
-    REAR_RIGHT_WHEEL_SPEED:
+    rear_right_wheel_speed:
       position: [0, 31]
       c_type: uint32_t
       unit: null
       values:
         REAR_RIGHT_WHEEL_SPEED: [0x000, 0xFFFFFFFF]
-    REAR_LEFT_WHEEL_SPEED:
+    rear_left_wheel_speed:
       position: [32, 63]
       c_type: uint32_t
       unit: null
@@ -91,36 +91,36 @@ REAR_CAN_NODE_WHEEL_SPEED:
         REAR_LEFT_WHEEL_SPEED: [0x000, 0xFFFFFFFF]
 
 #################### LOGGING_ONLY #########################
-FRONT_CAN_NODE_RAW_VALUES:
+Front_Can_Node_Raw_Values:
   can_id: 0x230
   frequency: 10HZ
   is_big_endian: true
   segments:
-    ACCEL_1_RAW:
+    accel_1_raw:
       position: [0, 9]
       c_type: uint16_t
       unit: null
       values:
         RIGHT_THROTTLE_POT: [0x00, 0xFF]
-    ACCEL_2_RAW:
+    accel_2_raw:
       position: [10, 19]
       c_type: uint16_t
       unit: null
       values:
         LEFT_THROTTLE_POT: [0x00, 0xFF]
-    BRAKE_1_RAW:
+    brake_1_raw:
       position: [20, 29]
       c_type: uint16_t
       unit: null
       values:
         FRONT_BRAKE_PRESSURE: [0x00, 0xFF]
-    BRAKE_2_RAW:
+    brake_2_raw:
       position: [30, 39]
       c_type: uint16_t
       unit: null
       values:
         REAR_BRAKE_PRESSURE: [0x00, 0xFF]
-    STEERING_RAW:
+    steering_raw:
       position: [40, 49]
       c_type: uint16_t
       unit: null
@@ -128,18 +128,18 @@ FRONT_CAN_NODE_RAW_VALUES:
         STEERING_POT: [0x00, 0xFF]
 
 #################### LOGGING_ONLY #########################
-FRONT_CAN_NODE_WHEEL_SPEED:
+Front_Can_Node_Wheel_Speed:
   can_id: 0x231
   frequency: 50HZ
   is_big_endian: true
   segments:
-    FRONT_RIGHT_WHEEL_SPEED:
+    front_right_wheel_speed:
       position: [0, 31]
       c_type: uint32_t
       unit: null
       values:
         FRONT_RIGHT_WHEEL_SPEED: [0x000, 0xFFFFFFFF]
-    FRONT_LEFT_WHEEL_SPEED:
+    front_left_wheel_speed:
       position: [32, 63]
       c_type: uint32_t
       unit: null
@@ -151,241 +151,241 @@ FRONT_CAN_NODE_WHEEL_SPEED:
 #           May need to listen to can_ids: TODO             #
 #############################################################
 
-VCU_BMS_HEARTBEAT:
+Vcu_Bms_Heartbeat:
   can_id: 0x050
   frequency: 1HZ
   is_big_endian: true
   segments:
-    ALWAYS_TRUE:
+    always_true:
       position: [0, 0]
       c_type: bool
       unit: null
       values:
         DISCHARGE: 0x0
 
-VCU_DASH_HEARTBEAT:
+Vcu_Dash_Heartbeat:
   can_id: 0x51
   frequency: 10HZ
   is_big_endian: true
   segments:
-    RTD_LIGHT:
+    rtd_light:
       position: [0, 0]
       c_type: bool
       unit: null
       values:
         OFF: 0x0
         ON: 0x1
-    AMS_LIGHT:
+    ams_light:
       position: [1, 1]
       c_type: bool
       unit: null
       values:
         OFF: 0x0
         ON: 0x1
-    IMD_LIGHT:
+    imd_light:
       position: [2, 2]
       c_type: bool
       unit: null
       values:
         OFF: 0x0
         ON: 0x1
-    HV_LIGHT:
+    hv_light:
       position: [3, 3]
       c_type: bool
       unit: null
       values:
         OFF: 0x0
         ON: 0x1
-    TRACTION_CONTROL:
+    traction_control:
       position: [4, 4]
       c_type: bool
       unit: null
       values:
         OFF: 0x0
         ON: 0x1
-    LIMP_MODE:
+    limp_mode:
       position: [5, 5]
       c_type: bool
       unit: null
       values:
         OFF: 0x0
         ON: 0x1
-    LV_WARNING:
+    lv_warning:
       position: [6, 6]
       c_type: bool
       unit: null
       values:
         OFF: 0x0
         ON: 0x1
-    ACTIVE_AERO:
+    active_aero:
       position: [7, 7]
       c_type: bool
       unit: null
       values:
         OFF: 0x0
         ON: 0x1
-    REGEN:
+    regen:
       position: [8, 8]
       c_type: bool
       unit: null
       values:
         OFF: 0x0
         ON: 0x1
-    SHUTDOWN_ESD_DRAIN:
+    shutdown_esd_drain:
       position: [9, 9]
       c_type: bool
       unit: null
       values:
         CLOSED: 0x0
         OPEN: 0x1
-    SHUTDOWN_BMS:
+    shutdown_bms:
       position: [10, 10]
       c_type: bool
       unit: null
       values:
         CLOSED: 0x0
         OPEN: 0x1
-    SHUTDOWN_IMD:
+    shutdown_imd:
       position: [11, 11]
       c_type: bool
       unit: null
       values:
         CLOSED: 0x0
         OPEN: 0x1
-    SHUTDOWN_BSPD:
+    shutdown_bspd:
       position: [12, 12]
       c_type: bool
       unit: null
       values:
         CLOSED: 0x0
         OPEN: 0x1
-    SHUTDOWN_VCU:
+    shutdown_vcu:
       position: [13, 13]
       c_type: bool
       unit: null
       values:
         CLOSED: 0x0
         OPEN: 0x1
-    SHUTDOWN_PRECHARGE:
+    shutdown_precharge:
       position: [14, 14]
       c_type: bool
       unit: null
       values:
         CLOSED: 0x0
         OPEN: 0x1
-    SHUTDOWN_MASTER_RESET:
+    shutdown_master_reset:
       position: [15, 15]
       c_type: bool
       unit: null
       values:
         CLOSED: 0x0
         OPEN: 0x1
-    SHUTDOWN_DRIVER_RESET:
+    shutdown_driver_reset:
       position: [16, 16]
       c_type: bool
       unit: null
       values:
         CLOSED: 0x0
         OPEN: 0x1
-    UNUSED:
+    unused:
       position: [17, 24]
       c_type: null
       unit: null
       values:
-    HEARTBEAT_FRONT_CAN_NODE_DEAD:
+    heartbeat_front_can_node_dead:
       position: [25, 25]
       c_type: bool
       unit: null
       values:
         ALIVE: 0x0
         DEAD: 0x1
-    HEARTBEAT_REAR_CAN_NODE_DEAD:
+    heartbeat_rear_can_node_dead:
       position: [26, 26]
       c_type: bool
       unit: null
       values:
         ALIVE: 0x0
         DEAD: 0x1
-    HEARTBEAT_BMS_DEAD:
+    heartbeat_bms_dead:
       position: [27, 27]
       c_type: bool
       unit: null
       values:
         ALIVE: 0x0
         DEAD: 0x1
-    HEARTBEAT_DASH_DEAD:
+    heartbeat_dash_dead:
       position: [28, 28]
       c_type: bool
       unit: null
       values:
         ALIVE: 0x0
         DEAD: 0x1
-    HEARTBEAT_MC_DEAD:
+    heartbeat_mc_dead:
       position: [29, 29]
       c_type: bool
       unit: null
       values:
         ALIVE: 0x0
         DEAD: 0x1
-    HEARTBEAT_CURRENT_SENSOR_DEAD:
+    heartbeat_current_sensor_dead:
       position: [30, 30]
       c_type: bool
       unit: null
       values:
         ALIVE: 0x0
         DEAD: 0x1
-    TSMS_OFF:
+    tsms_off:
       position: [31, 31]
       c_type: bool
       unit: null
       values:
         ON: 0x0
         OFF: 0x1
-    RESET_LATCH_OPEN:
+    reset_latch_open:
       position: [32, 32]
       c_type: bool
       unit: null
       values:
         CLOSED: 0x0
         OPEN: 0x1
-    PRECHARGE_RUNNING:
+    precharge_running:
       position: [33, 33]
       c_type: bool
       unit: null
       values:
         FALSE: 0x0
         TRUE: 0x1
-    MASTER_RESET_NOT_INITIALIZED:
+    master_reset_not_initialized:
       position: [34, 34]
       c_type: bool
       unit: null
       values:
         FALSE: 0x0
         TRUE: 0x1
-    DRIVER_RESET_NOT_INITIALIZED:
+    driver_reset_not_initialized:
       position: [35, 35]
       c_type: bool
       unit: null
       values:
         FALSE: 0x0
         TRUE: 0x1
-    RESERVED:
+    reserved:
       position: [36, 39]
       c_type: null
       unit: null
       values:
-    LV_BATTERY_VOLTAGE:
+    lv_battery_voltage:
       position: [40, 49]
       c_type: uint16_t
       unit: null
       values:
         LV_BATTERY_VOLTAGE: [0x000, 0x3FF]
 
-VCU_MC_MESSAGE:
+Vcu_Mc_Message:
   can_id: 0x52
   is_big_endian: false
   segments:
-    REG_ID:
+    reg_id:
       position: [0, 7]
       c_type: enum
       unit: null
@@ -393,13 +393,13 @@ VCU_MC_MESSAGE:
         MSG_REQUEST: 0x3D
         MSG_EVENT_REQUEST: 0x51
         TORQUE_CMD: 0x90
-    DATA_1:
+    data_1:
       position: [8, 15]
       c_type: uint8_t
       unit: null
       values:
         DATA_LOW_BYTE: [0x00, 0xFF]
-    DATA_2:
+    data_2:
       position: [16, 23]
       c_type: uint8_t
       unit: null
@@ -418,12 +418,12 @@ VCU_MC_MESSAGE:
 # temperate:    8 bits
 # cell can_id:   >:  7 bits
 
-BMS_HEARTBEAT:
+Bms_Heartbeat:
   can_id: 0x060
   frequency: 1HZ
   is_big_endian: true
   segments:
-    STATE:
+    state:
       position: [0, 2]
       c_type: enum
       unit: null
@@ -435,27 +435,27 @@ BMS_HEARTBEAT:
         DISCHARGE: 0x4
         BATTERY_FAULT: 0x5
         BMS_FAULT: 0x6
-    SOC:
+    soc:
       position: [3, 12]
       c_type: uint16_t
       unit: null
       values:
         SOC_PERCENTAGE: [0x000, 0x3FF]
-    FAN_ENABLE:
+    fan_enable:
       position: [13, 13]
       c_type: bool
       unit: null
       values:
         OFF: 0x0
         ON: 0x1
-    DCDC_ENABLE:
+    dcdc_enable:
       position: [14, 14]
       c_type: bool
       unit: null
       values:
         OFF: 0x0
         ON: 0x1
-    DCDC_FAULT:
+    dcdc_fault:
       position: [15, 15]
       c_type: bool
       unit: null
@@ -464,81 +464,81 @@ BMS_HEARTBEAT:
         FAULT: 0x1
 
 #################### DASH_ONLY #########################
-BMS_CELL_TEMPS:
+Bms_Cell_Temps:
   can_id: 0x160
   frequency: 1HZ
   is_big_endian: true
   segments:
-    AVG_CELL_TEMP:
+    avg_cell_temp:
       position: [0, 14]
       c_type: int16_t
       unit: null
       values:
-    MIN_CELL_TEMP:
+    min_cell_temp:
       position: [15, 29]
       c_type: int16_t
       unit: null
       values:
-    ID_MIN_CELL_TEMP:
+    id_min_cell_temp:
       position: [30, 38]
       c_type: uint16_t
       unit: null
       values:
-    MAX_CELL_TEMP:
+    max_cell_temp:
       position: [39, 53]
       c_type: int16_t
       unit: null
       values:
-    ID_MAX_CELL_TEMP:
+    id_max_cell_temp:
       position: [54, 62]
       c_type: uint16_t
       unit: null
       values:
 
 #################### DASH_ONLY #########################
-BMS_PACK_STATUS:
+Bms_Pack_Status:
   can_id: 0x161
   frequency: 10HZ
   is_big_endian: true
   segments:
-    PACK_VOLTAGE:
+    pack_voltage:
       position: [0, 8]
       c_type: uint16_t
       unit: null
       values:
         PACK_VOLTAGE: [0x000, 0x1FF]
-    PACK_CURRENT:
+    pack_current:
       position: [9, 19]
       c_type: int16_t
       unit: null
       values:
         POSITIVE_PACK_CURRENT: [0x000, 0x3FF]
         NEGATIVE_PACK_CURRENT: [0x400, 0x7FF]
-    AVG_CELL_VOLTAGE:
+    avg_cell_voltage:
       position: [20, 29]
       c_type: uint16_t
       unit: null
       values:
         AVG_CELL_VOLTAGE: [0x000, 0x3FF]
-    MIN_CELL_VOLTAGE:
+    min_cell_voltage:
       position: [30, 39]
       c_type: uint16_t
       unit: null
       values:
         MIN_CELL_VOLTAGE: [0x000, 0x3FF]
-    ID_MIN_CELL_VOLTAGE:
+    id_min_cell_voltage:
       position: [40, 46]
       c_type: uint8_t
       unit: null
       values:
         MIN_CELL_VOLTAGE_ID: [0x00, 0x7F]
-    MAX_CELL_VOLTAGE:
+    max_cell_voltage:
       position: [47, 56]
       c_type: uint16_t
       unit: null
       values:
         MAX_CELL_VOLTAGE: [0x000, 0x3FF]
-    ID_MAX_CELL_VOLTAGE:
+    id_max_cell_voltage:
       position: [57, 63]
       c_type: uint8_t
       unit: null
@@ -546,12 +546,12 @@ BMS_PACK_STATUS:
         MAX_CELL_VOLTAGE_ID: [0x00, 0x7F]
 
 #################### LOGGING_ONLY #########################
-BMS_ERRORS:
+Bms_Errors:
   can_id: 0x260
   frequency: 0.1HZ
   is_big_endian: true
   segments:
-    TYPE:
+    type:
       position: [0, 3]
       c_type: enum
       unit: null
@@ -577,12 +577,12 @@ BMS_ERRORS:
 #           May need to listen to can_ids: None             #
 #############################################################
 
-DASH_HEARTBEAT:
+Dash_Heartbeat:
   can_id: 0x70
   frequency: 1HZ
   is_big_endian: true
   segments:
-    OK:
+    ok:
       position: [0, 0]
       c_type: bool
       unit: null
@@ -590,11 +590,11 @@ DASH_HEARTBEAT:
         ON: 0x1
         OFF: 0x0
 
-DASH_REQUEST:
+Dash_Request:
   can_id: 0x71
   is_big_endian: true
   segments:
-    TYPE:
+    type:
       position: [0, 3]
       c_type: enum
       unit: null
@@ -618,11 +618,11 @@ DASH_REQUEST:
 #############################################################
 
 #################### LOGGING_ONLY #########################
-MC_RESPONSE:
+Mc_Response:
   can_id: 0x310
   is_big_endian: false
   segments:
-    REG_ID:
+    reg_id:
       position: [0, 7]
       c_type: enum
       unit: null
@@ -646,7 +646,7 @@ MC_RESPONSE:
         AIR_TEMP: 0x4B
         STATE: 0x40
         ERRORS_AND_WARNINGS: 0x8F
-    DATA:
+    data:
       position: [8, 23]
       c_type: int16_t # Guessing by position range
       unit: null
@@ -659,12 +659,12 @@ MC_RESPONSE:
 #############################################################
 
 # Units of mA
-CURRENT_SENSOR_CURRENT:
+Current_Sensor_Current:
   can_id: 0x521
   frequency: 20HZ
   is_big_endian: true
   segments:
-    PACK_CURRENT:
+    pack_current:
       position: [16, 47]
       c_type: int32_t
       unit: null
@@ -672,12 +672,12 @@ CURRENT_SENSOR_CURRENT:
         PACK_CURRENT: [0x00000000, 0xFFFFFFFF]
 
 # Units of mV
-CURRENT_SENSOR_VOLTAGE:
+Current_Sensor_Voltage:
   can_id: 0x522
   frequency: 20HZ
   is_big_endian: true
   segments:
-    PACK_VOLTAGE:
+    pack_voltage:
       position: [16, 47]
       c_type: int32_t
       unit: null
@@ -685,12 +685,12 @@ CURRENT_SENSOR_VOLTAGE:
         PACK_VOLTAGE: [0x00000000, 0xFFFFFFFF]
 
 # Units of W
-CURRENT_SENSOR_POWER:
+Current_Sensor_Power:
   can_id: 0x526
   frequency: 20HZ
   is_big_endian: true
   segments:
-    PACK_POWER:
+    pack_power:
       position: [16, 47]
       c_type: int32_t
       unit: null
@@ -698,12 +698,12 @@ CURRENT_SENSOR_POWER:
         PACK_POWER: [0x00000000, 0xFFFFFFFF]
 
 # Units of Wh
-CURRENT_SENSOR_ENERGY:
+Current_Sensor_Energy:
   can_id: 0x528
   frequency: 20HZ
   is_big_endian: false
   segments:
-    PACK_ENERGY:
+    pack_energy:
       position: [16, 47]
       c_type: int32_t
       unit: null
@@ -717,12 +717,12 @@ CURRENT_SENSOR_ENERGY:
 
 # Units of mV
 #################### LOGGING_ONLY #########################
-LV_BATTERY_VOLTAGE:
+Lv_Battery_Voltage:
   can_id: 0x333
   frequency: 1HZ
   is_big_endian: true
   segments:
-    BATTERY_VOLTAGE:
+    battery_voltage:
       position: [0, 15]
       c_type: uint16_t
       unit: null
@@ -730,18 +730,18 @@ LV_BATTERY_VOLTAGE:
         BATTERY_VOLTAGE: [0x0000, 0xFFFF]
 
 #################### LOGGING_ONLY #########################
-ACCELEROMETER_HORIZONTAL:
+Accelerometer_Horizontal:
   can_id: 0x343
   frequency: 10HZ
   is_big_endian: true
   segments:
-    X_AXIS:
+    x_axis:
       position: [0, 31]
       c_type: int32_t # Guessing by position range
       unit: null
       values:
         X_AXIS: [0x00000000, 0xFFFFFFFF]
-    Y_AXIS:
+    y_axis:
       position: [32, 63]
       c_type: int32_t # Guessing by position range
       unit: null
@@ -749,12 +749,12 @@ ACCELEROMETER_HORIZONTAL:
         Y_AXIS: [0x00000000, 0xFFFFFFFF]
 
 #################### LOGGING_ONLY #########################
-ACCELEROMETER_VERTICAL:
+Accelerometer_Vertical:
   can_id: 0x344
   frequency: 10HZ
   is_big_endian: true
   segments:
-    Z_AXIS:
+    z_axis:
       position: [0, 31]
       c_type: int32_t # Guessing by position range
       unit: null
@@ -762,18 +762,18 @@ ACCELEROMETER_VERTICAL:
         Z_AXIS: [0x00000000, 0xFFFFFFFF]
 
 #################### LOGGING_ONLY #########################
-GYRO_HORIZONTAL:
+Gyro_Horizontal:
   can_id: 0x353
   frequency: 10HZ
   is_big_endian: true
   segments:
-    X_AXIS:
+    x_axis:
       position: [0, 31]
       c_type: int32_t # Guessing by position range
       unit: null
       values:
         X_AXIS: [0x00000000, 0xFFFFFFFF]
-    Y_AXIS:
+    y_axis:
       position: [32, 63]
       c_type: int32_t # Guessing by position range
       unit: null
@@ -781,12 +781,12 @@ GYRO_HORIZONTAL:
         Y_AXIS: [0x00000000, 0xFFFFFFFF]
 
 #################### LOGGING_ONLY #########################
-GYRO_VERTICAL:
+Gyro_Vertical:
   can_id: 0x354
   frequency: 10HZ
   is_big_endian: true
   segments:
-    Z_AXIS:
+    z_axis:
       position: [0, 31]
       c_type: int32_t # Guessing by position range
       unit: null
@@ -794,18 +794,18 @@ GYRO_VERTICAL:
         Z_AXIS: [0x00000000, 0xFFFFFFFF]
 
 #################### LOGGING_ONLY #########################
-MAGNETOMETER_HORIZONTAL:
+Magnetometer_Horizontal:
   can_id: 0x363
   frequency: 10HZ
   is_big_endian: true
   segments:
-    X_AXIS:
+    x_axis:
       position: [0, 31]
       c_type: int32_t # Guessing by position range
       unit: null
       values:
         X_AXIS: [0x00000000, 0xFFFFFFFF]
-    Y_AXIS:
+    y_axis:
       position: [32, 63]
       c_type: int32_t # Guessing by position range
       unit: null
@@ -813,12 +813,12 @@ MAGNETOMETER_HORIZONTAL:
         Y_AXIS: [0x00000000, 0xFFFFFFFF]
 
 #################### LOGGING_ONLY #########################
-MAGNETOMETER_VERTICAL:
+Magnetometer_Vertical:
   can_id: 0x364
   frequency: 10HZ
   is_big_endian: true
   segments:
-    Z_AXIS:
+    z_axis:
       position: [0, 31]
       c_type: int32_t # Guessing by position range
       unit: null
