@@ -11,7 +11,7 @@ class ValueSpec:
 
     def __str__(self):
         '''
-        A comma separated representation of a ValueSpec's values.
-        In the same order as ValueSpec.attributes.
+        A comma separated representation of a spec.value's values.
+        In the same order as spec.value.attributes.
         '''
         return ', '.join(str(getattr(self, x)) for x in self.attributes)

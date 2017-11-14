@@ -25,7 +25,7 @@ class SegmentSpec:
     def get_value(self, val):
         '''
         Given a spec.value return the corresponding
-        spec.value in self SegmentSpec.
+        spec.value in this spec.segment.
         '''
         assert isinstance(val, spec.value)
         return self.values[val.name]
@@ -47,16 +47,12 @@ class SegmentSpec:
         '''
         Returns the first contained spec.value in which data is contained.
         '''
-        try:
-            name = next(value for value in self.values if data in self.values[value])
-        except StopIteration:
-            # Not found corresponding spec.value
-            name = None
-        return name
+        incl = (value for value in self.values if data in self.values[value])
+        return next(incl, None)
 
     def __str__(self):
         '''
-        A comma separated representation of a SegmentSpec's values.
-        In the same order as SegmentSpec.attributes.
+        A comma separated representation of a spec.segment's values.
+        In the same order as spec.segment.attributes.
         '''
         return ', '.join(str(getattr(self, x)) for x in self.attributes)

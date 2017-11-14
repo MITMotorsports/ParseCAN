@@ -7,7 +7,7 @@ class CANSpec:
     '''
     A CAN specification.
     Describes the set of messages that flow through a CAN bus.
-    Can interpret CAN Messages that were sent based on this specification.
+    Can interpret CAN Messages that were sent based on this spec.can.
     '''
     def __init__(self, source):
         self._source = Path(source)
@@ -27,8 +27,8 @@ class CANSpec:
 
     def get_message(self, msg):
         '''
-        Given a Message or a MessageSpec return the
-        corresponding MessageSpec in self Spec.
+        Given a meta.message return the
+        corresponding spec.message in this spec.can.
         '''
         assert isinstance(msg, meta.message)
         print(msg)
@@ -36,14 +36,14 @@ class CANSpec:
 
     def upsert_message(self, msgtype):
         '''
-        Attach, via upsert, a MessageSpec to this CAN specification.
+        Attach, via upsert, a spec.message to this spec.can.
         '''
         assert isinstance(msgtype, spec.message)
         self.messages[msgtype.can_id] = msgtype
 
     def interpret(self, message):
         '''
-        Interprets a data.message instance based on this CAN specification.
+        Interprets a data.message instance based on this spec.can.
         '''
         assert isinstance(message, data.message)
         return self.get_message(message).interpret(message)

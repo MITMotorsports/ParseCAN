@@ -21,17 +21,17 @@ class MessageSpec(meta.message):
             else:
                 self.upsert_segment(segments[segnm])
 
-    def get_SegmentSpec(self, seg):
+    def get_segment(self, seg):
         '''
-        Given a SegmentSpec return the corresponding
-        SegmentSpec in self MessageSpec.
+        Given a spec.segment return the corresponding
+        spec.segment in this spec.message.
         '''
         assert isinstance(seg, spec.segment)
         return self.segments[seg.name]
 
     def upsert_segment(self, segtype):
         '''
-        Attach, via upsert, a SegmentSpec to self MessageSpec.
+        Attach, via upsert, a spec.segment to this spec.message.
         '''
         assert isinstance(segtype, spec.segment)
         self.segments[segtype.name] = segtype
@@ -44,7 +44,7 @@ class MessageSpec(meta.message):
 
     def __str__(self):
         '''
-        A comma separated representation of a MessageSpecs's values.
-        In the same order as MessageSpecs.attributes.
+        A comma separated representation of a spec.message's values.
+        In the same order as spec.message.attributes.
         '''
         return ', '.join(str(getattr(self, x)) for x in self.attributes)
