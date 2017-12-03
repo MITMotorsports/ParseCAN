@@ -6,14 +6,15 @@ class SegmentSpec:
     A specification for a segment of a larger data string.
     '''
 
-    attributes = ('name', 'c_type', 'position', 'length', 'values')
+    attributes = ('name', 'c_type', 'position', 'length', 'signed', 'values')
 
-    def __init__(self, name, c_type='', unit='', position=None, length=None, enum=None):
+    def __init__(self, name, c_type='', unit='', position=0, length=0, signed=False , enum=None):
         self.name = str(name)
         self.c_type = str(c_type)
         self.unit = str(unit)
-        self.position = int(position)
+        self.position = int(position)  # add better error messages
         self.length = int(length)
+        self.signed = signed
         self.values = {}
         # values synonymous to enum
 
@@ -41,7 +42,7 @@ class SegmentSpec:
 
     def interpret(self, message):
         assert isinstance(message, data.message)
-        msgdata = message[self.position:(self.position + self.length)] + self.unit
+        msgdata = str(message[self.position:(self.position + self.length)]) + self.unit
 
         if self.values:
             return (self.data_name(msgdata), msgdata)
