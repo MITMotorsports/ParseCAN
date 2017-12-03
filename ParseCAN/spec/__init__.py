@@ -1,6 +1,4 @@
-from .CAN import CANSpec as can
-from .Message import MessageSpec as message
-from .Segment import SegmentSpec as segment
-from .Value import ValueSpec as value
+from .can import can
+# from .board import board
 
-__all__ = ['can', 'message', 'segment', 'value']
+__all__ = ['can', 'board']

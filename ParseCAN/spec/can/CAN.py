@@ -1,6 +1,6 @@
 import yaml
 from pathlib import Path
-from .. import data, spec, meta
+from ... import data, spec, meta
 
 
 class CANSpec:
@@ -31,7 +31,6 @@ class CANSpec:
         corresponding spec.message in this spec.can.
         '''
         assert isinstance(msg, meta.message)
-        print(msg)
         return self.messages[msg.can_id]
 
     def upsert_message(self, msgtype):

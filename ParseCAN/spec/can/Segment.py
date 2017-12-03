@@ -1,4 +1,4 @@
-from .. import spec, meta
+from ... import spec, data
 
 
 class SegmentSpec:
@@ -6,21 +6,23 @@ class SegmentSpec:
     A specification for a segment of a larger data string.
     '''
 
-    attributes = ('name', 'c_type', 'position', 'values')
+    attributes = ('name', 'c_type', 'position', 'length', 'values')
 
-    def __init__(self, name, c_type, unit, position, values=None):
+    def __init__(self, name, c_type='', unit='', position=None, length=None, enum=None):
         self.name = str(name)
         self.c_type = str(c_type)
         self.unit = str(unit)
-        self.position = tuple(position)
+        self.position = int(position)
+        self.length = int(length)
         self.values = {}
+        # values synonymous to enum
 
-        if values:
-            for valnm in values:
-                if isinstance(values[valnm], (int, list)):
-                    self.upsert_value(spec.value(valnm, values[valnm]))
+        if enum:
+            for valnm in enum:
+                if isinstance(enum[valnm], (int, list)):
+                    self.upsert_value(spec.value(valnm, enum[valnm]))
                 else:
-                    self.upsert_value(values[valnm])
+                    self.upsert_value(enum[valnm])
 
     def get_value(self, val):
         '''
@@ -38,10 +40,13 @@ class SegmentSpec:
         self.values[valtype.name] = valtype
 
     def interpret(self, message):
-        assert isinstance(message, meta.message)
+        assert isinstance(message, data.message)
+        msgdata = message[self.position:(self.position + self.length)] + self.unit
 
-        data = message[self.position[0]:self.position[1] + 1]
-        return (self.data_name(data), data)
+        if self.values:
+            return (self.data_name(msgdata), msgdata)
+
+        return msgdata
 
     def data_name(self, data):
         '''

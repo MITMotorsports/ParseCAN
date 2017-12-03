@@ -1,4 +1,4 @@
-from .. import spec, meta, parse
+from ... import spec, data, meta, parse
 
 
 class MessageSpec(meta.message):
@@ -6,13 +6,14 @@ class MessageSpec(meta.message):
     A specification describing an arbitrary CAN Message's format and contents.
     '''
 
-    attributes = ('name', 'can_id', 'is_big_endian', 'frequency', 'segments')
+    attributes = ('name', 'can_id', 'is_big_endian', 'frequency', 'signed', 'segments')
 
-    def __init__(self, name, can_id, is_big_endian, frequency=None, segments=None):
+    def __init__(self, name, can_id, is_big_endian, frequency=None, signed=False, segments=None):
         self.name = str(name)
         self.can_id = parse.number(can_id)
         self.is_big_endian = bool(is_big_endian)
         self.frequency = parse.frequency(frequency) if frequency else None
+        self.signed = signed
         self.segments = {}
 
         for segnm in segments:
@@ -37,7 +38,7 @@ class MessageSpec(meta.message):
         self.segments[segtype.name] = segtype
 
     def interpret(self, message):
-        assert isinstance(message, meta.message)
+        assert isinstance(message, data.message)
 
         names = self.segments.values()
         return (self.name, {seg.name: seg.interpret(message) for seg in names})

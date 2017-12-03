@@ -616,7 +616,6 @@ DASH_REQUEST:
 #                   MC SPEC                                 #
 #           May need to listen to can_ids: TODO             #
 #############################################################
-
 #################### LOGGING_ONLY #########################
 MC_RESPONSE:
   can_id: 0x310
@@ -667,7 +666,7 @@ CURRENT_SENSOR_CURRENT:
     PACK_CURRENT:
       position: [16, 47]
       c_type: int32_t
-      unit: null
+      unit: mA
       values:
         PACK_CURRENT: [0x00000000, 0xFFFFFFFF]
 
@@ -680,7 +679,7 @@ CURRENT_SENSOR_VOLTAGE:
     PACK_VOLTAGE:
       position: [16, 47]
       c_type: int32_t
-      unit: null
+      unit: mV
       values:
         PACK_VOLTAGE: [0x00000000, 0xFFFFFFFF]
 
