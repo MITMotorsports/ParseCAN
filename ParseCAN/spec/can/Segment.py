@@ -13,16 +13,33 @@ class SegmentSpec:
         self.c_type = str(c_type)
         self.unit = str(unit)
         self.position = int(position)
+        if self.position < 0 or self.position > 64:
+            raise ValueError('incorrect position: {}'.format(self.position))
+
         self.length = int(length)
+        if self.length < 1:
+            raise ValueError('length too small: {}'.format(self.length))
+        if self.position + self.length > 64:
+            raise ValueError('length overflows: {}'.format(self.length))
+
         self.signed = bool(signed)
         self.values = {}
         # values synonymous to enum
 
         if enum:
             for valnm in enum:
-                if isinstance(enum[valnm], (int, list)):
-                    self.upsert_value(spec.value(valnm, enum[valnm]))
-                else:
+                if isinstance(enum[valnm], int):
+                    try:
+                        self.upsert_value(spec.value(valnm, enum[valnm]))
+                    except Exception as e:
+                        raise ValueError(
+                            'in value {}: {}'
+                            .format(
+                                valnm,
+                                e
+                            )
+                        )
+                elif isinstance(enum[valnm], spec.value):
                     self.upsert_value(enum[valnm])
 
     def get_value(self, val):

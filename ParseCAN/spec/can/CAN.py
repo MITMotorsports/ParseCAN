@@ -9,8 +9,9 @@ class CANSpec:
     Describes the set of messages that flow through a CAN bus.
     Can interpret CAN Messages that were sent based on this spec.can.
     '''
-    def __init__(self, source):
+    def __init__(self, source, err=False):
         self._source = Path(source)
+        self.err = err
         # A mapping of a message type's can_id to said message type.
         self.messages = {}
         self.parse()
@@ -20,8 +21,16 @@ class CANSpec:
             prem = yaml.safe_load(f)
 
         for msgnm in prem:
-            # TODO: Generalize this in parse module.
-            self.upsert_message(spec.message(name=msgnm, **prem[msgnm]))
+            try:
+                self.upsert_message(spec.message(name=msgnm, **prem[msgnm]))
+            except Exception as e:
+                raise ValueError(
+                    'in spec {}: in message {}: {}'.format(
+                        self._source,
+                        msgnm,
+                        e
+                    )
+                )
 
         return self.messages
 

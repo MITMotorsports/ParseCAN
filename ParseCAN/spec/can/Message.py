@@ -1,4 +1,5 @@
 from ... import spec, data, meta, parse
+from warnings import warn
 
 
 class MessageSpec(meta.message):
@@ -19,12 +20,14 @@ class MessageSpec(meta.message):
             if isinstance(segments[segnm], dict):
                 try:
                     cand = spec.segment(name=segnm, **segments[segnm])
-                except:
-                    print('Malformed segment {}:{} under message {}. Excluding...'.format(
-                        segnm,
-                        segments[segnm],
-                        self.name
-                    ))
+                except Exception as e:
+                    raise ValueError(
+                        'in segment {}: {}'
+                        .format(
+                            segnm,
+                            e
+                        )
+                    )
                     continue
 
                 self.upsert_segment(cand)

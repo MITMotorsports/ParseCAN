@@ -2,15 +2,13 @@ class ValueSpec:
     attributes = ('name', 'range')
 
     def __init__(self, name, value):
-        assert isinstance(value, (tuple, list, int))
         self.name = str(name)
-        self._range = tuple(value) if isinstance(value, list) else (value, value)
+        self.value = int(value)
+        if self.value < 0:
+            raise ValueError('incorrect value: {}'.format(self.value))
 
     def __contains__(self, data):
-        if self.is_enum():
-            return data >> (data.bit_length() - self._range[0].bit_length()) == self._range[0]
-
-        return self._range[0] <= data <= self._range[1]
+        return self.value == data
 
     def __str__(self):
         '''
