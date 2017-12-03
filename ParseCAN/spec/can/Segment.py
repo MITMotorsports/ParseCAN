@@ -8,13 +8,13 @@ class SegmentSpec:
 
     attributes = ('name', 'c_type', 'position', 'length', 'signed', 'values')
 
-    def __init__(self, name, c_type='', unit='', position=0, length=0, signed=False , enum=None):
+    def __init__(self, name, c_type='', unit='', position=None, length=None, signed=False , enum=None):
         self.name = str(name)
         self.c_type = str(c_type)
         self.unit = str(unit)
-        self.position = int(position)  # add better error messages
+        self.position = int(position)
         self.length = int(length)
-        self.signed = signed
+        self.signed = bool(signed)
         self.values = {}
         # values synonymous to enum
 

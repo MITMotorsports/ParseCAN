@@ -12,7 +12,7 @@ class MessageSpec(meta.message):
         self.name = str(name)
         self.can_id = parse.number(can_id)
         self.is_big_endian = bool(is_big_endian)
-        self.frequency = parse.frequency(frequency) if frequency else None
+        self.frequency = parse.SI(frequency, 'Hz') if frequency else None
         self.segments = {}
 
         for segnm in segments:

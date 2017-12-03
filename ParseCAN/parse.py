@@ -15,20 +15,20 @@ SI_MOD = {
 }
 
 
-def frequency(freq):
+def SI(value, expunit):
     '''
     Extract frequency of CAN Message from spec.
     '''
-    if isinstance(freq, (int, float)):
-        return freq
+    if isinstance(value, (int, float)):
+        return value
 
-    match = re.search(r'(\d\.*\d*)*([A-Za-z]*)', freq)
+    match = re.search(r'(\d\.*\d*)*([A-Za-z]*)', value)
     unit = match.group(2)
     num = float(match.group(1))
-    if unit.lower().endswith('hz'):
+    if unit.lower().endswith(expunit.lower()):
         return num * SI_MOD[unit[:-2]]
     elif len(unit) == 0:
-        return num  # Assuming no unit implies Hz
+        return num  # Assuming no unit implies expunit
     else:
         raise ValueError('Unrecognized frequency unit {}.'.format(unit))
 
