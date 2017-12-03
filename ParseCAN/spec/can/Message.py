@@ -17,7 +17,17 @@ class MessageSpec(meta.message):
 
         for segnm in segments:
             if isinstance(segments[segnm], dict):
-                self.upsert_segment(spec.segment(name=segnm, **segments[segnm]))
+                try:
+                    cand = spec.segment(name=segnm, **segments[segnm])
+                except:
+                    print('Malformed segment {}:{} under message {}. Excluding...'.format(
+                        segnm,
+                        segments[segnm],
+                        self.name
+                    ))
+                    continue
+
+                self.upsert_segment(cand)
             else:
                 self.upsert_segment(segments[segnm])
 
