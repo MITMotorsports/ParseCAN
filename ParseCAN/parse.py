@@ -30,7 +30,10 @@ def SI(value, expunit):
     elif len(unit) == 0:
         return num  # Assuming no unit implies expunit
     else:
-        raise ValueError('Unrecognized frequency unit {}.'.format(unit))
+        raise ValueError(
+            'unrecognized unit {} - expected multiple of {}'
+            .format(unit, expunit)
+        )
 
 
 def number(num, reverse_endian=False):
