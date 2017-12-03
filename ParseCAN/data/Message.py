@@ -16,7 +16,7 @@ class message(meta.message):
         '''
         Returns the bit or range of bits within data.
         '''
-        return int('0b' + '{0:064b}'.format(self.data)[index], 2)
+        return int('0b0' + bin(self.data)[2:][index], 2)
         # TODO: Sue python for negative step not working for no reason.
 
     def __str__(self):
