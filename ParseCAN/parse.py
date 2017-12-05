@@ -3,17 +3,6 @@ A module containing all the specifics about each file format.
 '''
 import re
 
-SI_MOD = {
-    'u': 1e-6,
-    'm': 1e-3,
-    'c': 1e-2,
-    'd': 1e-1,
-    '': 1,
-    'k': 1e3,
-    'K': 1e3,
-    'M': 1e6,
-}
-
 
 def SI(value, expunit):
     '''
@@ -21,6 +10,17 @@ def SI(value, expunit):
     '''
     if isinstance(value, (int, float)):
         return value
+
+    SI_MOD = {
+        'u': 1e-6,
+        'm': 1e-3,
+        'c': 1e-2,
+        'd': 1e-1,
+        '': 1,
+        'k': 1e3,
+        'K': 1e3,
+        'M': 1e6,
+    }
 
     match = re.search(r'(\d\.*\d*)*([A-Za-z]*)', value)
     unit = match.group(2)

@@ -1,5 +1,4 @@
 from ... import spec, data, meta, parse
-from warnings import warn
 
 
 class MessageSpec(meta.message):
@@ -34,6 +33,9 @@ class MessageSpec(meta.message):
             else:
                 self.upsert_segment(segments[segnm])
 
+    def __iter__(self):
+        return iter(self.segments.values())
+
     def get_segment(self, seg):
         '''
         Given a spec.segment return the corresponding
@@ -42,12 +44,23 @@ class MessageSpec(meta.message):
         assert isinstance(seg, spec.segment)
         return self.segments[seg.name]
 
-    def upsert_segment(self, segtype):
+    def segment_fits(self, seg):
+        assert isinstance(seg, spec.segment)
+        within = lambda x, s: x.position < s < x.position + x.length
+        return not any(within(x, seg.position) or within(x, seg.position + seg.length) for x in self)
+
+    def upsert_segment(self, seg):
         '''
         Attach, via upsert, a spec.segment to this spec.message.
+        Returns true if replacement ocurred.
         '''
-        assert isinstance(segtype, spec.segment)
-        self.segments[segtype.name] = segtype
+        assert isinstance(seg, spec.segment)
+        if not self.segment_fits(seg):
+            raise ValueError('segment {} intersects'.format(seg.name))
+        replacement = seg.name in self.segments and self.segments[seg.name] != seg
+        self.segments[seg.name] = seg
+
+        return replacement
 
     def interpret(self, message):
         assert isinstance(message, data.message)

@@ -6,9 +6,9 @@ class SegmentSpec:
     A specification for a segment of a larger data string.
     '''
 
-    attributes = ('name', 'c_type', 'position', 'length', 'signed', 'values')
+    attributes = ('name', 'c_type', 'unit', 'position', 'length', 'signed', 'values')
 
-    def __init__(self, name, c_type='', unit='', position=None, length=None, signed=False , enum=None):
+    def __init__(self, name, c_type='', unit='', position=None, length=None, signed=False, enum=None):
         self.name = str(name)
         self.c_type = str(c_type)
         self.unit = str(unit)
@@ -41,21 +41,26 @@ class SegmentSpec:
                         )
                 elif isinstance(enum[valnm], spec.value):
                     self.upsert_value(enum[valnm])
+                else:
+                    raise TypeError('value given is not dict or spec.value')
 
     def get_value(self, val):
         '''
-        Given a spec.value return the corresponding
-        spec.value in this spec.segment.
+        Returns the spec.value synonymous to `val` in this spec.segment.
         '''
         assert isinstance(val, spec.value)
         return self.values[val.name]
 
-    def upsert_value(self, valtype):
+    def upsert_value(self, val):
         '''
         Attach, via upsert, a spec.value to this segment spec.
+        Returns true if replacement occured.
         '''
-        assert isinstance(valtype, spec.value)
-        self.values[valtype.name] = valtype
+        assert isinstance(val, spec.value)
+        replacement = val.name in self.values and self.values[val.name] != val
+        self.values[val.name] = val
+
+        return replacement
 
     def interpret(self, message):
         assert isinstance(message, data.message)

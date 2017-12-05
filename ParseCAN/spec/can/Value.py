@@ -1,10 +1,10 @@
 class ValueSpec:
-    attributes = ('name', 'range')
+    attributes = ('name', 'value')
 
     def __init__(self, name, value):
         self.name = str(name)
         self.value = int(value)
-        if self.value < 0:
+        if self.value < 0 or self.value > 1.8446744e+19:
             raise ValueError('incorrect value: {}'.format(self.value))
 
     def __contains__(self, data):
