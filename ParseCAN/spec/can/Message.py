@@ -45,6 +45,10 @@ class MessageSpec(meta.message):
         return self.segments[seg.name]
 
     def segment_fits(self, seg):
+        '''
+        Returns whether or not `seg` fits into this message
+        without intersecting with other segments.
+        '''
         assert isinstance(seg, spec.segment)
         within = lambda x, s: x.position < s < x.position + x.length
         return not any(within(x, seg.position) or within(x, seg.position + seg.length) for x in self)
@@ -52,11 +56,13 @@ class MessageSpec(meta.message):
     def upsert_segment(self, seg):
         '''
         Attach, via upsert, a spec.segment to this spec.message.
+        `seg` must not intersect other segments
+            If it does, a ValueError is raised.
         Returns true if replacement ocurred.
         '''
         assert isinstance(seg, spec.segment)
         if not self.segment_fits(seg):
-            raise ValueError('segment {} intersects'.format(seg.name))
+            raise ValueError('segment {} intersects with others'.format(seg.name))
         replacement = seg.name in self.segments and self.segments[seg.name] != seg
         self.segments[seg.name] = seg
 
