@@ -5,7 +5,7 @@ FrontCanNodeOutput:
   segments:
     requested_torque:
       position: 0
-      length: 16
+      length: 65
       c_type: int16_t
       signed: true
       unit: daJ # From motor controller manual

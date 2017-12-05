@@ -24,13 +24,15 @@ class CANSpec:
             try:
                 self.upsert_message(spec.message(name=msgnm, **prem[msgnm]))
             except Exception as e:
-                raise ValueError(
+                e.args = (
                     'in spec {}: in message {}: {}'.format(
                         self._source,
                         msgnm,
                         e
-                    )
+                    ),
                 )
+
+                raise
 
         return self.messages
 

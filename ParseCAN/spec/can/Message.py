@@ -20,18 +20,23 @@ class MessageSpec(meta.message):
                 try:
                     cand = spec.segment(name=segnm, **segments[segnm])
                 except Exception as e:
-                    raise ValueError(
+                    e.args = (
                         'in segment {}: {}'
                         .format(
                             segnm,
                             e
-                        )
+                        ),
                     )
-                    continue
 
-                self.upsert_segment(cand)
+                    raise
+
+                rep = self.upsert_segment(cand)
             else:
-                self.upsert_segment(segments[segnm])
+                rep = self.upsert_segment(segments[segnm])
+
+            # This is not really possible due to the data coming in through a name dict
+            if rep:
+                raise ValueError('repeated segments with same name {}'.format(segnm))
 
     def __iter__(self):
         return iter(self.segments.values())
