@@ -16,9 +16,3 @@ class ValueSpec:
         In the same order as spec.value.attributes.
         '''
         return ', '.join(str(getattr(self, x)) for x in self.attributes)
-
-    def is_enum(self):
-        '''
-        Returns true if this spec.value is not a range.
-        '''
-        return self._range[0] == self._range[1]
