@@ -32,17 +32,20 @@ class SegmentSpec:
                     try:
                         self.upsert_value(spec.value(valnm, enum[valnm]))
                     except Exception as e:
-                        raise ValueError(
+                        e.args = (
                             'in value {}: {}'
                             .format(
                                 valnm,
                                 e
-                            )
+                            ),
                         )
+
+                        raise
+
                 elif isinstance(enum[valnm], spec.value):
                     self.upsert_value(enum[valnm])
                 else:
-                    raise TypeError('value given is not dict or spec.value')
+                    raise TypeError('value given is not int or spec.value')
 
     def get_value(self, val):
         '''
