@@ -1,4 +1,5 @@
-from .can import *
-# from .board import board
+from .bus import *
+from .board import BoardSpec as board 
+from .Car import CarSpec as car
 
-__all__ = ['can', 'board']
+__all__ = ['bus', 'board']

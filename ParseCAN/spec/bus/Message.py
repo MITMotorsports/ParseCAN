@@ -8,8 +8,9 @@ class MessageSpec(meta.message):
 
     attributes = ('name', 'can_id', 'is_big_endian', 'frequency', 'segments')
 
-    def __init__(self, name, can_id, is_big_endian, frequency=None, segments=None):
+    def __init__(self, name, bus, can_id, is_big_endian, frequency=None, segments=None):
         self.name = str(name)
+        self.bus = bus
         self.can_id = parse.number(can_id)
         self.is_big_endian = bool(is_big_endian)
         self.frequency = parse.SI(frequency, 'Hz') if frequency else None

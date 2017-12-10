@@ -1,17 +1,9 @@
-BMS:
-  location: under IDKman
-  publish:
-    - PACK_VOLTAGE
-    - PACK_CURRENT
-  subscribe:
-    - VCU_HEARTBEAT
-    - AC/DC
-    - THUNDER
-
-VCU:
-  location: next to IDKman
-  publish:
-    - VCU_HEARTBEAT
-  subscribe:
-    - PACK_CURRENT
-    - VOICES
+boards:
+  VCU:
+    location: next to IDKman
+    publish:
+      - can0/VCU_HEARTBEAT
+    subscribe:
+      - can0/PACK_CURRENT
+      - can0/VOICES
+busses:

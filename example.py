@@ -1,6 +1,6 @@
 from ParseCAN import spec, data
 
-can = spec.can('./fsae_can_spec.yml')
+can = spec.car('./fsae_can_spec.yml')
 race = data.race('./samples/')
 log = data.log('./samples/fake.log')
 
@@ -14,6 +14,7 @@ log = data.log('./samples/fake.log')
 
 for msg in log:
     if msg.can_id == 0x522:
-        print(msg.time, hex(msg.can_id), hex(msg.data), can.interpret(msg))
+        pass
+        #print(msg.time, hex(msg.can_id), hex(msg.data), can.interpret(msg))
 
 print('Here is the interpretation of fake.log.')
