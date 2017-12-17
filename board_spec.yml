@@ -2,8 +2,7 @@ boards:
   VCU:
     location: next to IDKman
     publish:
-      - can0/VCU_HEARTBEAT
+      - s
     subscribe:
-      - can0/PACK_CURRENT
-      - can0/VOICES
-busses:
+      - s
+buses:

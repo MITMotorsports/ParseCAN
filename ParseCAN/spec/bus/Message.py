@@ -1,5 +1,4 @@
-from ... import spec, data, meta, parse
-
+from ... import spec, data, meta, parse, helper
 
 class MessageSpec(meta.message):
     '''
@@ -14,7 +13,7 @@ class MessageSpec(meta.message):
         self.can_id = parse.number(can_id)
         self.is_big_endian = bool(is_big_endian)
         self.frequency = parse.SI(frequency, 'Hz') if frequency else None
-        self.segments = {}
+        self._segments = {}
 
         for segnm in segments:
             if isinstance(segments[segnm], dict):
@@ -35,12 +34,14 @@ class MessageSpec(meta.message):
             else:
                 rep = self.upsert_segment(segments[segnm])
 
-            # This is not really possible due to the data coming in through a name dict
+            # This is really possible due to the data coming in through a name dict
+            # but still having the possibility of the exact same can_id.
             if rep:
                 raise ValueError('repeated segments with same name {}'.format(segnm))
 
-    def __iter__(self):
-        return iter(self.segments.values())
+    @property
+    def segments(self):
+        return self._segments.values()
 
     def get_segment(self, seg):
         '''
@@ -48,7 +49,7 @@ class MessageSpec(meta.message):
         spec.segment in this spec.message.
         '''
         assert isinstance(seg, spec.segment)
-        return self.segments[seg.name]
+        return self._segments[seg.name]
 
     def segment_intersections(self, seg):
         '''
@@ -61,9 +62,9 @@ class MessageSpec(meta.message):
             return x.position <= s.position <= x.position + x.length - 1 or x.position <= s.position + s.length - 1 <= x.position + x.length - 1
 
         # w should be commutative so let's aplpy it twice instead of redefining
-        return [x.name for x in self if w(x, seg) or w(seg, x)]
+        return [x.name for x in self.segments if w(x, seg) or w(seg, x)]
 
-    def upsert_segment(self, seg):
+    def upsert_segment(self, seg) -> bool:
         '''
         Attach, via upsert, a spec.segment to this spec.message.
         `seg` must not intersect other segments
@@ -79,15 +80,15 @@ class MessageSpec(meta.message):
                 .format(seg.name, ', '.join(intersections))
             )
 
-        replacement = seg.name in self.segments and self.segments[seg.name] != seg
-        self.segments[seg.name] = seg
+        rep = helper.dict_key_populated(self._segments, seg.name, seg)
+        self._segments[seg.name] = seg
 
-        return replacement
+        return rep
 
     def interpret(self, message):
         assert isinstance(message, data.message)
+        names = self._segments.values()
 
-        names = self.segments.values()
         return (self.name, {seg.name: seg.interpret(message) for seg in names})
 
     def __str__(self):

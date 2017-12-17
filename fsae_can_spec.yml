@@ -1,12 +1,19 @@
 name: datboi
+archs:
+  - arm
+  - avr
+  - x86
 boards:
   FrontCanNode:
     location: next to IDKman
     publish:
-      - can0/FrontCanNodeOutput
+      can0:
+        - BMS_SOC
     subscribe:
-      - can0/BMS_SOC
-busses:
+      can0:
+        - BMS_SOC
+        - FrontCanNodeOutput
+buses:
   can0:
     is_extended: false
     messages:

@@ -1,6 +1,6 @@
 import yaml
 from pathlib import Path
-from .. import data, spec
+from .. import data, spec, helper
 
 
 class CarSpec:
@@ -8,22 +8,22 @@ class CarSpec:
         self._source = Path(source)
         self.name = name
         # A mapping of bus names to bus objects.
-        self.busses = {}
+        self.buses = {}
         # A mapping of board names to board objects.
         self.boards = {}
         self.parse()
 
-    # Must move to another module
+    # TODO: Must move to another module
     def parse(self):
         with self._source.open('r') as f:
             prem = yaml.safe_load(f)
 
         self.name = prem['name']
 
-        busses = prem['busses']
-        for busnm in busses:
+        buses = prem['buses']
+        for busnm in buses:
             try:
-                self.upsert_bus(spec.bus(name=busnm, **busses[busnm]))
+                self.upsert_bus(spec.bus(name=busnm, **buses[busnm]))
             except Exception as e:
                 e.args = (
                     'in spec {}: in bus {}: {}'.format(
@@ -36,13 +36,13 @@ class CarSpec:
                 raise
 
         boards = prem['boards']
-        boards = {}
         for brdnm in boards:
             if isinstance(boards[brdnm], dict):
                 kwargs = boards[brdnm]
-                kwargs['publish'][:] = map(self.get_message, kwargs['publish'])
-                kwargs['subscribe'][:] = map(self.get_message, kwargs['subscribe'])
 
+                # Prepare filtered bus representation
+                kwargs['publish'] = {busnm: spec.busFiltered(self.buses[busnm], kwargs['publish'][busnm]) for busnsm in kwargs['publish']}
+                kwargs['subscribe'] = {busnm: spec.busFiltered(self.buses[busnm], kwargs['subscribe'][busnm]) for busnsm in kwargs['publish']}
                 try:
                     self.upsert_board(spec.board(name=brdnm, **kwargs))
                 except Exception as e:
@@ -56,23 +56,29 @@ class CarSpec:
 
                     raise
 
-    def upsert_bus(self, bus):
+    def upsert_bus(self, bus: spec.bus) -> bool:
         assert isinstance(bus, spec.bus)
-        self.busses[bus.name] = bus
+        rep = helper.dict_key_populated(self.buses, bus.name, bus)
+        self.buses[bus.name] = bus
 
-    def upsert_board(self, board):
+        return rep
+
+    def upsert_board(self, board: spec.board) -> bool:
         assert isinstance(board, spec.board)
+        rep = helper.dict_key_populated(self.boards, board.name, board)
         self.boards[board.name] = board
 
-    def get_message(self, msgstr):
+        return rep
+
+    def get_message_coordinate_by_str(self, msgstr: str):
         '''
         Given a string in the format `<bus_name>/<message_name>`
-        return the corresponding message in this spec.
+        return the corresponding spec.bus, spec.message pair in this car.
         '''
         assert isinstance(msgstr, str)
         part = msgstr.split('/')
 
-        return self.busses[part[0]].messages[part[1]]
+        return (self.buses[part[0]], self.buses[part[0]].get_message_by_name(part[1]))
 
     def interpret(self, message):
         '''

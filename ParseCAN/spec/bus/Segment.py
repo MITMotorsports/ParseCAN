@@ -1,5 +1,5 @@
-from ... import spec, data
-
+from ... import spec, data, helper
+from typing import Iterable
 
 class SegmentSpec:
     '''
@@ -23,7 +23,7 @@ class SegmentSpec:
             raise ValueError('length overflows: {}'.format(self.length))
 
         self.signed = bool(signed)
-        self.values = {}
+        self._values = {}
         # values synonymous to enum
 
         if enum:
@@ -47,29 +47,33 @@ class SegmentSpec:
                 else:
                     raise TypeError('value given is not int or spec.value')
 
+    @property
+    def values(self): # Iterable[spec.values]:
+        return self._values.values()
+
     def get_value(self, val):
         '''
         Returns the spec.value synonymous to `val` in this spec.segment.
         '''
         assert isinstance(val, spec.value)
-        return self.values[val.name]
+        return self._values[val.name]
 
-    def upsert_value(self, val):
+    def upsert_value(self, val) -> bool:
         '''
         Attach, via upsert, a spec.value to this segment spec.
         Returns true if replacement occured.
         '''
         assert isinstance(val, spec.value)
-        replacement = val.name in self.values and self.values[val.name] != val
-        self.values[val.name] = val
+        rep = helper.dict_key_populated(self._values, val.name, val)
+        self._values[val.name] = val
 
-        return replacement
+        return rep
 
-    def interpret(self, message):
+    def interpret(self, message: data.message):
         assert isinstance(message, data.message)
         msgdata = str(message[self.position:(self.position + self.length)]) + self.unit
 
-        if self.values:
+        if self._values:
             return (self.data_name(msgdata), msgdata)
 
         return msgdata
@@ -78,7 +82,7 @@ class SegmentSpec:
         '''
         Returns the first contained spec.value in which data is contained.
         '''
-        incl = (value for value in self.values if data in self.values[value])
+        incl = (value for value in self._values if data in self._values[value])
         return next(incl, None)
 
     def __str__(self):
