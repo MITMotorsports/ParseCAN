@@ -1,25 +1,85 @@
-name: datboi
-archs:
-  - arm
-  - avr
-  - x86
+name: MY18
 boards:
-  FrontCanNode:
-    location: next to IDKman
+  can_node:
     publish:
       can0:
-        - BMS_SOC
+        - FrontCanNodeOutput
     subscribe:
       can0:
-        - BMS_SOC
+        - can0/RearCanNodeWheelSpeed
+        - can0/VcuToDash
+        - can0/BMS_SOC
+  rear_can_node:
+    publish:
+      can0:
+        - RearCanNodeWheelSpeed
+  vcu:
+    publish:
+      can0:
+        - VcuToDash
+        - BMSState
+        - BMS_VCU_Switch
+    subscribe:
+      can0:
+        - can0/FrontCanNodeOutput
+        - can0/Dash_Request
+  dash:
+    publish:
+      can0:
+        - can0/Dash_Request
+    subscribe:
+      can0:
+        - VcuToDash
+        - BMSErrors
         - FrontCanNodeOutput
+        - RearCanNodeWheelSpeed
+  bms:
+    publish:
+      can0:
+        - BMSErrors
+        - BmsPackStatus
+      can1:
+        - BmsPackStatus
+    subscribe:
+      can0:
+        - BMSState
+        - BMS_VCU_Switch
+      can1:
+        - BMS_CSB_Switch
+  csb:
+    publish:
+      can1:
+        - BMS_CSB_Switch
+    subscribe:
+      can1:
+        - BmsPackStatus
+        - ElconHeartbeat
+  mc:
+    publish:
+    subscribe:
+      can0:
+        - MC_Command
+  current_sensor:
+    publish:
+      can0:
+        - CurrentSensor_Current
+        - CurrentSensor_Voltage
+        - CurrentSensor_Power
+  elcon:
+    publish:
+      can1:
+        - ElconHeartbeat
+    subscribe:
+      can1:
+        - ElconCommand
+
 buses:
   can0:
     is_extended: false
     messages:
       FrontCanNodeOutput:
         can_id: 0x0D0
-        frequency: 1Hz # Filler
+        frequency: 50Hz
         is_big_endian: true
         segments:
           requested_torque:
@@ -63,7 +123,7 @@ buses:
             length: 15
             c_type: int16_t
             signed: false
-            unit: C # Double check w/ Skanda
+            unit: C
           min_cell_temp:
             position: 15
             length: 15
@@ -293,9 +353,6 @@ buses:
             position: 31
             length: 1
             c_type: bool
-            enum:
-              ON: 0x0
-              OFF: 0x1
           reset_latch_open:
             position: 32
             length: 1
@@ -343,47 +400,13 @@ buses:
             c_type: uint32_t
             signed: false
             unit: mRPM
-      BMS_SwitchCAN: # Sent by CSB
+      BMS_VCU_Switch: # Switch CAN bus and baudrate
         can_id: 0x0F4
         frequency: 1Hz # Filler
         is_big_endian: true
         segments:
           always_true:
             position: 0
-            length: 1
-            c_type: bool
-      # Extended CAN
-      ElconHeartbeat:
-        can_id: 0x18FF50E5
-        frequency: 1Hz
-        is_big_endian: true
-        segments:
-          output_voltage:
-            position: 0
-            length: 16
-            c_type: uint16_t
-            signed: false
-            unit: dV
-          output_current:
-            position: 16
-            length: 16
-            c_type: uint16_t
-            signed: false
-            unit: dA
-          has_hardware_failure:
-            position: 32
-            length: 1
-            c_type: bool
-          over_temp_protection_on:
-            position: 33
-            length: 1
-            c_type: bool
-          is_input_voltage_wrong:
-            position: 34
-            length: 1
-            c_type: bool
-          battery_voltage_not_detected: # If battery voltage is not detected, the charger stays turned off the prevent reverse polarity
-            position: 35
             length: 1
             c_type: bool
       CurrentSensor_Current:
@@ -453,3 +476,125 @@ buses:
             length: 16
             c_type: unint_16
             unit: daJ # 10 joules
+  can1:
+    is_extended: true
+    messages:
+      BMS_CSB_Switch: # Switch CAN bus and baudrate
+        can_id: 0x10
+        frequency: 1Hz # Filler
+        is_big_endian: true
+        segments:
+          always_true:
+            position: 0
+            length: 1
+            c_type: bool
+      BMS_Mode:
+        can_id: 0x11
+        frequency: 1Hz
+        is_big_endian: true
+        segments:
+          requested_mode:
+            position: 0
+            length: 1
+            c_type: enum
+            enum:
+              CHARGE: 0x0
+              BALANCE: 0x1
+      ElconCommand:
+        can_id: 0x1806E5F4
+        frequency: 1Hz
+        is_big_endian: true
+        segments:
+          max_terminal_voltage:
+            position: 0
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: dV
+          max_current:
+            position: 16
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: dA
+          control:
+            position: 32
+            length: 1
+            c_type: enum
+            enum:
+              stop: 0x0
+              start: 0x1
+      ElconHeartbeat:
+        can_id: 0x18FF50E5
+        frequency: 1Hz
+        is_big_endian: true
+        segments:
+          output_voltage:
+            position: 0
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: dV
+          output_current:
+            position: 16
+            length: 16
+            c_type: uint16_t
+            signed: false
+            unit: dA
+          has_hardware_failure:
+            position: 32
+            length: 1
+            c_type: bool
+          over_temp_protection_on:
+            position: 33
+            length: 1
+            c_type: bool
+          is_input_voltage_wrong:
+            position: 34
+            length: 1
+            c_type: bool
+          battery_voltage_not_detected: # If battery voltage is not detected, the charger stays turned off the prevent reverse polarity
+            position: 35
+            length: 1
+            c_type: bool
+      BmsPackStatus:
+        can_id: 0x12
+        frequency: 1Hz # Filler
+        is_big_endian: true
+        segments:
+          pack_voltage:
+            position: 0
+            length: 9
+            c_type: uint16_t
+            signed: false
+            unit: mV # check
+          pack_current:
+            position: 9
+            length: 11
+            c_type: int16_t
+            signed: true
+          balancing_needed:
+            position: 20
+            length: 1
+            c_type: bool
+            signed: false
+          min_cell_voltage:
+            position: 30
+            length: 10
+            c_type: uint16_t
+            signed: false
+          min_cell_voltage_id:
+            position: 40
+            length: 7
+            c_type: uint8_t
+            signed: false
+          max_cell_voltage:
+            position: 47
+            length: 10
+            c_type: uint16_t
+            signed: false
+          max_cell_voltage_id:
+            position: 57
+            length: 7
+            c_type: uint8_t
+            signed: false

@@ -41,8 +41,12 @@ class CarSpec:
                 kwargs = boards[brdnm]
 
                 # Prepare filtered bus representation
-                kwargs['publish'] = {busnm: spec.busFiltered(self.buses[busnm], kwargs['publish'][busnm]) for busnsm in kwargs['publish']}
-                kwargs['subscribe'] = {busnm: spec.busFiltered(self.buses[busnm], kwargs['subscribe'][busnm]) for busnsm in kwargs['publish']}
+                if kwargs.get('publish', None):
+                    kwargs['publish'] = {busnm: spec.busFiltered(self.buses[busnm], kwargs['publish'][busnm]) for busnm in kwargs['publish']}
+
+                if kwargs.get('subscribe', None):
+                    kwargs['subscribe'] = {busnm: spec.busFiltered(self.buses[busnm], kwargs['subscribe'][busnm]) for busnm in kwargs['subscribe']}
+
                 try:
                     self.upsert_board(spec.board(name=brdnm, **kwargs))
                 except Exception as e:
