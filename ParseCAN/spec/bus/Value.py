@@ -1,4 +1,4 @@
-class ValueSpec:
+class ValueType:
     attributes = ('name', 'value')
 
     def __init__(self, name, value):

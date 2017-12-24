@@ -1,7 +1,7 @@
-from ... import spec, data, helper
+from ... import spec, data, helper, plural
 from typing import Iterable
 
-class SegmentSpec:
+class SegmentType:
     '''
     A specification for a segment of a larger data string.
     '''
@@ -23,14 +23,14 @@ class SegmentSpec:
             raise ValueError('length overflows: {}'.format(self.length))
 
         self.signed = bool(signed)
-        self._values = {}
+        self.__values = plural.unique('name', 'value', type=spec.value)
         # values synonymous to enum
 
         if enum:
             for valnm in enum:
                 if isinstance(enum[valnm], int):
                     try:
-                        self.upsert_value(spec.value(valnm, enum[valnm]))
+                        self.values.safe_add(spec.value(valnm, enum[valnm]))
                     except Exception as e:
                         e.args = (
                             'in value {}: {}'
@@ -43,31 +43,13 @@ class SegmentSpec:
                         raise
 
                 elif isinstance(enum[valnm], spec.value):
-                    self.upsert_value(enum[valnm])
+                    self.safe_add(enum[valnm])
                 else:
                     raise TypeError('value given is not int or spec.value')
 
     @property
-    def values(self): # Iterable[spec.values]:
-        return self._values.values()
-
-    def get_value(self, val):
-        '''
-        Returns the spec.value synonymous to `val` in this spec.segment.
-        '''
-        assert isinstance(val, spec.value)
-        return self._values[val.name]
-
-    def upsert_value(self, val) -> bool:
-        '''
-        Attach, via upsert, a spec.value to this segment spec.
-        Returns true if replacement occured.
-        '''
-        assert isinstance(val, spec.value)
-        rep = helper.dict_key_populated(self._values, val.name, val)
-        self._values[val.name] = val
-
-        return rep
+    def values(self):
+        return self.__values
 
     def interpret(self, message: data.message):
         assert isinstance(message, data.message)
@@ -80,9 +62,9 @@ class SegmentSpec:
 
     def data_name(self, data):
         '''
-        Returns the first contained spec.value in which data is contained.
+        Returns the first contained spec.value in which data is contained
         '''
-        incl = (value for value in self._values if data in self._values[value])
+        incl = (value for value in self.values if data in self.value)
         return next(incl, None)
 
     def __str__(self):

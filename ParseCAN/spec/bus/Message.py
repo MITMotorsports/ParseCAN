@@ -1,24 +1,24 @@
-from ... import spec, data, meta, parse, helper
+from ... import spec, data, meta, parse, helper, plural
 
-class MessageSpec(meta.message):
+class MessageType(meta.message):
     '''
     A specification describing an arbitrary CAN Message's format and contents.
     '''
 
     attributes = ('name', 'can_id', 'is_big_endian', 'frequency', 'segments')
 
-    def __init__(self, name, bus, can_id, is_big_endian, frequency=None, segments=None):
+    def __init__(self, name, can_id, is_big_endian, frequency=None, segments=None):
         self.name = str(name)
-        self.bus = bus
         self.can_id = parse.number(can_id)
         self.is_big_endian = bool(is_big_endian)
         self.frequency = parse.SI(frequency, 'Hz') if frequency else None
-        self._segments = {}
+        self.__segments = plural.unique('name', type=spec.segment)
 
         for segnm in segments:
             if isinstance(segments[segnm], dict):
                 try:
-                    cand = spec.segment(name=segnm, **segments[segnm])
+                    seg = spec.segment(name=segnm, **segments[segnm])
+                    self.segments.safe_add(seg)
                 except Exception as e:
                     e.args = (
                         'in segment {}: {}'
@@ -29,27 +29,20 @@ class MessageSpec(meta.message):
                     )
 
                     raise
-
-                rep = self.upsert_segment(cand)
             else:
-                rep = self.upsert_segment(segments[segnm])
+                seg = segments[segnm]
+                self.segments.safe_add(seg)
 
-            # This is really possible due to the data coming in through a name dict
-            # but still having the possibility of the exact same can_id.
-            if rep:
-                raise ValueError('repeated segments with same name {}'.format(segnm))
+            intersections = self.segment_intersections(seg)
+            if intersections:
+                raise ValueError(
+                    'segment {} intersects with {}'
+                    .format(seg.name, ', '.join(intersections))
+                )
 
     @property
     def segments(self):
-        return self._segments.values()
-
-    def get_segment(self, seg):
-        '''
-        Given a spec.segment return the corresponding
-        spec.segment in this spec.message.
-        '''
-        assert isinstance(seg, spec.segment)
-        return self._segments[seg.name]
+        return self.__segments
 
     def segment_intersections(self, seg):
         '''
@@ -61,29 +54,8 @@ class MessageSpec(meta.message):
         def w(x, s):
             return x.position <= s.position <= x.position + x.length - 1 or x.position <= s.position + s.length - 1 <= x.position + x.length - 1
 
-        # w should be commutative so let's aplpy it twice instead of redefining
-        return [x.name for x in self.segments if w(x, seg) or w(seg, x)]
-
-    def upsert_segment(self, seg) -> bool:
-        '''
-        Attach, via upsert, a spec.segment to this spec.message.
-        `seg` must not intersect other segments
-            If it does, a ValueError is raised.
-        Returns true if replacement ocurred.
-        '''
-        assert isinstance(seg, spec.segment)
-
-        intersections = self.segment_intersections(seg)
-        if intersections:
-            raise ValueError(
-                'segment {} intersects with {}'
-                .format(seg.name, ', '.join(intersections))
-            )
-
-        rep = helper.dict_key_populated(self._segments, seg.name, seg)
-        self._segments[seg.name] = seg
-
-        return rep
+        # w should be commutative so let's apply it twice instead of redefining
+        return [x.name for x in self.segments if seg != x and (w(x, seg) or w(seg, x))]
 
     def interpret(self, message):
         assert isinstance(message, data.message)

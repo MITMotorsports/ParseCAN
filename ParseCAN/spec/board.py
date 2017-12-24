@@ -1,6 +1,6 @@
 from .. import spec, helper
 
-class BoardSpec:
+class BoardType:
     def __init__(self, name, arch=None, location=None, publish=None, subscribe=None):
         self.name = name
         self.arch = arch
