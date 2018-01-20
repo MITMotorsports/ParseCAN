@@ -53,3 +53,6 @@ class BusTypeFiltered(BusType):
     @property
     def messages(self):
         return (msg for msg in self.bus.messages if self.interested(msg))
+
+    def __getattr__(self, attr):
+        return getattr(self.bus, attr)

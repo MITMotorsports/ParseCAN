@@ -42,10 +42,10 @@ class CarSpec:
 
                 # Prepare filtered bus representation
                 if kwargs.get('publish', None):
-                    kwargs['publish'] = {busnm: spec.busFiltered(self.buses.name[busnm], kwargs['publish'][busnm]) for busnm in kwargs['publish']}
+                    kwargs['publish'] = [spec.busFiltered(self.buses.name[busnm], kwargs['publish'][busnm]) for busnm in kwargs['publish']]
 
                 if kwargs.get('subscribe', None):
-                    kwargs['subscribe'] = {busnm: spec.busFiltered(self.buses.name[busnm], kwargs['subscribe'][busnm]) for busnm in kwargs['subscribe']}
+                    kwargs['subscribe'] = [spec.busFiltered(self.buses.name[busnm], kwargs['subscribe'][busnm]) for busnm in kwargs['subscribe']]
 
                 try:
                     self.boards.add(spec.board(name=brdnm, **kwargs))
@@ -75,8 +75,9 @@ class CarSpec:
         '''
         assert isinstance(msgstr, str)
         part = msgstr.split('/')
+        bus = self.buses['name'][part[0]]
 
-        return (self.buses[part[0]], self.buses[part[0]].get_message_by_name(part[1]))
+        return (bus, bus['name'][part[1]])
 
     def interpret(self, message):
         '''

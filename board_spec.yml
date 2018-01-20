@@ -1,8 +1,0 @@
-boards:
-  VCU:
-    location: next to IDKman
-    publish:
-      - s
-    subscribe:
-      - s
-buses:

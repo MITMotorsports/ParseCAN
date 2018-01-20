@@ -13,13 +13,16 @@ class unique:
             for x in init:
                 self.safe_add(x)
 
-        # TODO: Add type assertion
-
     @property
     def attributes(self):
         return iter(self.__store.keys())
 
-    def add(self, item):
+    def add(self, item, safe=False):
+        '''
+        Add `item` to the internal representation.
+        
+        Will raise ValuError if `safe` is True and there exists a conflict.
+        '''
         assert isinstance(item, self.__type)
 
         removal = None
@@ -30,26 +33,24 @@ class unique:
             if attr in self.__store[attrnm]:
                 removal = self.__store[attrnm][attr]
                 remattr = attrnm
-                self.remove(removal)
+
+                if safe:
+                    raise ValueError(
+                        '{} and {} have equal \'{}\' attributes'
+                        .format(item, removal, remattr)
+                    )
+                else:
+                    self.remove(removal)
 
             self.__store[attrnm][attr] = item
-
-        if removal:
-            return (removal, remattr)
 
         return None
 
     def safe_add(self, item):
-        removal = self.add(item)
+        self.add(item, safe=True)
 
-        if removal:
-            raise ValueError(
-                '{} and {} have equal \'{}\' attributes'
-                .format(item, removal[0], removal[1])
-            )
-
-    #def find(self, item):
-    #    return next(self[attrnm] for attrnm in self.attributes, None)
+    # def find(self, item):
+    #   return next(self[attrnm] for attrnm in self.attributes, None)
 
     def remove(self, item):
         assert isinstance(item, self.__type)
@@ -97,9 +98,9 @@ if __name__ == '__main__':
 
     a = unique('name', 'value')
     b = ValueType('w', 2)
-    c = ValueType('w', 4)
+    c = ValueType('1', 4)
     print(a.add(b))
-    print(a.add(c))
+    print(a.safe_add(c))
     print(a['name'])
     print(a.name)
     print(a)
