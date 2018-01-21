@@ -20,7 +20,7 @@ class unique:
     def add(self, item, safe=False):
         '''
         Add `item` to the internal representation.
-        
+
         Will raise ValuError if `safe` is True and there exists a conflict.
         '''
         assert isinstance(item, self.__type)
@@ -67,8 +67,10 @@ class unique:
 
         return MappingProxyType(self.__store[attrnm])
 
-    def __getattr__(self, attrnm: str):
-        return self[attrnm]
+    __getattr__ = __getitem__
+
+    def __len__(self):
+        return len(next(iter(self.__store.values())))
 
     def __contains__(self, item):
         '''
