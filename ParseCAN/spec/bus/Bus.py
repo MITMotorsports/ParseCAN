@@ -8,9 +8,10 @@ class BusType:
     Describes the set of messages that flow through a CAN bus.
     Can interpret CAN Messages that were sent based on this spec.bus.
     '''
-    def __init__(self, name, is_extended=None, messages=None):
+    def __init__(self, name, baudrate, is_extended=None, messages=None):
         self.name = name
-        self.is_extended = is_extended
+        self.baudrate = int(baudrate)
+        self.is_extended = bool(is_extended)
         self.__messages = plural.unique('name', 'can_id', type=spec.message)
 
         for msgnm in messages:

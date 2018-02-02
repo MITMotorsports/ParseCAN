@@ -34,13 +34,13 @@ class unique:
                 removal = self.__store[attrnm][attr]
                 remattr = attrnm
 
+                self.remove(removal)
+
                 if safe:
                     raise ValueError(
                         '{} and {} have equal \'{}\' attributes'
                         .format(item, removal, remattr)
                     )
-                else:
-                    self.remove(removal)
 
             self.__store[attrnm][attr] = item
 
