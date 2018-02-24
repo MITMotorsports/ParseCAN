@@ -5,7 +5,7 @@ A Python package for integrating CAN specifications and parsing logged CAN messa
 This package is intuitively split into two top-level sub-packages: `ParseCAN.spec` and `ParseCAN.data`.
 
 ### spec
-`raise NotWrittenError`
+`raise NotWrittenError` will be done
 
 ### data
 `ParseCAN.data` provides classes whose instances specify CAN messages, logs, and races.
