@@ -5,13 +5,13 @@ class MessageType(meta.message):
     A specification describing an arbitrary CAN Message's format and contents.
     '''
 
-    attributes = ('name', 'can_id', 'is_big_endian', 'frequency', 'segments')
+    attributes = ('name', 'can_id', 'is_big_endian', 'period', 'segments')
 
-    def __init__(self, name, can_id, is_big_endian, frequency=None, segments=None):
+    def __init__(self, name, can_id, is_big_endian, period=None, segments=None):
         self.name = str(name)
         self.can_id = parse.number(can_id)
         self.is_big_endian = bool(is_big_endian)
-        self.frequency = parse.SI(frequency, 'Hz') if frequency else None
+        self.period = parse.SI(period, 's') if period else None
         self.__segments = plural.unique('name', type=spec.segment)
 
         for segnm in segments:
