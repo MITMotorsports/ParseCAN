@@ -391,10 +391,10 @@ buses:
             length: 3
             c_type: enum
             enum:
-              LIMP_NORMAL: 0x0
-              LIMP_50: 0x1
-              LIMP_33: 0x2
-              LIMP_25: 0x3
+              - LIMP_NORMAL
+              - LIMP_50
+              - LIMP_33
+              - LIMP_25
       RearCanNodeWheelSpeed:
         can_id: 0x0D1
         period: 50s

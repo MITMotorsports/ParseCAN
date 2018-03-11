@@ -27,6 +27,9 @@ class SegmentType:
         # values synonymous to enum
 
         if enum:
+            if isinstance(enum, list):
+                enum = {valnm: idx for idx, valnm in enumerate(enum)}
+
             for valnm in enum:
                 if isinstance(enum[valnm], int):
                     try:
