@@ -8,6 +8,7 @@ class BusType:
     Describes the set of messages that flow through a CAN bus.
     Can interpret CAN Messages that were sent based on this spec.bus.
     '''
+
     def __init__(self, name, baudrate, is_extended=None, messages=None):
         self.name = name
         self.baudrate = int(baudrate)
@@ -17,7 +18,8 @@ class BusType:
         for msgnm in messages:
             if isinstance(messages[msgnm], dict):
                 try:
-                    self.messages.safe_add(spec.message(name=msgnm, **messages[msgnm]))
+                    self.messages.safe_add(spec.message(
+                        name=msgnm, **messages[msgnm]))
                 except Exception as e:
                     e.args = (
                         'in message {}: {}'.format(
@@ -41,6 +43,9 @@ class BusType:
         assert isinstance(message, data.message)
         return self.messages.interpret(message)
 
+    def __str__(self):
+        return self.name
+
 
 class BusTypeFiltered(BusType):
     def __init__(self, bus: BusType, interests: Sequence[Union[int, str]]):
@@ -60,9 +65,11 @@ class BusTypeFiltered(BusType):
                 elif isinstance(interest, str):
                     self.bus.messages.name[interest]
                 else:
-                    raise ValueError('interests must be of type int or str')
+                    raise ValueError('in bus {}: in interest {}: must be of type int or str'.format(
+                        self.bus, interest))
             except KeyError:
-                raise ValueError('specified interest does not exist in the bus')
+                raise ValueError('in bus {}: in interest {}: does not exist in the bus'.format(
+                    self.bus, interest))
 
         self._interests = interests
 

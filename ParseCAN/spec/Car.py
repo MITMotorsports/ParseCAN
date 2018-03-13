@@ -40,14 +40,14 @@ class CarSpec:
             if isinstance(boards[brdnm], dict):
                 kwargs = boards[brdnm]
 
-                # Prepare filtered bus representation
-                if kwargs.get('publish', None):
-                    kwargs['publish'] = [spec.busFiltered(self.buses.name[busnm], kwargs['publish'][busnm]) for busnm in kwargs['publish']]
-
-                if kwargs.get('subscribe', None):
-                    kwargs['subscribe'] = [spec.busFiltered(self.buses.name[busnm], kwargs['subscribe'][busnm]) for busnm in kwargs['subscribe']]
-
                 try:
+                    # Prepare filtered bus representation
+                    if kwargs.get('publish', None):
+                        kwargs['publish'] = [spec.busFiltered(self.buses.name[busnm], kwargs['publish'][busnm]) for busnm in kwargs['publish']]
+
+                    if kwargs.get('subscribe', None):
+                        kwargs['subscribe'] = [spec.busFiltered(self.buses.name[busnm], kwargs['subscribe'][busnm]) for busnm in kwargs['subscribe']]
+
                     self.boards.add(spec.board(name=brdnm, **kwargs))
                 except Exception as e:
                     e.args = (
