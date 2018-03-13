@@ -47,6 +47,25 @@ class BusTypeFiltered(BusType):
         self.bus = bus
         self.interests = interests
 
+    @property
+    def interests(self):
+        return self._interests
+
+    @interests.setter
+    def interests(self, interests):
+        for interest in interests:
+            try:
+                if isinstance(interest, int):
+                    self.bus.messages.can_id[interest]
+                elif isinstance(interest, str):
+                    self.bus.messages.name[interest]
+                else:
+                    raise ValueError('interests must be of type int or str')
+            except KeyError:
+                raise ValueError('specified interest does not exist in the bus')
+
+        self._interests = interests
+
     def interested(self, msg):
         assert isinstance(msg, spec.message)
         return msg.name in self.interests or msg.can_id in self.interests
