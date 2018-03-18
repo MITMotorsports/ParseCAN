@@ -10,8 +10,8 @@ class Log:
     def __iter__(self):
         return (data.messageTimed(**parse.log(line)) for line in self.src.open() if not line.startswith('#'))
 
-    def interpret(self, spec):
-        return (msg.interpret(spec) for msg in self)
+    def unpack(self, spec):
+        return (msg.unpack(spec) for msg in self)
 
     def csv(self, outpath):
         '''

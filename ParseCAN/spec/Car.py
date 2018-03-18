@@ -1,6 +1,6 @@
 import yaml
 from pathlib import Path
-from .. import data, spec, helper, plural
+from .. import data, spec, plural
 
 
 class CarSpec:
@@ -79,9 +79,19 @@ class CarSpec:
 
         return (bus, bus['name'][part[1]])
 
-    def interpret(self, message):
+    def unpack(self, frame):
         '''
-        Interprets a data.message instance based on this spec.can.
+        unpacks a data.message instance based on this spec.can.
         '''
-        assert isinstance(message, data.message)
-        return self.get_message(message).interpret(message)
+        assert isinstance(frame, data.message)
+
+        ret = {}
+        # TODO: Make this a comprehension.
+        # TODO: Make busFiltered interests receptive to message type objects.
+        for bus in self.buses:
+            msgs = list(spec.busFiltered(bus, [frame.can_id]).messages)
+
+            if msgs:
+                ret[bus.name] = [msg.unpack(frame) for msg in msgs]
+
+        return ret

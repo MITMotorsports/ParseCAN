@@ -24,13 +24,17 @@ class message(meta.message):
         A comma separated representation of self's values.
         In the same order as self.attributes.
         '''
-        return ', '.join(str(getattr(self, x)) for x in self.attributes)
+        t = {
+            'can_id': hex,
+            'data': bin
+        }
+        return ', '.join(t[attr](getattr(self, attr)) for attr in self.attributes)
 
     def __iter__(self):
         return (getattr(self, x) for x in self.attributes)
 
-    def interpret(self, spec):
-        return spec.interpret(self)
+    def unpack(self, spec):
+        return spec.unpack(self)
 
 
 class messageTimed(message):
@@ -39,11 +43,10 @@ class messageTimed(message):
     '''
     attributes = ('can_id', 'data', 'time')
 
-    def __init__(self, can_id, data, time):
+    def __init__(self, *args, time, **kwargs):
         '''
         Expects can_id, data in a string of capital hex format.
         '''
         # Store our attributes in the format we want them (numbers).
-        self.can_id = parse.number(can_id)
-        self.data = parse.number(data)
+        super().__init__(*args, **kwargs)
         self.time = parse.number(time)

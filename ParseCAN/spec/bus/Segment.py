@@ -1,5 +1,5 @@
-from ... import spec, data, helper, plural
-from typing import Iterable
+from ... import spec, data, plural
+
 
 class SegmentType:
     '''
@@ -54,21 +54,28 @@ class SegmentType:
     def values(self):
         return self.__values
 
-    def interpret(self, message: data.message):
-        assert isinstance(message, data.message)
-        msgdata = str(message[self.position:(self.position + self.length)]) + self.unit
+    def unpack(self, frame):
+        assert isinstance(frame, data.message)
+        # raw = str(message[self.position:(self.position + self.length)]) + self.unit
+        # TODO: Move this to data.message.__getitem__
+        raw = data.EXTRACT(frame.data, self.position, self.length)
 
-        if self._values:
-            return (self.data_name(msgdata), msgdata)
+        if self.values:
+            return self.values.value[raw]
 
-        return msgdata
+        def c_to_py(val):
+            t = {
+                'bool': bool
+            }
 
-    def data_name(self, data):
-        '''
-        Returns the first contained spec.value in which data is contained
-        '''
-        incl = (value for value in self.values if data in self.value)
-        return next(incl, None)
+            if 'int' in self.c_type:
+                return int(val)
+
+            return t[self.c_type](val)
+
+        clean = c_to_py(raw)
+
+        return (clean, self.unit) if self.unit else clean
 
     def __str__(self):
         '''

@@ -1,4 +1,4 @@
-from ... import data, spec, meta, helper, plural
+from ... import data, spec, plural
 from typing import Sequence, Union
 
 
@@ -6,7 +6,7 @@ class BusType:
     '''
     A (CAN) bus specification.
     Describes the set of messages that flow through a CAN bus.
-    Can interpret CAN Messages that were sent based on this spec.bus.
+    Can unpack CAN Messages that were sent based on this spec.bus.
     '''
 
     def __init__(self, name, baudrate, is_extended=None, messages=None):
@@ -36,12 +36,12 @@ class BusType:
     def messages(self):
         return self.__messages
 
-    def interpret(self, message):
+    def unpack(self, message):
         '''
-        Interprets a data.message instance based on this spec.can.
+        unpacks a data.message instance based on this spec.can.
         '''
         assert isinstance(message, data.message)
-        return self.messages.interpret(message)
+        return self.messages.unpack(message)
 
     def __str__(self):
         return self.name

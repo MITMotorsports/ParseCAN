@@ -30,12 +30,12 @@ class Race:
         '''
         return chain.from_iterable(self)
 
-    def interpret(self, spec):
+    def unpack(self, spec):
         '''
-        An iterator of the interpretation of all the messages
+        An iterator of the unpackation of all the messages
         in each of the logs in this race.
         '''
-        return (spec.interpret(msg) for msg in self.messages)
+        return (spec.unpack(msg) for msg in self.messages)
 
     # def __getattr__(self, index):
     #     '''

@@ -1,5 +1,6 @@
 from ... import spec, data, meta, parse, helper, plural
 
+
 class MessageType(meta.message):
     '''
     A specification describing an arbitrary CAN Message's format and contents.
@@ -60,11 +61,11 @@ class MessageType(meta.message):
         # w should be commutative so let's apply it twice instead of redefining
         return [x.name for x in self.segments if seg != x and (w(x, seg) or w(seg, x))]
 
-    def interpret(self, message):
+    def unpack(self, message):
         assert isinstance(message, data.message)
         names = self._segments.values()
 
-        return (self.name, {seg.name: seg.interpret(message) for seg in names})
+        return (self.name, {seg.name: seg.unpack(message) for seg in names})
 
     def __str__(self):
         '''
@@ -72,3 +73,15 @@ class MessageType(meta.message):
         In the same order as spec.message.attributes.
         '''
         return ', '.join(str(getattr(self, x)) for x in self.attributes)
+
+    def pack(self, by='name', **kwargs):
+        bitstring = 0
+        for segnm in kwargs:
+            seg = self.segments.name[segnm]
+            bitstring = data.INSERT(kwargs[segnm], bitstring,
+                                    seg.position, seg.length)
+
+        return data.message(self.can_id, bitstring)
+
+    def unpack(self, frame):
+        return {seg.name: seg.unpack(frame) for seg in self.segments}
