@@ -36,12 +36,12 @@ class BusType:
     def messages(self):
         return self.__messages
 
-    def unpack(self, message):
+    def unpack(self, frame):
         '''
         unpacks a data.message instance based on this spec.can.
         '''
-        assert isinstance(message, data.message)
-        return self.messages.unpack(message)
+        assert isinstance(frame, data.message)
+        return (msg.unpack(frame) for msg in self.messages)
 
     def __str__(self):
         return self.name

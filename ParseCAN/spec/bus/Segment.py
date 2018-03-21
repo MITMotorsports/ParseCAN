@@ -63,6 +63,7 @@ class SegmentType:
         if self.values:
             return self.values.value[raw]
 
+        # TODO: Deal with two's complement signed numbers.
         def c_to_py(val):
             t = {
                 'bool': bool
