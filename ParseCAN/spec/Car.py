@@ -91,6 +91,6 @@ class CarSpec:
         for bus in self.buses:
             fbus = spec.busFiltered(bus, [frame.can_id])
 
-            ret[bus.name] = list(fbus.unpack(frame))
+            ret[bus.name] = fbus.unpack(frame)
 
         return ret

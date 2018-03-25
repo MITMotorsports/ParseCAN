@@ -1,14 +1,21 @@
 from ParseCAN import spec, data
+import can
 
-can = spec.car('./samples/fsae_can_spec.yml')
-race = data.race('./samples/')
-log = data.log('./samples/fake.log')
+car = spec.car('../MY18/can_spec_my18.yml')
+bus = can.interface.Bus(bustype='pcan', channel='PCAN_USBBUS1', bitrate=500000)
 
-brd = can.boards.name['vcu']
-print(brd.subscribe)
-pub_msgnm = [msg.name for msg in brd.publish.name['can0'].messages]
-print(pub_msgnm)
 
-# Test implicit segment enum/values
-print([(seg.value, seg.name) for seg in can.buses.name['can0']
-       .messages.name['VcuToDash'].segments.name['limp_state'].values])
+def bitstr(bytes):
+    return int.from_bytes(bytes, byteorder='big', signed=False)
+
+
+def msg_conv(msg):
+    return data.message(can_id=msg.arbitration_id, data=bitstr(msg.data))
+
+
+try:
+    for msg in bus:
+        print(hex(msg_conv(msg).data))
+        print(car.unpack(msg_conv(msg))['can0'])
+except KeyboardInterrupt:
+    pass
