@@ -89,7 +89,10 @@ class CarSpec:
         # TODO: Make this a comprehension.
         # TODO: Make busFiltered interests receptive to message type objects.
         for bus in self.buses:
-            fbus = spec.busFiltered(bus, [frame.can_id])
+            try:
+                fbus = spec.busFiltered(bus, [frame.can_id])
+            except ValueError:
+                continue
 
             ret[bus.name] = fbus.unpack(frame)
 

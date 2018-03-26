@@ -15,7 +15,16 @@ def msg_conv(msg):
 
 try:
     for msg in bus:
-        print(hex(msg_conv(msg).data))
-        print(car.unpack(msg_conv(msg))['can0'])
+        if msg.arbitration_id == 218:
+            msg.arbitration_id = 217
+            print('VCU FAKE')
+
+        print(hex(msg.arbitration_id), hex(msg_conv(msg).data))
+
+        try:
+            print(car.unpack(msg_conv(msg))['can0'])
+        except KeyError:
+            print('Unknown message.')
+
 except KeyboardInterrupt:
     pass
