@@ -85,3 +85,21 @@ class MessageType(meta.message):
 
     def unpack(self, frame):
         return {seg.name: seg.unpack(frame) for seg in self.segments}
+
+    def swap_endianness(val, length, signed):
+        if signed:
+            if length == 16:
+                return (val << 8) | ((val >> 8) & 0xFF)
+            elif length == 32:
+                val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF)
+                return (val << 16) | ((val >> 16) & 0xFFFF)
+            else:
+                raise ValueError
+        else:
+            if length == 16:
+                return (val << 8) | (val >> 8)
+            elif length == 32:
+                val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF)
+                return (val << 16) | (val >> 16)
+            else:
+                raise ValueError
