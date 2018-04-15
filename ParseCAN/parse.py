@@ -31,10 +31,13 @@ def SI(value, expunit):
     match = re.search(r'(\d\.*\d*)*([A-Za-z]*)', value)
     unit = match.group(2)
     num = float(match.group(1))
-    if unit.lower().endswith(expunit.lower()):
-        return num * SI_MOD[unit[:-2]]
+    if unit.endswith(expunit):
+        return num * SI_MOD[unit[:-len(expunit)]]
     elif len(unit) == 0:
-        return num  # Assuming no unit implies expunit
+        raise ValueError(
+            'no unit given - expected multiple of {}'
+            .format(expunit)
+        )
     else:
         raise ValueError(
             'unrecognized unit {} - expected multiple of {}'
