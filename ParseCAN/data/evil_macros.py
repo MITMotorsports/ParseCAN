@@ -1,3 +1,17 @@
+import struct
+
+
+def REVERSE(type, num):
+    return struct.unpack('<' + type, struct.pack('>' + type, num))[0]
+
+
+def reverse_gen(type):
+    def closure(num):
+        return REVERSE(type, num)
+
+    return closure
+
+
 def ONES(leng):
     return ((1 << (leng)) - 1)
 

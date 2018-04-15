@@ -1,4 +1,4 @@
-from ... import spec, data, plural
+from ... import spec, data, plural, parse
 
 
 class SegmentType:
@@ -8,7 +8,7 @@ class SegmentType:
 
     attributes = ('name', 'c_type', 'unit', 'position', 'length', 'signed', 'values')
 
-    def __init__(self, name, c_type='', unit='', position=None, length=None, signed=False, enum=None):
+    def __init__(self, name, c_type='', unit='', position=None, length=None, signed=False, is_big_endian=True, enum=None):
         self.name = str(name)
         self.c_type = str(c_type)
         self.unit = str(unit)
@@ -23,6 +23,7 @@ class SegmentType:
             raise ValueError('length overflows: {}'.format(self.length))
 
         self.signed = bool(signed)
+        self.is_big_endian = bool(is_big_endian)
         self.__values = plural.unique('name', 'value', type=spec.value)
         # values synonymous to enum
 
@@ -60,19 +61,27 @@ class SegmentType:
         # TODO: Move this to data.message.__getitem__
         raw = data.EXTRACT(frame.data, self.position, self.length)
 
+        def parsenum(type):
+            if self.is_big_endian:
+                return int
+            else:
+                return data.reverse_gen(type)
+
         if self.values:
             return self.values.value[raw]
 
-        # TODO: Deal with two's complement signed numbers.
         def c_to_py(val):
-            t = {
-                'bool': bool
-            }
-
-            if 'int' in self.c_type:
-                return int(val)
-
-            return t[self.c_type](val)
+            return {
+                'bool': bool,
+                'int8_t': parsenum('b'),
+                'uint8_t': parsenum('B'),
+                'int16_t': parsenum('H'),
+                'uint16_t': parsenum('H'),
+                'int32_t': parsenum('i'),
+                'uint32_t': parsenum('I'),
+                'int64_t': parsenum('q'),
+                'uint64_t': parsenum('Q'),
+            }[self.c_type](val)
 
         clean = c_to_py(raw)
 

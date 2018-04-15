@@ -2,6 +2,7 @@
 A module containing all the specifics about each file format.
 '''
 import re
+import struct
 
 
 def SI(value, expunit):
@@ -50,17 +51,9 @@ def number(num, reverse_endian=False):
     if isinstance(num, (int, float)):
         return num
     if reverse_endian:
-        return int(bin(int(num, 0))[-1:1:-1], 2)
+        return struct.unpack("<I", struct.pack(">I", i))[0]
 
     return float(num) if '.' in num else int(num, 0)
-
-
-def log(line):
-    return {
-        'time': re.search(r'\(([0-9]+(.[0-9]+)?)\)', line).group(1),
-        'can_id': '0x' + re.search(r'([0-9]+)#', line).group(1),
-        'data': '0x' + re.search(r'#([0-9, A-F]+)', line).group(1),
-    }
 
 
 def node(obj, attributes, nodesrc):

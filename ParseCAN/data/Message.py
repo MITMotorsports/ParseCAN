@@ -25,10 +25,11 @@ class message(meta.message):
         In the same order as self.attributes.
         '''
         t = {
+            'time': float,
             'can_id': hex,
-            'data': bin
+            'data': hex
         }
-        return ', '.join(t[attr](getattr(self, attr)) for attr in self.attributes)
+        return ', '.join(str(t[attr](getattr(self, attr))) for attr in self.attributes)
 
     def __iter__(self):
         return (getattr(self, x) for x in self.attributes)
@@ -41,7 +42,7 @@ class messageTimed(message):
     '''
     Represents a logged CAN message with well defined time, ID, and data.
     '''
-    attributes = ('can_id', 'data', 'time')
+    attributes = ('time', 'can_id', 'data')
 
     def __init__(self, *args, time, **kwargs):
         '''

@@ -21,7 +21,7 @@ class MessageType(meta.message):
         for segnm in segments:
             if isinstance(segments[segnm], dict):
                 try:
-                    seg = spec.segment(name=segnm, **segments[segnm])
+                    seg = spec.segment(name=segnm, is_big_endian=self.is_big_endian, **segments[segnm])
                     self.segments.safe_add(seg)
                 except Exception as e:
                     e.args = (

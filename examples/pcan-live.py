@@ -1,7 +1,7 @@
-from ParseCAN import spec, data
 import can
+from ParseCAN import spec, data
 
-car = spec.car('../MY18/can_spec_my18.yml')
+car = spec.car('../../MY18/can_spec_my18.yml')
 bus = can.interface.Bus(bustype='pcan', channel='PCAN_USBBUS1', bitrate=500000)
 
 
@@ -17,7 +17,7 @@ black_list = [0xD8, 0xF0]
 black_list.extend(range(0x521, 0x525))
 print('Ignoring the following: ', black_list)
 
-white_list = []
+white_list = [0xD0]
 raw_list = [0xD4]
 
 try:
