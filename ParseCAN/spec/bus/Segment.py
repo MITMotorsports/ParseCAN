@@ -75,7 +75,7 @@ class SegmentType:
                 'bool': bool,
                 'int8_t': parsenum('b'),
                 'uint8_t': parsenum('B'),
-                'int16_t': parsenum('H'),
+                'int16_t': parsenum('h'),
                 'uint16_t': parsenum('H'),
                 'int32_t': parsenum('i'),
                 'uint32_t': parsenum('I'),

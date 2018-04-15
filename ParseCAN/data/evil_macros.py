@@ -1,8 +1,17 @@
 import struct
 
+fmttolen = {
+    'h': 2,
+    'H': 2,
+    'i': 4,
+    'I': 4,
+    'q': 8,
+    'Q': 8
+}
+
 
 def REVERSE(type, num):
-    return struct.unpack('<' + type, struct.pack('>' + type, num))[0]
+    return struct.unpack('<' + type, num.to_bytes(fmttolen[type], 'big'))[0]
 
 
 def reverse_gen(type):
