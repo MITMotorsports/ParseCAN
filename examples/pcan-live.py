@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../ParseCAN')
+
 import can
 from ParseCAN import spec, data
 
