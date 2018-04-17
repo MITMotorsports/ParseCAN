@@ -10,7 +10,7 @@ def bitstr(bytes):
 
 
 def msg_conv(msg):
-    return data.message(can_id=msg.arbitration_id, data=bitstr(msg.data))
+    return data.Frame(can_id=msg.arbitration_id, data=bitstr(msg.data))
 
 
 black_list = [0xD8, 0xF0]

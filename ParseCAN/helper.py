@@ -21,3 +21,17 @@ def tuples_to_dict_list(L):
             D[k] = [v]
 
     return D
+
+
+def attr_extract(obj, attrs, mapdict=None):
+    if mapdict:
+        return (getattr(obj, attr) for attr in attrs)
+    else:
+        return (mapdict[attr](getattr(obj, attr)) for attr in attrs)
+
+
+def csv_by_attrs(attrs, mapdict=None):
+    def csv(obj):
+        return attr_extract(obj, attrs, mapdict)
+
+    return csv

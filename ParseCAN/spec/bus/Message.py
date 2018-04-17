@@ -6,17 +6,26 @@ class MessageType(meta.message):
     A specification describing an arbitrary CAN Message's format and contents.
     '''
 
-    attributes = ('name', 'can_id', 'is_big_endian', 'period', 'segments')
-
     def __init__(self, name, can_id, is_big_endian, period=None, segments=None):
         self.name = str(name)
         self.can_id = parse.number(can_id)
         self.is_big_endian = bool(is_big_endian)
 
         if period:
-            self.period = parse.SI(period, 's')
+            self.period = parse.number(period, True)
 
-        self.__segments = plural.unique('name', type=spec.segment)
+            # Make sure period is in a time unit
+            self.period.to('s')
+
+        self.segments = segments
+
+    @property
+    def segments(self):
+        return self._segments
+
+    @segments.setter
+    def segments(self, segments):
+        self._segments = plural.unique('name', type=spec.segment)
 
         for segnm in segments:
             if isinstance(segments[segnm], dict):
@@ -44,10 +53,6 @@ class MessageType(meta.message):
                     .format(seg.name, ', '.join(intersections))
                 )
 
-    @property
-    def segments(self):
-        return self.__segments
-
     def segment_intersections(self, seg):
         '''
         Returns a list of the segments in self
@@ -62,17 +67,10 @@ class MessageType(meta.message):
         return [x.name for x in self.segments if seg != x and (w(x, seg) or w(seg, x))]
 
     def unpack(self, message):
-        assert isinstance(message, data.message)
+        assert isinstance(message, data.Frame)
         names = self._segments.values()
 
         return (self.name, {seg.name: seg.unpack(message) for seg in names})
-
-    def __str__(self):
-        '''
-        A comma separated representation of a spec.message's values.
-        In the same order as spec.message.attributes.
-        '''
-        return ', '.join(str(getattr(self, x)) for x in self.attributes)
 
     def pack(self, by='name', **kwargs):
         bitstring = 0
@@ -81,7 +79,9 @@ class MessageType(meta.message):
             bitstring = data.INSERT(kwargs[segnm], bitstring,
                                     seg.position, seg.length)
 
-        return data.message(self.can_id, bitstring)
+        return data.Frame(self.can_id, bitstring)
 
     def unpack(self, frame):
         return {seg.name: seg.unpack(frame) for seg in self.segments}
+
+    __str__ = helper.csv_by_attrs(('name', 'can_id', 'is_big_endian', 'period', 'segments'))

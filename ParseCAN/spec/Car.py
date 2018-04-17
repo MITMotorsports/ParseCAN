@@ -1,6 +1,6 @@
 import yaml
 from pathlib import Path
-from .. import data, spec, plural
+from .. import data, spec, plural, parse
 
 
 class CarSpec:
@@ -17,6 +17,9 @@ class CarSpec:
     def parse(self):
         with self._source.open('r') as f:
             prem = yaml.safe_load(f)
+
+        for definition in prem['units']:
+            parse.ureg.define(definition)
 
         self.name = prem['name']
 
@@ -81,9 +84,9 @@ class CarSpec:
 
     def unpack(self, frame):
         '''
-        unpacks a data.message instance based on this spec.can.
+        unpacks a data.Frame instance based on this spec.can.
         '''
-        assert isinstance(frame, data.message)
+        assert isinstance(frame, data.Frame)
 
         ret = {}
         # TODO: Make this a comprehension.

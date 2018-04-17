@@ -9,6 +9,9 @@ class Log:
         self.parser = parser
 
     def __iter__(self):
+        '''
+        Returns an iterator of the valid outputs of self.parser.
+        '''
         return filter(bool, map(self.parser, self.src.open()))
 
     def unpack(self, spec):
@@ -22,6 +25,6 @@ class Log:
         csvfile = outpath.open('w', newline='')
         writer = csv.writer(csvfile)
 
-        writer.writerow(data.messageTimed.attributes)
+        writer.writerow(data.FrameTimed.attributes)
         for message in self:
             writer.writerow(message)

@@ -1,12 +1,10 @@
-from ... import spec, data, plural, parse
+from ... import spec, data, plural, parse, helper
 
 
 class SegmentType:
     '''
     A specification for a segment of a larger data string.
     '''
-
-    attributes = ('name', 'c_type', 'unit', 'position', 'length', 'signed', 'values')
 
     def __init__(self, name, c_type='', unit='', position=None, length=None, signed=False, is_big_endian=True, enum=None):
         self.name = str(name)
@@ -29,6 +27,7 @@ class SegmentType:
 
         if enum:
             if isinstance(enum, list):
+                # implicitly assign values to enum elements given as a list
                 enum = {valnm: idx for idx, valnm in enumerate(enum)}
 
             for valnm in enum:
@@ -56,10 +55,9 @@ class SegmentType:
         return self.__values
 
     def unpack(self, frame):
-        assert isinstance(frame, data.message)
-        # raw = str(message[self.position:(self.position + self.length)]) + self.unit
-        # TODO: Move this to data.message.__getitem__
-        raw = data.EXTRACT(frame.data, self.position, self.length)
+        assert isinstance(frame, data.Frame)
+
+        raw = frame[self.position, self.length]
 
         def parsenum(type):
             if self.is_big_endian:
@@ -68,7 +66,7 @@ class SegmentType:
                 return data.reverse_gen(type)
 
         if self.values:
-            return self.values.value[raw]
+            return self.values.value[raw].name
 
         def c_to_py(val):
             return {
@@ -85,11 +83,6 @@ class SegmentType:
 
         clean = c_to_py(raw)
 
-        return (clean, self.unit) if self.unit else clean
+        return parse.number(clean, self.unit if self.unit else False)
 
-    def __str__(self):
-        '''
-        A comma separated representation of a spec.segment's values.
-        In the same order as spec.segment.attributes.
-        '''
-        return ', '.join(str(getattr(self, x)) for x in self.attributes)
+    __str__ = helper.csv_by_attrs(('name', 'c_type', 'unit', 'position', 'length', 'signed', 'values'))

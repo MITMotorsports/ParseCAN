@@ -38,9 +38,9 @@ class BusType:
 
     def unpack(self, frame):
         '''
-        unpacks a data.message instance based on this spec.can.
+        unpacks a data.Frame instance based on this spec.can.
         '''
-        assert isinstance(frame, data.message)
+        assert isinstance(frame, data.Frame)
 
         ret = {}
         for msg in self.messages:
@@ -87,7 +87,7 @@ class BusTypeFiltered(BusType):
 
     @property
     def messages(self):
-        return (msg for msg in self.bus.messages if self.interested(msg))
+        return filter(self.interested, self.bus.messages)
 
     def __getattr__(self, attr):
         return getattr(self.bus, attr)
