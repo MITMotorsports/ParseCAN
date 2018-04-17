@@ -22,37 +22,41 @@ class SegmentType:
 
         self.signed = bool(signed)
         self.is_big_endian = bool(is_big_endian)
-        self.__values = plural.unique('name', 'value', type=spec.value)
+
         # values synonymous to enum
-
-        if enum:
-            if isinstance(enum, list):
-                # implicitly assign values to enum elements given as a list
-                enum = {valnm: idx for idx, valnm in enumerate(enum)}
-
-            for valnm in enum:
-                if isinstance(enum[valnm], int):
-                    try:
-                        self.values.safe_add(spec.value(valnm, enum[valnm]))
-                    except Exception as e:
-                        e.args = (
-                            'in value {}: {}'
-                            .format(
-                                valnm,
-                                e
-                            ),
-                        )
-
-                        raise
-
-                elif isinstance(enum[valnm], spec.value):
-                    self.safe_add(enum[valnm])
-                else:
-                    raise TypeError('value given is not int or spec.value')
+        self.values = enum
 
     @property
     def values(self):
-        return self.__values
+        return self._values
+
+    @values.setter
+    def values(self, values):
+        self._values = plural.unique('name', 'value', type=spec.value)
+
+        if isinstance(values, list):
+            # implicitly assign values to enum elements given as a list
+            values = {valnm: idx for idx, valnm in enumerate(values)}
+
+        for valnm in values or ():
+            if isinstance(values[valnm], int):
+                try:
+                    self.values.safe_add(spec.value(valnm, values[valnm]))
+                except Exception as e:
+                    e.args = (
+                        'in value {}: {}'
+                        .format(
+                            valnm,
+                            e
+                        ),
+                    )
+
+                    raise
+
+            elif isinstance(values[valnm], spec.value):
+                self.safe_add(values[valnm])
+            else:
+                raise TypeError('value given is not int or spec.value')
 
     def unpack(self, frame):
         assert isinstance(frame, data.Frame)

@@ -6,19 +6,27 @@ class BoardType:
         self.name = name
         self.arch = arch
         self.location = location
-        self.__publish = plural.unique('name', type=spec.busFiltered)
-        self.__subscribe = plural.unique('name', type=spec.busFiltered)
-
-        for bus in publish or ():
-            self.__publish.safe_add(bus)
-
-        for bus in subscribe or ():
-            self.__subscribe.safe_add(bus)
+        self.publish = publish
+        self.subscribe = subscribe
 
     @property
     def publish(self):
-        return self.__publish
+        return self._publish
+
+    @publish.setter
+    def publish(self, publish):
+        self._publish = plural.unique('name', type=spec.busFiltered)
+
+        for bus in publish or ():
+            self._publish.safe_add(bus)
 
     @property
     def subscribe(self):
-        return self.__subscribe
+        return self._subscribe
+
+    @subscribe.setter
+    def subscribe(self, subscribe):
+        self._subscribe = plural.unique('name', type=spec.busFiltered)
+
+        for bus in subscribe or ():
+            self._subscribe.safe_add(bus)

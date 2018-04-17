@@ -13,9 +13,17 @@ class BusType:
         self.name = name
         self.baudrate = int(baudrate)
         self.is_extended = bool(is_extended)
-        self.__messages = plural.unique('name', 'can_id', type=spec.message)
+        self.messages = messages
 
-        for msgnm in messages:
+    @property
+    def messages(self):
+        return self._messages
+
+    @messages.setter
+    def messages(self, messages):
+        self._messages = plural.unique('name', 'can_id', type=spec.message)
+
+        for msgnm in messages or ():
             if isinstance(messages[msgnm], dict):
                 try:
                     self.messages.safe_add(spec.message(
@@ -31,10 +39,6 @@ class BusType:
                     raise
             else:
                 self.messages.safe_add(messages[msgnm])
-
-    @property
-    def messages(self):
-        return self.__messages
 
     def unpack(self, frame):
         '''

@@ -30,13 +30,22 @@ def pcantrc_parser(line):
            )
 
 
-def log_to_csv(logfile, parser, outpath):
+def log_to_csv(logfile, parser, outpath, dimensionless=False):
     logfile = Path(logfile)
     outpath = Path(outpath).joinpath(logfile.name)
     outpath.mkdir(exist_ok=True)
 
     log = data.log(logfile, parser)
     unp = log.unpack(car)
+
+    if dimensionless:
+        def outfn(x):
+            if isinstance(x, parse.ureg.Quantity):
+                x = x.to_base_units().magnitude
+
+            return str(x)
+    else:
+        outfn = str
 
     writers = {}
 
@@ -48,10 +57,10 @@ def log_to_csv(logfile, parser, outpath):
             if msg not in writers:
                 outfile = outpath.joinpath(msg).with_suffix('.csv').open('w', newline='')
                 writers[msg] = csv.writer(outfile)
-                writers[msg].writerow(chain(['time'], parsed['can0'][msg].keys()))
+                writers[msg].writerow(chain(['time (ms)'], parsed['can0'][msg].keys()))
 
-            values = (str(x) for x in parsed['can0'][msg].values())
-            writers[msg].writerow(chain([raw.time], values))
+            values = map(outfn, parsed['can0'][msg].values())
+            writers[msg].writerow(chain([raw.time.to('ms').magnitude], values))
 
     return None
 
@@ -60,4 +69,4 @@ logpath = r'C:\Users\nistath\Desktop\Logs'
 outpath = r'C:\Users\nistath\Desktop\Logs\outs'
 
 for logfile in Path(logpath).glob('*.trc'):
-    log_to_csv(logfile, pcantrc_parser, outpath)
+    log_to_csv(logfile, pcantrc_parser, outpath, dimensionless=True)

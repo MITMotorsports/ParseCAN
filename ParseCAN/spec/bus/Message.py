@@ -27,7 +27,7 @@ class MessageType(meta.message):
     def segments(self, segments):
         self._segments = plural.unique('name', type=spec.segment)
 
-        for segnm in segments:
+        for segnm in segments or ():
             if isinstance(segments[segnm], dict):
                 try:
                     seg = spec.segment(name=segnm, is_big_endian=self.is_big_endian, **segments[segnm])
