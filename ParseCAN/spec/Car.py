@@ -18,8 +18,9 @@ class CarSpec:
         with self._source.open('r') as f:
             prem = yaml.safe_load(f)
 
-        for definition in prem['units']:
-            parse.ureg.define(definition)
+        if prem['units']:
+            for definition in prem['units']:
+                parse.ureg.define(definition)
 
         self.name = prem['name']
 
@@ -88,15 +89,14 @@ class CarSpec:
         '''
         assert isinstance(frame, data.Frame)
 
+        # Inefficient way of doing this given current featureset.
         ret = {}
         # TODO: Make this a comprehension.
         # TODO: Make busFiltered interests receptive to message type objects.
         for bus in self.buses:
-            try:
-                fbus = spec.busFiltered(bus, [frame.can_id])
-            except ValueError:
-                continue
+            x = bus.messages.can_id.get(frame.can_id, None)
 
-            ret[bus.name] = fbus.unpack(frame)
+            if x:
+                ret[bus.name] = {x.name: x.unpack(frame)}
 
         return ret

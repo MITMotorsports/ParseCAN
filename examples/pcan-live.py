@@ -1,7 +1,10 @@
+import sys
+sys.path.append('../ParseCAN')
+
 import can
 from ParseCAN import spec, data
 
-car = spec.car('../../MY18/can_spec_my18.yml')
+car = spec.car('../MY18/can_spec_my18.yml')
 bus = can.interface.Bus(bustype='pcan', channel='PCAN_USBBUS1', bitrate=500000)
 
 

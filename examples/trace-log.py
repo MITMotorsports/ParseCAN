@@ -42,12 +42,15 @@ def log_to_csv(logfile, parser, outpath, dimensionless=False):
         def outfn(x):
             if isinstance(x, parse.ureg.Quantity):
                 x = x.to_base_units().magnitude
+            elif isinstance(x, bool):
+                x = int(x)
 
             return str(x)
     else:
         outfn = str
 
     writers = {}
+
 
     for raw, parsed in unp:
         if not parsed:
@@ -65,8 +68,8 @@ def log_to_csv(logfile, parser, outpath, dimensionless=False):
     return None
 
 
-logpath = r'C:\Users\nistath\Desktop\Logs'
-outpath = r'C:\Users\nistath\Desktop\Logs\outs'
+logpath = r'C:\Users\nistath\Desktop\420 torque shudder tests'
+outpath = r'C:\Users\nistath\Desktop\420 torque shudder tests\outs'
 
 for logfile in Path(logpath).glob('*.trc'):
     log_to_csv(logfile, pcantrc_parser, outpath, dimensionless=True)

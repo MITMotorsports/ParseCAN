@@ -15,7 +15,7 @@ class Log:
         return filter(bool, map(self.parser, self.src.open()))
 
     def unpack(self, spec):
-        return ((msg, msg.unpack(spec)) for msg in self)
+        return ((msg, spec.unpack(msg)) for msg in self)
 
     def csv(self, outpath):
         '''

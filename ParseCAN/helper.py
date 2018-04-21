@@ -25,13 +25,13 @@ def tuples_to_dict_list(L):
 
 def attr_extract(obj, attrs, mapdict=None):
     if mapdict:
-        return (getattr(obj, attr) for attr in attrs)
+        return (mapdict[attr](getattr(obj, attr, None)) for attr in attrs)
     else:
-        return (mapdict[attr](getattr(obj, attr)) for attr in attrs)
+        return (getattr(obj, attr, None) for attr in attrs)
 
 
 def csv_by_attrs(attrs, mapdict=None):
     def csv(obj):
-        return attr_extract(obj, attrs, mapdict)
+        return ','.join(map(str, attr_extract(obj, attrs, mapdict)))
 
     return csv

@@ -84,4 +84,4 @@ class MessageType(meta.message):
     def unpack(self, frame):
         return {seg.name: seg.unpack(frame) for seg in self.segments}
 
-    __str__ = helper.csv_by_attrs(('name', 'can_id', 'is_big_endian', 'period', 'segments'))
+    __str__ = helper.csv_by_attrs(('name', 'can_id', 'is_big_endian', 'period'))
