@@ -10,7 +10,11 @@ class Frame(meta.message):
     def __init__(self, can_id, data):
         # Store our attributes in the format we want them.
         self.can_id = int(can_id)
-        self.data = int(data)
+
+        if isinstance(data, (bytes, bytearray)):
+            self.data = data.evil_macros.bytestoint(data, 64)
+        else:
+            self.data = int(data)
 
     def __getitem__(self, index):
         '''

@@ -8,7 +8,7 @@ class MessageType(meta.message):
 
     def __init__(self, name, can_id, is_big_endian, period=None, segments=None):
         self.name = str(name)
-        self.can_id = parse.number(can_id)
+        self.can_id = int(can_id)
         self.is_big_endian = bool(is_big_endian)
 
         if period:

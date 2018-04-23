@@ -21,6 +21,16 @@ def reverse_gen(type):
     return closure
 
 
+def bytestoint(b, l):
+    '''
+    Converts a bytes object `b` to an integer of at least length `l`,
+    padded with zeros to the right.
+    '''
+    n = int.from_bytes(b, byteorder='big', signed=False)
+
+    return n << (l - n.bit_length())
+
+
 def ONES(leng):
     return ((1 << (leng)) - 1)
 
