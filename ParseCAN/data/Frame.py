@@ -2,6 +2,7 @@ from .. import parse, data, meta, helper
 
 __all__ = ['Frame', 'FrameTimed']
 
+datamodule = data
 
 class Frame(meta.message):
 
@@ -12,7 +13,7 @@ class Frame(meta.message):
         self.can_id = int(can_id)
 
         if isinstance(data, (bytes, bytearray)):
-            self.data = data.evil_macros.bytestoint(data, 64)
+            self.data = datamodule.evil_macros.bytestoint(data, 64)
         else:
             self.data = int(data)
 
