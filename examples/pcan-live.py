@@ -23,6 +23,7 @@ raw_list = [0xD4]
 try:
     for msg in bus:
         can_id = msg.arbitration_id
+        print(msg.data)
 
         if white_list and can_id not in white_list:
             continue

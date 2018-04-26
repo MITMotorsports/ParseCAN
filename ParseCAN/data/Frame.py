@@ -4,16 +4,17 @@ __all__ = ['Frame', 'FrameTimed']
 
 datamodule = data
 
+
 class Frame(meta.message):
 
-    attributes = ('can_id', 'data')
+    attributes = ('can_id', 'data', 'dlc')
 
     def __init__(self, can_id, data):
         # Store our attributes in the format we want them.
         self.can_id = int(can_id)
 
         if isinstance(data, (bytes, bytearray)):
-            self.data = datamodule.evil_macros.bytestoint(data, 64)
+            self.data = int.from_bytes(data, byteorder='big', signed=False)
         else:
             self.data = int(data)
 
