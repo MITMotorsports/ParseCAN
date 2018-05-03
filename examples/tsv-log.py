@@ -14,14 +14,12 @@ car = spec.car('../MY18/can_spec_my18.yml')
 
 
 def pcantrc_parser(line):
-    m = re.search(r'([0-9]+)\)\s+([0-9\.]+)\s+([a-zA-Z]+)\s+([0-9A-F]+)\s+([0-9]+)\s+([0-9A-F\s]+)', line)
+    m = line.split('\t')
 
-    if not m:
+    if line.startswith('~') or not m:
         return None
 
-    timestr = m.group(2)
-    can_idstr = m.group(4)
-    datastr = m.group(6).replace(' ', '')
+    timestr, busstr, can_idstr, datastr = m
 
     return data.FrameTimed(
                time=parse.number(timestr, 'ms'),
@@ -71,8 +69,9 @@ def log_to_csv(logfile, parser, outpath, dimensionless=False):
     return None
 
 
-logpath = r'C:\Users\nistath\Desktop\420 torque shudder tests'
-outpath = r'C:\Users\nistath\Desktop\420 torque shudder tests\outs'
+day = '20180503'
+logpath = r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\Raw\\' + day
+outpath = r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\\' + day
 
-for logfile in Path(logpath).glob('*.trc'):
+for logfile in Path(logpath).glob('*.tsv'):
     log_to_csv(logfile, pcantrc_parser, outpath, dimensionless=True)

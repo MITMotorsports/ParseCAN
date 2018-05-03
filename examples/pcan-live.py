@@ -16,14 +16,13 @@ black_list = [0xD8, 0xF0]
 black_list.extend(range(0x521, 0x525))
 print('Blacklisted:', black_list)
 
-white_list = []
+white_list = [0x090]
 print('Whitelisted:', white_list)
-raw_list = [0xD4]
+raw_list = []
 
 try:
     for msg in bus:
         can_id = msg.arbitration_id
-        print(msg.data)
 
         if white_list and can_id not in white_list:
             continue
