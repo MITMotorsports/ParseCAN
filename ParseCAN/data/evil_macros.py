@@ -1,6 +1,8 @@
 import struct
 
 fmttolen = {
+    'b': 1,
+    'B': 1,
     'h': 2,
     'H': 2,
     'i': 4,
@@ -10,13 +12,19 @@ fmttolen = {
 }
 
 
-def REVERSE(type, num):
-    return struct.unpack('<' + type, num.to_bytes(fmttolen[type], 'big'))[0]
+def CAST(type, num, endianness='big', reverse=False):
+    if endianness == 'big':
+        d = '<' if reverse else '>'
+    else:
+        d = '>' if reverse else '<'
+
+    inbytes = num.to_bytes(fmttolen[type], endianness)
+    return struct.unpack(d + type, inbytes)[0]
 
 
-def reverse_gen(type):
-    def closure(num):
-        return REVERSE(type, num)
+def cast_gen(type, **kwargs):
+    def closure(x):
+        return CAST(type, num=x, **kwargs)
 
     return closure
 

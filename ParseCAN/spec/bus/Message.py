@@ -66,12 +66,6 @@ class MessageType(meta.message):
         # w should be commutative so let's apply it twice instead of redefining
         return [x.name for x in self.segments if seg != x and (w(x, seg) or w(seg, x))]
 
-    def unpack(self, message):
-        assert isinstance(message, data.Frame)
-        names = self._segments.values()
-
-        return (self.name, {seg.name: seg.unpack(message) for seg in names})
-
     def pack(self, by='name', **kwargs):
         bitstring = 0
         for segnm in kwargs:
@@ -81,7 +75,7 @@ class MessageType(meta.message):
 
         return data.Frame(self.can_id, bitstring)
 
-    def unpack(self, frame):
-        return {seg.name: seg.unpack(frame) for seg in self.segments}
+    def unpack(self, frame, **kwargs):
+        return {seg.name: seg.unpack(frame, **kwargs) for seg in self.segments}
 
     __str__ = helper.csv_by_attrs(('name', 'can_id', 'is_big_endian', 'period'))

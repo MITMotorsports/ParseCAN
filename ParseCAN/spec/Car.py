@@ -83,7 +83,7 @@ class CarSpec:
 
         return (bus, bus['name'][part[1]])
 
-    def unpack(self, frame):
+    def unpack(self, frame, **kwargs):
         '''
         unpacks a data.Frame instance based on this spec.can.
         '''
@@ -97,6 +97,6 @@ class CarSpec:
             x = bus.messages.can_id.get(frame.can_id, None)
 
             if x:
-                ret[bus.name] = {x.name: x.unpack(frame)}
+                ret[bus.name] = {x.name: x.unpack(frame, **kwargs)}
 
         return ret

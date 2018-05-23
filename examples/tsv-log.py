@@ -13,8 +13,8 @@ car = spec.car('../MY18/can_spec_my18.yml')
 # a data.Frame object or None if the line does not represent a message
 
 
-def pcantrc_parser(line):
-    m = line.split('\t')
+def tsvlog_parser(line):
+    m = line.rstrip().split('\t')
 
     if line.startswith('~') or not m:
         return None
@@ -24,17 +24,17 @@ def pcantrc_parser(line):
     return data.FrameTimed(
                time=parse.number(timestr, 'ms'),
                can_id=int(can_idstr, 16),
-               data=int(datastr, 16)
+               data=parse.hexstr_to_bytes(datastr)
            )
 
 
-def log_to_csv(logfile, parser, outpath, dimensionless=False):
+def log_to_csv(logfile, parser, outpath, dimensionless=False, raw=False):
     logfile = Path(logfile)
     outpath = Path(outpath).joinpath(logfile.name)
     outpath.mkdir(parents=True, exist_ok=True)
 
     log = data.log(logfile, parser)
-    unp = log.unpack(car)
+    unp = log.unpack(car, raw=raw)
 
     if dimensionless:
         def outfn(x):
@@ -52,7 +52,6 @@ def log_to_csv(logfile, parser, outpath, dimensionless=False):
 
     writers = {}
 
-
     for raw, parsed in unp:
         if not parsed:
             continue
@@ -69,9 +68,9 @@ def log_to_csv(logfile, parser, outpath, dimensionless=False):
     return None
 
 
-day = '20180503'
+day = 'lol'
 logpath = r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\Raw\\' + day
 outpath = r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\\' + day
 
 for logfile in Path(logpath).glob('*.tsv'):
-    log_to_csv(logfile, pcantrc_parser, outpath, dimensionless=True)
+    log_to_csv(logfile, tsvlog_parser, outpath, dimensionless=True)

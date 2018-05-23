@@ -2,8 +2,6 @@ from .. import parse, data, meta, helper
 
 __all__ = ['Frame', 'FrameTimed']
 
-datamodule = data
-
 
 class Frame(meta.message):
 
@@ -12,11 +10,20 @@ class Frame(meta.message):
     def __init__(self, can_id, data):
         # Store our attributes in the format we want them.
         self.can_id = int(can_id)
+        self.data = data
 
-        if isinstance(data, (bytes, bytearray)):
-            self.data = int.from_bytes(data, byteorder='big', signed=False)
-        else:
-            self.data = int(data)
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, x):
+        if not isinstance(x, (bytes, bytearray)):
+            raise TypeError('data must be of type bytes or bytearray')
+
+        self._data = x
+        self._raw_data = int.from_bytes(x, byteorder='big', signed=False) << 8 * (8 - len(x))
+        # self._raw_data = int.from_bytes(x, byteorder='big', signed=False)
 
     def __getitem__(self, index):
         '''
@@ -26,13 +33,12 @@ class Frame(meta.message):
             position = index
             length = 1
         elif isinstance(index, tuple):
-            position = index[0]
-            length = index[1]
+            position, length = index
         else:
             raise TypeError('frame indices must be integers or tuples, not {}'
                             .format(type(index).__name__))
 
-        return data.EXTRACT(self.data, position, length)
+        return data.evil_macros.EXTRACT(self._raw_data, position, length)
 
     __str__ = helper.csv_by_attrs(attributes, mapdict={
         'time': parse.number_in('ms'),
@@ -43,8 +49,8 @@ class Frame(meta.message):
     def __iter__(self):
         return (getattr(self, x) for x in self.attributes)
 
-    def unpack(self, spec):
-        return spec.unpack(self)
+    def unpack(self, spec, **kwargs):
+        return spec.unpack(self, **kwargs)
 
 
 class FrameTimed(Frame):

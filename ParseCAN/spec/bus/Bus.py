@@ -40,7 +40,7 @@ class BusType:
             else:
                 self.messages.safe_add(messages[msgnm])
 
-    def unpack(self, frame):
+    def unpack(self, frame, **kwargs):
         '''
         unpacks a data.Frame instance based on this spec.can.
         '''
@@ -48,7 +48,7 @@ class BusType:
 
         ret = {}
         for msg in self.messages:
-            potential = msg.unpack(frame)
+            potential = msg.unpack(frame, **kwargs)
 
             if potential:
                 ret[msg.name] = potential

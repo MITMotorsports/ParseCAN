@@ -58,16 +58,17 @@ class SegmentType:
             else:
                 raise TypeError('value given is not int or spec.value')
 
-    def unpack(self, frame):
+    def unpack(self, frame, **kwargs):
         assert isinstance(frame, data.Frame)
 
         raw = frame[self.position, self.length]
 
         def parsenum(type):
-            if self.is_big_endian:
-                return int
-            else:
-                return data.reverse_gen(type)
+            return data.evil_macros.cast_gen(type, reverse=not self.is_big_endian)
+
+        # def parsenum(type):
+        #     endianness = 'big' if self.is_big_endian else 'little'
+        #     return data.evil_macros.cast_gen(type, endianness=endianness)
 
         if self.values:
             return self.values.value[raw].name
@@ -87,6 +88,6 @@ class SegmentType:
 
         clean = c_to_py(raw)
 
-        return parse.number(clean, self.unit if self.unit else False)
+        return parse.number(clean, self.unit if self.unit and not kwargs['raw'] else False)
 
     __str__ = helper.csv_by_attrs(('name', 'c_type', 'unit', 'position', 'length', 'signed', 'values'))
