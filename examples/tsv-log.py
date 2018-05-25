@@ -30,7 +30,7 @@ def tsvlog_parser(line):
 
 def log_to_csv(logfile, parser, outpath, dimensionless=False, raw=False):
     logfile = Path(logfile)
-    outpath = Path(outpath).joinpath(logfile.name)
+    outpath = Path(outpath).joinpath(logfile.stem)
     outpath.mkdir(parents=True, exist_ok=True)
 
     log = data.log(logfile, parser)
@@ -68,9 +68,12 @@ def log_to_csv(logfile, parser, outpath, dimensionless=False, raw=False):
     return None
 
 
-day = 'lol'
-logpath = r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\Raw\\' + day
-outpath = r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\\' + day
+specific = ''
+logdir = Path(r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\Raw\\' + specific)
+outdir = Path(r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\\' + specific)
 
-for logfile in Path(logpath).glob('*.tsv'):
+for logfile in Path(logdir).glob('**/*.tsv'):
+    print('Parsing {}'.format(logfile))
+
+    outpath = outdir.joinpath(logfile.parent.relative_to(logdir))
     log_to_csv(logfile, tsvlog_parser, outpath, dimensionless=True)
