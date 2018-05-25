@@ -1,11 +1,12 @@
 import sys
 sys.path.append('../ParseCAN')
 
-import re
 import csv
 from pathlib import Path
 from itertools import chain
 from ParseCAN import spec, data, parse
+
+from log_parsers import *
 
 car = spec.car('../MY18/can_spec_my18.yml')
 
@@ -13,30 +14,13 @@ car = spec.car('../MY18/can_spec_my18.yml')
 # a data.Frame object or None if the line does not represent a message
 
 
-def pcantrc_parser(line):
-    m = re.search(r'([0-9]+)\)\s+([0-9\.]+)\s+([a-zA-Z]+)\s+([0-9A-F]+)\s+([0-9]+)\s+([0-9A-F\s]+)', line)
-
-    if not m:
-        return None
-
-    timestr = m.group(2)
-    can_idstr = m.group(4)
-    datastr = m.group(6).replace(' ', '')
-
-    return data.FrameTimed(
-               time=parse.number(timestr, 'ms'),
-               can_id=int(can_idstr, 16),
-               data=int(datastr, 16)
-           )
-
-
-def log_to_csv(logfile, parser, outpath, dimensionless=False):
+def log_to_csv(logfile, parser, outpath, dimensionless=False, raw=False):
     logfile = Path(logfile)
-    outpath = Path(outpath).joinpath(logfile.name)
+    outpath = Path(outpath).joinpath(logfile.stem)
     outpath.mkdir(parents=True, exist_ok=True)
 
     log = data.log(logfile, parser)
-    unp = log.unpack(car)
+    unp = log.unpack(car, raw=raw)
 
     if dimensionless:
         def outfn(x):
@@ -54,7 +38,6 @@ def log_to_csv(logfile, parser, outpath, dimensionless=False):
 
     writers = {}
 
-
     for raw, parsed in unp:
         if not parsed:
             continue
@@ -71,8 +54,13 @@ def log_to_csv(logfile, parser, outpath, dimensionless=False):
     return None
 
 
-logpath = r'C:\Users\nistath\Desktop\420 torque shudder tests'
-outpath = r'C:\Users\nistath\Desktop\420 torque shudder tests\outs'
+if __name__ == 'main':
+    specific = ''
+    logdir = Path(r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\Raw\\' + specific)
+    outdir = Path(r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\\' + specific)
 
-for logfile in Path(logpath).glob('*.trc'):
-    log_to_csv(logfile, pcantrc_parser, outpath, dimensionless=True)
+    for logfile in Path(logdir).glob('**/*.tsv'):
+        print('Parsing {}'.format(logfile))
+
+        outpath = outdir.joinpath(logfile.parent.relative_to(logdir))
+        log_to_csv(logfile, tsvlog_parser, outpath, dimensionless=True)
