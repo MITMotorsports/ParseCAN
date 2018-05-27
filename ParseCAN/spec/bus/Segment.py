@@ -58,6 +58,10 @@ class SegmentType:
             else:
                 raise TypeError('value given is not int or spec.value')
 
+    @property
+    def pint_unit(self):
+        return parse.ureg[self.unit]
+
     def unpack(self, frame, **kwargs):
         assert isinstance(frame, data.Frame)
 
@@ -66,12 +70,13 @@ class SegmentType:
         def parsenum(type):
             return data.evil_macros.cast_gen(type, reverse=not self.is_big_endian)
 
-        # def parsenum(type):
-        #     endianness = 'big' if self.is_big_endian else 'little'
-        #     return data.evil_macros.cast_gen(type, endianness=endianness)
-
         if self.values:
-            return self.values.value[raw].name
+            retval = self.values.value[raw].name
+
+            if kwargs.get('unittuple', False):
+                return (retval, '')
+
+            return retval
 
         def c_to_py(val):
             return {
@@ -88,6 +93,12 @@ class SegmentType:
 
         clean = c_to_py(raw)
 
-        return parse.number(clean, self.unit if self.unit and not kwargs['raw'] else False)
+        if kwargs.get('unittuple', False):
+            return clean, self.unit
+
+        if self.unit and not kwargs.get('raw', False):
+            return parse.number(clean, self.unit)
+
+        return clean
 
     __str__ = helper.csv_by_attrs(('name', 'c_type', 'unit', 'position', 'length', 'signed', 'values'))

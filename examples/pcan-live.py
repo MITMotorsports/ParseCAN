@@ -16,7 +16,7 @@ black_list = [0xD8, 0xF0]
 black_list.extend(range(0x521, 0x525))
 print('Blacklisted:', black_list)
 
-white_list = [0x090]
+white_list = []
 print('Whitelisted:', white_list)
 raw_list = []
 
@@ -32,7 +32,7 @@ try:
 
         frame = msg_conv(msg)
 
-        print(hex(msg.arbitration_id), hex(frame.data))
+        print(hex(msg.arbitration_id), frame.data)
 
         if msg.arbitration_id in raw_list:
             continue  # raw

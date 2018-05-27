@@ -12,7 +12,7 @@ class Log:
         '''
         Returns an iterator of the valid outputs of self.parser.
         '''
-        return filter(bool, map(self.parser, self.src.open()))
+        return filter(bool, map(self.parser, self.src.open('r')))
 
     def unpack(self, spec, **kwargs):
         return ((msg, spec.unpack(msg, **kwargs)) for msg in self)

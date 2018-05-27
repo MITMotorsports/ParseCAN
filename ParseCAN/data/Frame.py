@@ -58,7 +58,4 @@ class FrameTimed(Frame):
 
     def __init__(self, *args, time, **kwargs):
         super().__init__(*args, **kwargs)
-        self.time = parse.number(time, True)
-
-        # Make sure time is in a time unit
-        self.time.to('s')
+        self.time = time

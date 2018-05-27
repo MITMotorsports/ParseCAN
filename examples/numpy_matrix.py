@@ -1,11 +1,13 @@
 import sys
 sys.path.append('../ParseCAN')
 
+import scipy.io
 import numpy as np
 from copy import deepcopy
 from pathlib import Path
-from log2csv import *
 from ParseCAN import spec, data
+
+from log_parsers import *
 
 car = spec.car('../MY18/can_spec_my18.yml')
 
@@ -80,14 +82,15 @@ def vecdict_to_matdict(vecdict):
 
 
 def interp_vecdict(timeseries, vecdict):
-    vecdict = deepcopy(vecdict)
+    intdict = {}
+    intdict['time'] = timeseries
 
     for msgnm, vecs in vecdict.items():
         if 'time' not in vecs:
             raise ValueError('no time data given in all of vecdict')
 
         old_time = vecs['time']
-        vecs['time'] = timeseries
+        intdict[msgnm] = {}
 
         for vecnm, vec in vecs.items():
             if vecnm == 'time':
@@ -98,11 +101,38 @@ def interp_vecdict(timeseries, vecdict):
             except TypeError:
                 continue
 
-            vecs[vecnm] = interp
+            intdict[msgnm][vecnm] = interp
 
-    return vecdict
+    return intdict
+
+
+def stack_vecdict(*vecdicts):
+    if len(vecdicts) == 0:
+        return
+
+    fvecdict = vecdicts[0]
+    res = {}
+
+    for msgnm in fvecdict:
+        res[msgnm] = {}
+
+        if not isinstance(fvecdict[msgnm], dict):
+            gen = list(vecdict[msgnm] for vecdict in vecdicts)
+            res[msgnm] = np.hstack(gen)
+            continue
+
+        for vecnm in fvecdict[msgnm]:
+            gen = (vecdict[msgnm][vecnm] for vecdict in vecdicts)
+            res[msgnm][vecnm] = np.hstack(gen)
+
+    return res
 
 
 if __name__ == '__main__':
     specific = r'20180521\192147.TSV'
     logfile = Path(r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\Raw\\' + specific)
+
+    ad = log_to_listdict(logfile, tsvlog_parser)
+    l = listdict_to_vecdict(ad)
+    a = np.linspace(0, 180e3, 100)
+    hh = interp_vecdict(a, l)
