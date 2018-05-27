@@ -62,6 +62,23 @@ class SegmentType:
     def pint_unit(self):
         return parse.ureg[self.unit]
 
+    @property
+    def np_dtype(self):
+        if self.values:
+            return 'str'
+
+        return {
+            'bool': 'bool',
+            'int8_t': 'int8',
+            'uint8_t': 'uint8',
+            'int16_t': 'int16',
+            'uint16_t': 'uint16',
+            'int32_t': 'int32',
+            'uint32_t': 'uint32',
+            'int64_t': 'int64',
+            'uint64_t': 'uint64',
+        }.get(self.c_type, None)
+
     def unpack(self, frame, **kwargs):
         assert isinstance(frame, data.Frame)
 
@@ -73,8 +90,11 @@ class SegmentType:
         if self.values:
             retval = self.values.value[raw].name
 
+            if kwargs.get('segtuple', False):
+                return retval, self
+
             if kwargs.get('unittuple', False):
-                return (retval, '')
+                return retval, None
 
             return retval
 
@@ -92,6 +112,9 @@ class SegmentType:
             }[self.c_type](val)
 
         clean = c_to_py(raw)
+
+        if kwargs.get('segtuple', False):
+            return clean, self
 
         if kwargs.get('unittuple', False):
             return clean, self.unit

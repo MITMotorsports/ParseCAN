@@ -54,7 +54,7 @@ def log_to_csv(logfile, parser, outpath, dimensionless=False, raw=False):
     return None
 
 
-if __name__ == 'main':
+if __name__ == '__main__':
     specific = ''
     logdir = Path(r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\Raw\\' + specific)
     outdir = Path(r'C:\Users\nistath\Dropbox (MIT)\FSAE\Data\\' + specific)
