@@ -2,7 +2,17 @@ import sys
 sys.path.append('../ParseCAN')
 
 import re
+import datetime as dt
+import time
 from ParseCAN import parse, data
+
+
+def static_vars(**kwargs):
+    def decorate(func):
+        for k in kwargs:
+            setattr(func, k, kwargs[k])
+        return func
+    return decorate
 
 
 def pcantrc_parser(line):
@@ -16,22 +26,38 @@ def pcantrc_parser(line):
     datastr = m.group(6).replace(' ', '')
 
     return data.FrameTimed(
-               time=parse.number(timestr, 'ms'),
+               time=int(timestr) / 1000,  # in seconds
                can_id=int(can_idstr, 16),
                data=parse.hexstr_to_bytes(datastr)
            )
 
 
+@static_vars(inittime=None)
 def tsvlog_parser(line):
     m = line.rstrip().split('\t')
 
-    if line.startswith('~') or not m:
+    if not m:
+        raise UserWarning('invalid line found `{}`'.format(line))
+        return None
+
+    if line.startswith('~'):
+        ms, datestr, timestr = m
+        ms = ms.lstrip('~')
+        us = 1000 * int(ms)
+
+        dtstr = '{} {}'.format(datestr, timestr)
+        datetime = dt.datetime.strptime(dtstr, '%Y%m%d %H%M%S')
+        idx = dt.timedelta(microseconds=us)
+
+        datetime = datetime - idx
+
+        tsvlog_parser.inittime = time.mktime(datetime.timetuple())
         return None
 
     timestr, busstr, can_idstr, datastr = m
 
     return data.FrameTimed(
-               time=parse.number(timestr, 'ms'),
+               time=int(timestr) / 1000 + tsvlog_parser.inittime,  # POSIX time
                can_id=int(can_idstr, 16),
                data=parse.hexstr_to_bytes(datastr)
            )

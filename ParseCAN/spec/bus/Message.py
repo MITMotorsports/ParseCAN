@@ -1,4 +1,5 @@
 from ... import spec, data, meta, parse, helper, plural
+from math import ceil
 
 
 class MessageType(meta.message):
@@ -66,14 +67,18 @@ class MessageType(meta.message):
         # w should be commutative so let's apply it twice instead of redefining
         return [x.name for x in self.segments if seg != x and (w(x, seg) or w(seg, x))]
 
+    def __len__(self):
+        return ceil(max(seg.position + seg.length for seg in self.segments) / 8)
+
     def pack(self, by='name', **kwargs):
         bitstring = 0
         for segnm in kwargs:
             seg = self.segments.name[segnm]
-            bitstring = data.INSERT(kwargs[segnm], bitstring,
-                                    seg.position, seg.length)
+            bitstring = data.evil_macros.INSERT(kwargs[segnm], bitstring,
+                                                seg.position, seg.length)
 
-        return data.Frame(self.can_id, bitstring)
+        byteobj = bitstring.to_bytes(len(self), 'big')
+        return data.Frame(self.can_id, byteobj)
 
     def unpack(self, frame, **kwargs):
         return {seg.name: seg.unpack(frame, **kwargs) for seg in self.segments}
