@@ -13,7 +13,7 @@ class MessageType(meta.message):
         self.is_big_endian = bool(is_big_endian)
 
         if period:
-            self.period = parse.number(period, True)
+            self.period = parse.number(period)
 
             # Make sure period is in a time unit
             self.period.to('s')
@@ -73,10 +73,11 @@ class MessageType(meta.message):
     def pack(self, by='name', **kwargs):
         bitstring = 0
         for segnm in kwargs:
-            seg = self.segments.name[segnm]
+            seg = self.segments[by][segnm]
             bitstring = data.evil_macros.INSERT(kwargs[segnm], bitstring,
                                                 seg.position, seg.length)
 
+        print(bitstring)
         byteobj = bitstring.to_bytes(len(self), 'big')
         return data.Frame(self.can_id, byteobj)
 

@@ -15,8 +15,6 @@ def number(num, unit=False):
 
     - If `unit` is a string or Quantity, a number with the unit described will
     be returned. In that case `num` must be dimensionless.
-
-    - If `unit` is truthy the number will be forced to have a unit.
     '''
     if isinstance(num, ureg.Quantity):
         if isinstance(unit, (str, ureg.Quantity)):
@@ -24,12 +22,10 @@ def number(num, unit=False):
 
         return num
 
-    if isinstance(unit, (str, ureg.Quantity)):
-        return ureg.Quantity(float(num), unit)
-
     if unit:
-        return ureg.Quantity(num)
-    elif isinstance(num, (int, float)):
+        return num * ureg.Quantity(unit)
+
+    if isinstance(num, (int, float)):
         return num
 
     return ureg.parse_expression(num)
