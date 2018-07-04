@@ -12,8 +12,8 @@ fmttolen = {
 }
 
 
-def CAST(type, num, endianness='big'):
-    d = '<' if endianness == 'big' else '>'
+def CAST(type, num, endianness):
+    d = '>' if endianness == 'big' else '<'
 
     inbytes = num.to_bytes(fmttolen[type], endianness)
     return struct.unpack(d + type, inbytes)[0]
