@@ -65,7 +65,11 @@ class SegmentType:
     @property
     def np_dtype(self):
         if self.values:
-            return 'str'
+            '''
+            Return a unicode string with length equal to the maximum possible
+            length of any of the contained value names.
+            '''
+            return 'U' + str(max(len(val.name) for val in self.values))
 
         return np_dtypes.get(self.c_type, None)
 
@@ -102,7 +106,6 @@ class SegmentType:
 
 
 np_dtypes = {
-    'enum': 'str',
     'bool': 'bool',
     'int8_t': 'int8',
     'uint8_t': 'uint8',
