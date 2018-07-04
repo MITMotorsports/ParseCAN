@@ -67,25 +67,12 @@ class SegmentType:
         if self.values:
             return 'str'
 
-        return {
-            'bool': 'bool',
-            'int8_t': 'int8',
-            'uint8_t': 'uint8',
-            'int16_t': 'int16',
-            'uint16_t': 'uint16',
-            'int32_t': 'int32',
-            'uint32_t': 'uint32',
-            'int64_t': 'int64',
-            'uint64_t': 'uint64',
-        }.get(self.c_type, None)
+        return np_dtypes.get(self.c_type, None)
 
     def unpack(self, frame, **kwargs):
         assert isinstance(frame, data.Frame)
 
         raw = frame[self.position, self.length]
-
-        def parsenum(type):
-            return data.evil_macros.cast_gen(type, reverse=not self.is_big_endian)
 
         if self.values:
             retval = self.values.value[raw].name
@@ -98,20 +85,7 @@ class SegmentType:
 
             return retval
 
-        def c_to_py(val):
-            return {
-                'bool': bool,
-                'int8_t': parsenum('b'),
-                'uint8_t': parsenum('B'),
-                'int16_t': parsenum('h'),
-                'uint16_t': parsenum('H'),
-                'int32_t': parsenum('i'),
-                'uint32_t': parsenum('I'),
-                'int64_t': parsenum('q'),
-                'uint64_t': parsenum('Q'),
-            }[self.c_type](val)
-
-        clean = c_to_py(raw)
+        clean = casts[self.c_type](raw, endianness='big' if self.is_big_endian else 'little')
 
         if kwargs.get('segtuple', False):
             return clean, self
@@ -125,3 +99,29 @@ class SegmentType:
         return clean
 
     __str__ = helper.csv_by_attrs(('name', 'c_type', 'unit', 'position', 'length', 'signed', 'values'))
+
+
+np_dtypes = {
+    'enum': 'str',
+    'bool': 'bool',
+    'int8_t': 'int8',
+    'uint8_t': 'uint8',
+    'int16_t': 'int16',
+    'uint16_t': 'uint16',
+    'int32_t': 'int32',
+    'uint32_t': 'uint32',
+    'int64_t': 'int64',
+    'uint64_t': 'uint64',
+}
+
+casts = {
+    'bool': lambda x, **kw: bool(x),
+    'int8_t': data.evil_macros.cast_gen('b'),
+    'uint8_t': data.evil_macros.cast_gen('B'),
+    'int16_t': data.evil_macros.cast_gen('h'),
+    'uint16_t': data.evil_macros.cast_gen('H'),
+    'int32_t': data.evil_macros.cast_gen('i'),
+    'uint32_t': data.evil_macros.cast_gen('I'),
+    'int64_t': data.evil_macros.cast_gen('q'),
+    'uint64_t': data.evil_macros.cast_gen('Q'),
+}

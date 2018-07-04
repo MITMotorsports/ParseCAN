@@ -12,18 +12,15 @@ fmttolen = {
 }
 
 
-def CAST(type, num, endianness='big', reverse=False):
-    if endianness == 'big':
-        d = '<' if reverse else '>'
-    else:
-        d = '>' if reverse else '<'
+def CAST(type, num, endianness='big'):
+    d = '<' if endianness == 'big' else '>'
 
     inbytes = num.to_bytes(fmttolen[type], endianness)
     return struct.unpack(d + type, inbytes)[0]
 
 
-def cast_gen(type, **kwargs):
-    def closure(x):
+def cast_gen(type):
+    def closure(x, **kwargs):
         return CAST(type, num=x, **kwargs)
 
     return closure

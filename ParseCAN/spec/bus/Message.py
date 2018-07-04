@@ -77,7 +77,6 @@ class MessageType(meta.message):
             bitstring = data.evil_macros.INSERT(kwargs[segnm], bitstring,
                                                 seg.position, seg.length)
 
-        print(bitstring)
         byteobj = bitstring.to_bytes(len(self), 'big')
         return data.Frame(self.can_id, byteobj)
 

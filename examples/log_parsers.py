@@ -28,7 +28,7 @@ def pcantrc_parser(line):
     return data.FrameTimed(
                time=int(timestr) / 1000,  # in seconds
                can_id=int(can_idstr, 16),
-               data=parse.hexstr_to_bytes(datastr)
+               data=bytes.fromhex(datastr)
            )
 
 
@@ -59,5 +59,5 @@ def tsvlog_parser(line):
     return data.FrameTimed(
                time=int(timestr) / 1000 + tsvlog_parser.inittime,  # POSIX time
                can_id=int(can_idstr, 16),
-               data=parse.hexstr_to_bytes(datastr)
+               data=bytes.fromhex(datastr)
            )

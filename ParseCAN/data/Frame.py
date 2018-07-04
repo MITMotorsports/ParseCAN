@@ -41,7 +41,7 @@ class Frame(meta.message):
         return data.evil_macros.EXTRACT(self._raw_data, position, length)
 
     __str__ = helper.csv_by_attrs(attributes, mapdict={
-        'time': parse.number_in('ms'),
+        'time': int,
         'can_id': hex,
         'data': hex
     })

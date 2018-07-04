@@ -36,16 +36,3 @@ def number_in(unit):
         return number(num, unit).magnitude
 
     return in_unit
-
-
-def hexstr_to_bytes(s):
-    '''
-    Returns a bytes object corresponding to to the hex string `s` given.
-    len(s) must be a multiple of 2.
-    '''
-
-    if len(s) % 2 == 1:
-        raise ValueError('given hex string is of odd length')
-
-    gen = (int(twostr, 16) for twostr in map(''.join, zip(s[::2], s[1::2])))
-    return bytes(gen)
