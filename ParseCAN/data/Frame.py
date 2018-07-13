@@ -4,8 +4,8 @@ __all__ = ['Frame', 'FrameTimed']
 
 
 class Frame(meta.message):
-
-    attributes = ('can_id', 'data', 'dlc')
+    attributes = ('can_id', 'data')
+    __slots__ = ('can_id', '_data', '_raw_data')
 
     def __init__(self, can_id, data):
         # Store our attributes in the format we want them.
@@ -23,7 +23,6 @@ class Frame(meta.message):
 
         self._data = x
         self._raw_data = int.from_bytes(x, byteorder='big', signed=False) << 8 * (8 - len(x))
-        # self._raw_data = int.from_bytes(x, byteorder='big', signed=False)
 
     def __getitem__(self, index):
         '''
@@ -55,6 +54,7 @@ class Frame(meta.message):
 
 class FrameTimed(Frame):
     attributes = ('time', 'can_id', 'data')
+    __slots__ = Frame.__slots__ + ('time',)
 
     def __init__(self, *args, time, **kwargs):
         super().__init__(*args, **kwargs)
