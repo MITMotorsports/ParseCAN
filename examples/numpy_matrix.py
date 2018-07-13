@@ -24,7 +24,7 @@ def msg_to_row(msg):
 def log_to_listdict(logfile, parser, time=True):
     logfile = Path(logfile)
 
-    log = data.log(logfile, parser)
+    log = data.log.File(logfile, parser)
     unp = log.unpack(car, raw=True)
 
     listdict = {}

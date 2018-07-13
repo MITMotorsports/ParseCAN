@@ -1,9 +1,17 @@
-import csv
 from pathlib import Path
-from .. import data, parse
 
 
 class Log:
+    def unpack(self, spec, **kwargs):
+        return ((msg, spec.unpack(msg, **kwargs)) for msg in self)
+
+    def to_list(self):
+        return List(list(self))
+
+
+class File(Log):
+    ''' A lazy-loaded logfile parser. '''
+
     def __init__(self, source, parser):
         self.src = Path(source)
         self.parser = parser
@@ -12,19 +20,13 @@ class Log:
         '''
         Returns an iterator of the valid outputs of self.parser.
         '''
+        # TODO: Add fopen method in parser: could use a different delimiter.
         return filter(bool, map(self.parser, self.src.open('r')))
 
-    def unpack(self, spec, **kwargs):
-        return ((msg, spec.unpack(msg, **kwargs)) for msg in self)
 
-    def csv(self, outpath):
-        '''
-        Outputs a csv representation of the log in outpath.
-        '''
-        outpath = Path(outpath)
-        csvfile = outpath.open('w', newline='')
-        writer = csv.writer(csvfile)
+class List(Log):
+    def __init__(self, list):
+        self.list = list
 
-        writer.writerow(data.FrameTimed.attributes)
-        for message in self:
-            writer.writerow(message)
+    def __iter__(self):
+        return iter(self.list)
