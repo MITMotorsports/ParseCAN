@@ -1,4 +1,16 @@
 from ... import spec, data, plural, parse, helper
+import numpy as np
+
+
+def segtype(x):
+    if x == 'enum':
+        return x
+
+    dtype = np.dtype(x)
+    if x[0] not in ('>', '<') and dtype.byteorder != '|':
+        raise ValueError('endianness not specified: {}'.format(x))
+
+    return dtype
 
 
 class SegmentType:
@@ -6,13 +18,13 @@ class SegmentType:
     A specification for a segment of a larger data string.
     '''
 
-    def __init__(self, name, c_type='', unit='', position=None, length=None, signed=False, is_big_endian=True, enum=None):
+    def __init__(self, name, type='', unit='', position=None, length=None, enum=None):
         self.name = str(name)
-        self.c_type = str(c_type)
+        self.type = segtype(type)
         self.unit = str(unit)
         self.position = int(position)
-        if self.position < 0 or self.position > 64:
-            raise ValueError('incorrect position: {}'.format(self.position))
+        if self.position not in range(0, 65):
+            raise ValueError('position out of bounds: {}'.format(self.position))
 
         self.length = int(length)
         if self.length < 1:
@@ -20,11 +32,18 @@ class SegmentType:
         if self.position + self.length > 64:
             raise ValueError('length overflows: {}'.format(self.length))
 
-        self.signed = bool(signed)
-        self.is_big_endian = bool(is_big_endian)
-
         # values synonymous to enum
         self.values = enum
+
+    @classmethod
+    def from_string(cls, string):
+        '''
+        Constructs an instance from a string of format
+        `START to STOP as TYPE in UNIT`
+        `START + LEN | TYPE | *SCALE | -OFFSET | *UNIT`
+        `START : STOP | TYPE | *SCALE | -OFFSET | log10 | exp2 | *UNIT`
+        '''
+        raise NotImplementedError
 
     @property
     def values(self):

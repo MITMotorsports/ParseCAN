@@ -1,0 +1,242 @@
+name: MY18
+units:
+  - newtonmeter = N * m = J = Nm
+  - tick = 3 ms
+  - RPM = 360 deg / min
+archs:
+  - lpc11cx4
+  - stm32f205
+boards:
+  can_node:
+    arch: lpc11cx4
+  vcu:
+    arch: stm32f205
+  dash:
+    arch: lpc11cx4
+buses:
+  can0:
+    baudrate: 500000
+    is_extended: false
+    messages:
+      CellTemperatureRange:
+        id: 0x016
+        period: 101ms
+        segments:
+          min:
+            position: 0
+            length: 10
+            type: '>i2'
+            unit: decidegC
+          argmin:
+            position: 10
+            length: 8
+            type: '>u1'
+          max0:
+            position: 18
+            length: 10
+            type: '>i2'
+            unit: decidegC
+          argmax0:
+            position: 28
+            length: 8
+            type: '>u1'
+          max1:
+            position: 36
+            length: 10
+            type: '>i2'
+            unit: decidegC
+          argmax1:
+            position: 46
+            length: 8
+            type: '>u1'
+          max2:
+            position: 54
+            length: 10
+            type: '>i2'
+            unit: decidegC
+      CellTemperatureVariance:
+        id: 0x0F0
+        period: 103ms
+        segments:
+          mean:
+            position: 0
+            length: 10
+            type: '>i2'
+            unit: decidegC
+          variance:
+            position: 10
+            length: 16
+            type: '>u2'
+            unit: decidegC ** 2
+      CellVoltageRange:
+        id: 0x017
+        period: 31ms
+        segments:
+          min:
+            position: 0
+            length: 14
+            type: '>u2'
+            unit: mV
+          max:
+            position: 14
+            length: 14
+            type: '>u2'
+            unit: mV
+          sum:
+            position: 28
+            length: 32
+            type: '>u4'
+            unit: mV
+      BMSHeartbeat:
+        id: 0x0DF
+        period: 103ms
+        segments:
+          error_pec:
+            position: 0
+            length: 1
+            type: 'bool'
+          error_cvst:
+            position: 1
+            length: 1
+            type: 'bool'
+          error_owt:
+            position: 2
+            length: 1
+            type: 'bool'
+          error_L_contactor_error:
+            position: 3
+            length: 1
+            type: 'bool'
+          error_H_contactor_error:
+            position: 4
+            length: 1
+            type: 'bool'
+          error_L_contactor_weld:
+            position: 5
+            length: 1
+            type: 'bool'
+          error_H_contactor_weld:
+            position: 6
+            length: 1
+            type: 'bool'
+          error_cell_under_voltage:
+            position: 7
+            length: 1
+            type: 'bool'
+          error_cell_over_voltage:
+            position: 8
+            length: 1
+            type: 'bool'
+          error_cell_underemp:
+            position: 9
+            length: 1
+            type: 'bool'
+          error_cell_overemp:
+            position: 10
+            length: 1
+            type: 'bool'
+          error_control_flow:
+            position: 11
+            length: 1
+            type: 'bool'
+          error_force_over_can:
+            position: 12
+            length: 1
+            type: 'bool'
+          L_contactor_closed:
+            position: 13
+            length: 1
+            type: 'bool'
+          H_contactor_closed:
+            position: 14
+            length: 1
+            type: 'bool'
+          L_contactor_welded:
+            position: 15
+            length: 1
+            type: 'bool'
+          H_contactor_welded:
+            position: 16
+            length: 1
+            type: 'bool'
+          soc:
+            position: 17
+            length: 8
+            type: '>u1'
+      SBG_EKF_Euler:
+        id: 306
+        segments:
+          roll:
+            position: 0
+            length: 16
+            type: '<i2'
+            unit: 0.1 mrad
+          pitch:
+            position: 16
+            length: 16
+            type: '<i2'
+            unit: 0.1 mrad
+          yaw:
+            position: 32
+            length: 16
+            type: '<i2'
+            unit: 0.1 mrad
+      SBG_EKF_Quaternion:
+        id: 305
+        segments:
+          q0:
+            position: 0
+            length: 16
+            type: '<i2'
+            unit: 3.0517578125e-5
+          q1:
+            position: 16
+            length: 16
+            type: '<i2'
+            unit: 3.0517578125e-5
+          q2:
+            position: 32
+            length: 16
+            type: '<i2'
+            unit: 3.0517578125e-5
+          q3:
+            position: 48
+            length: 16
+            type: '<i2'
+            unit: 3.0517578125e-5
+      SBG_IMU_Gyroscope:
+        id: 290
+        segments:
+          x:
+            position: 0
+            length: 16
+            type: '<i2'
+            unit: mrad / s
+          y:
+            position: 16
+            length: 16
+            type: '<i2'
+            unit: mrad / s
+          z:
+            position: 32
+            length: 16
+            type: '<i2'
+            unit: mrad / s
+      SBG_IMU_Accelerometer:
+        id: 289
+        segments:
+          x:
+            position: 0
+            length: 16
+            type: '<i2'
+            unit: cm / (s ** 2)
+          y:
+            position: 16
+            length: 16
+            type: '<i2'
+            unit: cm / (s ** 2)
+          z:
+            position: 32
+            length: 16
+            type: '<i2'
+            unit: cm / (s ** 2)

@@ -21,7 +21,7 @@ class BusType:
 
     @messages.setter
     def messages(self, messages):
-        self._messages = plural.unique('name', 'can_id', type=spec.message)
+        self._messages = plural.unique('name', 'id', type=spec.message)
 
         for msgnm in messages or ():
             if isinstance(messages[msgnm], dict):

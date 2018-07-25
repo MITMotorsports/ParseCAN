@@ -1,10 +1,10 @@
 import sys
 sys.path.append('../ParseCAN')
 
-import can
 from ParseCAN import spec, data
+car = spec.car('can_spec_my18.yml')
 
-car = spec.car('../MY18/can_spec_my18.yml')
+exit()
 
 bitrate = 500000
 interface = 'vector'

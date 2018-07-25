@@ -7,10 +7,9 @@ class MessageType(meta.message):
     A specification describing an arbitrary CAN Message's format and contents.
     '''
 
-    def __init__(self, name, can_id, is_big_endian, period=None, segments=None):
+    def __init__(self, name, id, period=None, segments=None):
         self.name = str(name)
-        self.can_id = int(can_id)
-        self.is_big_endian = bool(is_big_endian)
+        self.id = int(id)
 
         if period:
             self.period = parse.number(period)
@@ -31,7 +30,7 @@ class MessageType(meta.message):
         for segnm in segments or ():
             if isinstance(segments[segnm], dict):
                 try:
-                    seg = spec.segment(name=segnm, is_big_endian=self.is_big_endian, **segments[segnm])
+                    seg = spec.segment(name=segnm, **segments[segnm])
                     self.segments.safe_add(seg)
                 except Exception as e:
                     e.args = (
@@ -83,4 +82,4 @@ class MessageType(meta.message):
     def unpack(self, frame, **kwargs):
         return {seg.name: seg.unpack(frame, **kwargs) for seg in self.segments}
 
-    __str__ = helper.csv_by_attrs(('name', 'can_id', 'is_big_endian', 'period'))
+    __str__ = helper.csv_by_attrs(('name', 'id', 'period'))
