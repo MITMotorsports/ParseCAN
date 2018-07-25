@@ -13,37 +13,78 @@ def segtype(x):
     return dtype
 
 
+class Slice:
+    def __init__(self, start=None, length=None):
+        if start:
+            self.start = int(start)
+            if self.start not in range(0, 65):
+                raise ValueError('start out of bounds: {}'.format(self.start))
+
+        self.length = int(length)
+        if self.length < 1:
+            raise ValueError('length too small: {}'.format(self.length))
+        if self.start + self.length > 64:
+            raise ValueError('length overflows: {}'.format(self.length))
+
+    @classmethod
+    def from_general(cls, val):
+        return {
+            slice: cls.from_slice,
+            str: cls.from_string,
+            tuple: cls.from_tuple,
+        }[type(val)](val)
+
+    @classmethod
+    def from_tuple(cls, val):
+        return cls(*val)
+
+    @classmethod
+    def from_slice(cls, val):
+        return cls(val.start, val.stop - val.start)
+
+    @classmethod
+    def from_string(cls, val):
+        if '-' in val:
+            start, stop = val.split('-')
+            return cls.from_slice(slice(int(start), int(stop)))
+        # elif 'to' in val:
+        #     start, stop = val.split('to')
+        #     return cls.from_slice(slice(int(start), int(stop)))
+        elif '+' in val:
+            return cls(*val.split('+'))
+        else:
+            return cls(start=int(val))
+
+
 class SegmentType:
     '''
     A specification for a segment of a larger data string.
     '''
 
-    def __init__(self, name, type='', unit='', position=None, length=None, enum=None):
+    def __init__(self, name, slice=None, type='', unit='', enum=None):
         self.name = str(name)
         self.type = segtype(type)
         self.unit = str(unit)
-        self.position = int(position)
-        if self.position not in range(0, 65):
-            raise ValueError('position out of bounds: {}'.format(self.position))
-
-        self.length = int(length)
-        if self.length < 1:
-            raise ValueError('length too small: {}'.format(self.length))
-        if self.position + self.length > 64:
-            raise ValueError('length overflows: {}'.format(self.length))
+        self.slice = Slice.from_general(slice)
 
         # values synonymous to enum
+        if enum and self.type != 'enum':
+            raise ValueError('type not enum but enum provided')
+
+        # TODO: Think about type == 'enum' vs the unicode of values
         self.values = enum
 
     @classmethod
-    def from_string(cls, string):
+    def from_string(cls, name, string, **kwargs):
         '''
         Constructs an instance from a string of format
         `START to STOP as TYPE in UNIT`
         `START + LEN | TYPE | *SCALE | -OFFSET | *UNIT`
         `START : STOP | TYPE | *SCALE | -OFFSET | log10 | exp2 | *UNIT`
         '''
-        raise NotImplementedError
+        pipe = string.split('|')
+        pipe = list(map(str.strip, pipe))
+        return cls(name, pipe[0], pipe[1], '|'.join(pipe[2:]), **kwargs)
 
     @property
     def values(self):
@@ -95,7 +136,7 @@ class SegmentType:
     def unpack(self, frame, **kwargs):
         assert isinstance(frame, data.Frame)
 
-        raw = frame[self.position, self.length]
+        raw = frame[self.start, self.length]
 
         if self.values:
             retval = self.values.value[raw].name
@@ -121,7 +162,7 @@ class SegmentType:
 
         return clean
 
-    __str__ = helper.csv_by_attrs(('name', 'c_type', 'unit', 'position', 'length', 'signed', 'values'))
+    __str__ = helper.csv_by_attrs(('name', 'c_type', 'unit', 'start', 'length', 'signed', 'values'))
 
 
 np_dtypes = {

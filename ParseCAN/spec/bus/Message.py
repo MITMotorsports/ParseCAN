@@ -31,7 +31,6 @@ class MessageType(meta.message):
             if isinstance(segments[segnm], dict):
                 try:
                     seg = spec.segment(name=segnm, **segments[segnm])
-                    self.segments.safe_add(seg)
                 except Exception as e:
                     e.args = (
                         'in segment {}: {}'
@@ -42,9 +41,12 @@ class MessageType(meta.message):
                     )
 
                     raise
+            elif isinstance(segments[segnm], str):
+                seg = spec.segment.from_string(segnm, segments[segnm])
             else:
                 seg = segments[segnm]
-                self.segments.safe_add(seg)
+
+            self.segments.safe_add(seg)
 
             intersections = self.segment_intersections(seg)
             if intersections:
@@ -61,20 +63,20 @@ class MessageType(meta.message):
         assert isinstance(seg, spec.segment)
 
         def w(x, s):
-            return x.position <= s.position <= x.position + x.length - 1 or x.position <= s.position + s.length - 1 <= x.position + x.length - 1
+            return x.slice.start <= s.slice.start <= x.slice.start + x.slice.length - 1 or x.slice.start <= s.slice.start + s.slice.length - 1 <= x.slice.start + x.slice.length - 1
 
         # w should be commutative so let's apply it twice instead of redefining
         return [x.name for x in self.segments if seg != x and (w(x, seg) or w(seg, x))]
 
     def __len__(self):
-        return ceil(max(seg.position + seg.length for seg in self.segments) / 8)
+        return ceil(max(seg.slice.start + seg.slice.length for seg in self.segments) / 8)
 
     def pack(self, by='name', **kwargs):
         bitstring = 0
         for segnm in kwargs:
             seg = self.segments[by][segnm]
             bitstring = data.evil_macros.INSERT(kwargs[segnm], bitstring,
-                                                seg.position, seg.length)
+                                                seg.slice.start, seg.slice.length)
 
         byteobj = bitstring.to_bytes(len(self), 'big')
         return data.Frame(self.can_id, byteobj)
