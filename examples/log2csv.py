@@ -1,6 +1,3 @@
-import sys
-sys.path.append('../ParseCAN')
-
 import csv
 from pathlib import Path
 from itertools import chain
@@ -8,7 +5,7 @@ from ParseCAN import spec, data, parse
 
 from log_parsers import *
 
-car = spec.car('../MY18/can_spec_my18.yml')
+car = spec.car('can_spec_my18.yml')
 
 
 def log_to_csv(logfile, parser, outpath, dimensionless=False, raw=False):

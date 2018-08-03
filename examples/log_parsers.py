@@ -1,6 +1,3 @@
-import sys
-sys.path.append('../ParseCAN')
-
 import re
 import datetime as dt
 import time
@@ -22,12 +19,12 @@ def pcantrc_parser(line):
         return None
 
     timestr = m.group(2)
-    can_idstr = m.group(4)
+    idstr = m.group(4)
     datastr = m.group(6).replace(' ', '')
 
     return data.FrameTimed(
                time=int(timestr) / 1000,  # in seconds
-               can_id=int(can_idstr, 16),
+               id=int(idstr, 16),
                data=bytes.fromhex(datastr)
            )
 
@@ -54,10 +51,10 @@ def tsvlog_parser(line):
         tsvlog_parser.inittime = time.mktime(datetime.timetuple())
         return None
 
-    timestr, busstr, can_idstr, datastr = m
+    timestr, busstr, idstr, datastr = m
 
     return data.FrameTimed(
                time=int(timestr) / 1000 + tsvlog_parser.inittime,  # POSIX time
-               can_id=int(can_idstr, 16),
+               id=int(idstr, 16),
                data=bytes.fromhex(datastr)
            )
