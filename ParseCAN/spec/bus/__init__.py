@@ -1,6 +1,6 @@
-from .bus import Bus, BusFiltered
-from .message import Message
+from .enumeration import Enumeration
 from .segment import Segment
-from .enum import Enum
+from .message import Message
+from .bus import Bus, BusFiltered
 
-__all__ = ['Bus', 'BusFiltered', 'Message', 'Segment', 'Enum']
+__all__ = ['Bus', 'BusFiltered', 'Message', 'Segment', 'Enumeration']

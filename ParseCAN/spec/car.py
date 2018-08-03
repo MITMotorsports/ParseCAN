@@ -8,9 +8,9 @@ class Car:
         self._source = Path(source)
         self.name = name
         # A mapping of bus names to bus objects.
-        self.__buses = plural.Unique('name', type=spec.bus)
+        self.__buses = plural.Unique('name')
         # A mapping of board names to board objects.
-        self.__boards = plural.Unique('name', type=spec.board)
+        self.__boards = plural.Unique('name')
         self.parse()
 
     # TODO: Must move to another module
@@ -27,7 +27,7 @@ class Car:
         buses = prem['buses']
         for busnm in buses:
             try:
-                self.buses.safe_add(spec.bus(name=busnm, **buses[busnm]))
+                self.buses.safe_add(spec.bus.Bus(name=busnm, **buses[busnm]))
             except Exception as e:
                 e.args = (
                     'in spec {}: in bus {}: {}'.format(
@@ -47,12 +47,12 @@ class Car:
                 try:
                     # Prepare filtered bus representation
                     if kwargs.get('publish', None):
-                        kwargs['publish'] = [spec.busFiltered(self.buses.name[busnm], kwargs['publish'][busnm]) for busnm in kwargs['publish']]
+                        kwargs['publish'] = [spec.bus.busFiltered(self.buses.name[busnm], kwargs['publish'][busnm]) for busnm in kwargs['publish']]
 
                     if kwargs.get('subscribe', None):
-                        kwargs['subscribe'] = [spec.busFiltered(self.buses.name[busnm], kwargs['subscribe'][busnm]) for busnm in kwargs['subscribe']]
+                        kwargs['subscribe'] = [spec.bus.busFiltered(self.buses.name[busnm], kwargs['subscribe'][busnm]) for busnm in kwargs['subscribe']]
 
-                    self.boards.add(spec.board(name=brdnm, **kwargs))
+                    self.boards.add(spec.Board(name=brdnm, **kwargs))
                 except Exception as e:
                     e.args = (
                         'in spec {}: in board {}: {}'.format(
@@ -71,17 +71,6 @@ class Car:
     @property
     def boards(self):
         return self.__boards
-
-    def get_message_coordinate_by_str(self, msgstr: str):
-        '''
-        Given a string in the format `<bus_name>/<message_name>`
-        return the corresponding spec.bus, spec.message pair in this car.
-        '''
-        assert isinstance(msgstr, str)
-        part = msgstr.split('/')
-        bus = self.buses['name'][part[0]]
-
-        return (bus, bus['name'][part[1]])
 
     def unpack(self, frame, **kwargs):
         '''

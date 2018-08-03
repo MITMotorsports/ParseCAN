@@ -16,7 +16,7 @@ boards:
 buses:
   can0:
     baudrate: 500000
-    is_extended: false
+    extended: false
     messages:
       CellTemperatureRange:
         id: 0x016

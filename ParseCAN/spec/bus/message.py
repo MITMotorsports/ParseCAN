@@ -1,23 +1,21 @@
-from ... import spec, data, meta, parse, helper, plural
+from dataclasses import dataclass
 from math import ceil
+from typing import Any
+
+from ... import spec, data, meta, plural
+from . import Segment
 
 
-class Message(meta.message):
+@dataclass
+class Message(meta.Message):
     '''
     A specification describing an arbitrary CAN Message's format and contents.
     '''
 
-    def __init__(self, name, id, period=None, segments=None):
-        self.name = str(name)
-        self.id = int(id)
-
-        if period:
-            self.period = parse.number(period)
-
-            # Make sure period is in a time unit
-            self.period.to('s')
-
-        self.segments = segments
+    name: str
+    id: int
+    period: Any = None
+    segments: plural.Unique[Segment]
 
     @property
     def segments(self):
@@ -25,12 +23,12 @@ class Message(meta.message):
 
     @segments.setter
     def segments(self, segments):
-        self._segments = plural.Unique('name', type=spec.segment)
+        self._segments = plural.Unique('name')
 
         for segnm in segments or ():
             if isinstance(segments[segnm], dict):
                 try:
-                    seg = spec.segment(name=segnm, **segments[segnm])
+                    seg = Segment(name=segnm, **segments[segnm])
                 except Exception as e:
                     e.args = (
                         'in segment {}: {}'
@@ -42,7 +40,7 @@ class Message(meta.message):
 
                     raise
             elif isinstance(segments[segnm], str):
-                seg = spec.segment.from_string(segnm, segments[segnm])
+                seg = Segment.from_string(segnm, segments[segnm])
             else:
                 seg = segments[segnm]
 
@@ -55,13 +53,11 @@ class Message(meta.message):
                     .format(seg.name, ', '.join(intersections))
                 )
 
-    def segment_intersections(self, seg):
+    def segment_intersections(self, seg: Segment):
         '''
         Returns a list of the segments in self
         with which `seg` intersects.
         '''
-        assert isinstance(seg, spec.segment)
-
         def w(x, s):
             return x.slice.start <= s.slice.start <= x.slice.start + x.slice.length - 1 or x.slice.start <= s.slice.start + s.slice.length - 1 <= x.slice.start + x.slice.length - 1
 
@@ -83,5 +79,3 @@ class Message(meta.message):
 
     def unpack(self, frame, **kwargs):
         return {seg.name: seg.unpack(frame, **kwargs) for seg in self.segments}
-
-    __str__ = helper.csv_by_attrs(('name', 'id', 'period'))

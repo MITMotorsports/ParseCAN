@@ -1,15 +1,11 @@
 from types import MappingProxyType
+from typing import Collection, T
 
 
-class Unique:
-    def __init__(self, *attributes: str, init=None, type=None):
+class Unique(Collection[T]):
+    def __init__(self, *attributes: str):
         assert len(attributes) >= 1
         self.__store = {attrnm: {} for attrnm in attributes}
-        self.__type = type if type else object
-
-        if init:
-            for x in init:
-                self.safe_add(x)
 
     @property
     def attributes(self):
@@ -21,8 +17,6 @@ class Unique:
 
         Will raise ValuError if `safe` is True and there exists a conflict.
         '''
-        assert isinstance(item, self.__type)
-
         removal = None
         remattr = None
         for attrnm in self.attributes:
@@ -80,7 +74,7 @@ class Unique:
         return iter(next(iter(self.__store.values())).values())
 
     def __repr__(self):
-        return str(self.__store)
+        return repr(next(iter(self.__store.values())).values())
 
 
 if __name__ == '__main__':

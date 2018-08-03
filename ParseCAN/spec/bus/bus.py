@@ -1,7 +1,11 @@
-from ... import data, spec, plural
+from dataclasses import dataclass
 from typing import Sequence, Union
 
+from ... import data, spec, plural
+from . import Message
 
+
+@dataclass
 class Bus:
     '''
     A (CAN) bus specification.
@@ -9,11 +13,10 @@ class Bus:
     Can unpack CAN Messages that were sent based on this spec.bus.
     '''
 
-    def __init__(self, name, baudrate, is_extended=None, messages=None):
-        self.name = name
-        self.baudrate = int(baudrate)
-        self.is_extended = bool(is_extended)
-        self.messages = messages
+    name: str
+    baudrate: int
+    extended: bool = False
+    messages: plural.Unique[Message]
 
     @property
     def messages(self):
@@ -21,13 +24,12 @@ class Bus:
 
     @messages.setter
     def messages(self, messages):
-        self._messages = plural.Unique('name', 'id', type=spec.message)
+        self._messages = plural.Unique('name', 'id')
 
         for msgnm in messages or ():
             if isinstance(messages[msgnm], dict):
                 try:
-                    self.messages.safe_add(spec.message(
-                        name=msgnm, **messages[msgnm]))
+                    self.messages.safe_add(Message(name=msgnm, **messages[msgnm]))
                 except Exception as e:
                     e.args = (
                         'in message {}: {}'.format(
@@ -60,7 +62,7 @@ class Bus:
 
 
 class BusFiltered(Bus):
-    def __init__(self, bus: BusType, interests: Sequence[Union[int, str]]):
+    def __init__(self, bus: Bus, interests: Sequence[Union[int, str]]):
         self.bus = bus
         self.interests = interests
 

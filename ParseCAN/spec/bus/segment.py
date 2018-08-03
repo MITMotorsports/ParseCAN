@@ -1,36 +1,41 @@
-from ... import spec, data, plural, parse, helper
+from dataclasses import dataclass
+from typing import Union, Tuple
 import numpy as np
 
-
-def segtype(x):
-    if x == 'enum':
-        return x
-
-    dtype = np.dtype(x)
-    if x[0] not in ('>', '<') and dtype.byteorder != '|':
-        raise ValueError('endianness not specified: {}'.format(x))
-
-    return dtype
+from ... import data, plural, parse
+from . import Enumeration
 
 
+class Type:
+    def __init__(self, x):
+        self.dtype = np.dtype(x)
+
+        if x[0] not in ('>', '<') and self.dtype.byteorder != '|':
+            raise ValueError('endianness not specified: {}'.format(x))
+
+
+@dataclass
 class Slice:
-    def __init__(self, start=None, length=None):
-        self.start = start
-        self.length = length
+    _START_T = Union[int, type(None)]
+
+    start: _START_T
+    length: int
 
     @property
-    def start(self, val):
+    def start(self):
         return self._start
 
     @start.setter
-    def start(self, val):
+    def start(self, val=None):
         if val:
             self._start = int(val)
             if self.start not in range(0, 65):
                 raise ValueError('start out of bounds: {}'.format(self.start))
+        else:
+            raise NotImplementedError('unable to handle implicit start yet')
 
     @property
-    def length(self, val):
+    def length(self):
         return self._length
 
     @length.setter
@@ -44,43 +49,42 @@ class Slice:
     @classmethod
     def from_general(cls, val):
         return {
+            cls: lambda val: val.copy(),
             slice: cls.from_slice,
             str: cls.from_string,
             tuple: cls.from_tuple,
         }[type(val)](val)
 
     @classmethod
-    def from_tuple(cls, val):
+    def from_tuple(cls, val: Tuple[_START_T, int]):
         return cls(*val)
 
     @classmethod
-    def from_slice(cls, val):
+    def from_slice(cls, val: slice):
         return cls(val.start, val.stop - val.start)
 
     @classmethod
-    def from_string(cls, val):
+    def from_string(cls, val: str):
         if '+' in val:
             return cls(*val.split('+'))
         else:
             return cls(length=int(val))
 
 
+@dataclass
 class Segment:
     '''
     A specification for a segment of a larger data string.
     '''
 
-    def __init__(self, name, slice=None, type='', unit='', enum=None):
-        self.name = str(name)
-        self.type = segtype(type)
-        self.unit = str(unit)
-        self.slice = Slice.from_general(slice)
+    name: str
+    type: Type
+    slice: Slice
+    unit: str = ''
+    enumerations: plural.Unique[Enumeration]
 
-        if enum and self.type != 'enum':
-            raise ValueError('type not enum but enum provided')
-
-        # TODO: Think about type == 'enum' vs the unicode of values
-        self.enum = enum
+    def __post_init__(self):
+        self.slice = Slice.from_general(self.slice)
 
     @classmethod
     def from_string(cls, name, string, **kwargs):
@@ -91,39 +95,43 @@ class Segment:
         '''
         pipe = string.split('|')
         pipe = list(map(str.strip, pipe))
-        return cls(name, pipe[0], pipe[1], '|'.join(pipe[2:]), **kwargs)
+        return cls(name, slice=pipe[0], type=pipe[1],
+                   unit='|'.join(pipe[2:]), **kwargs)
 
     @property
-    def enum(self):
-        return self._enum
+    def enumerations(self):
+        return self._enumerations
 
-    @enum.setter
-    def enum(self, values):
-        self._enum = plural.Unique('name', 'value', type=spec.value)
+    @enumerations.setter
+    def enumerations(self, enumerations):
+        self._enumerations = plural.Unique('name', 'value')
 
-        if isinstance(values, list):
-            # implicitly assign values to enum elements given as a list
-            values = {valnm: idx for idx, valnm in enumerate(values)}
+        # TODO: Figure out this weird behavior when argument in init is not given
+        if isinstance(enumerations, property):
+            return
 
-        for valnm in values or ():
-            if isinstance(values[valnm], int):
+        if isinstance(enumerations, list):
+            # implicitly assign values to enumerations elements given as a list
+            enumerations = {key: idx for idx, key in enumerate(enumerations)}
+
+        for key in enumerations or ():
+            if isinstance(enumerations[key], int):
                 try:
-                    self.values.safe_add(spec.value(valnm, values[valnm]))
+                    self.enumerations.safe_add(Enumeration(key, enumerations[key]))
                 except Exception as e:
                     e.args = (
-                        'in value {}: {}'
+                        'in enumeration {}: {}'
                         .format(
-                            valnm,
+                            key,
                             e
                         ),
                     )
 
                     raise
-
-            elif isinstance(values[valnm], spec.value):
-                self.safe_add(values[valnm])
+            elif isinstance(enumerations[key], Enumeration):
+                self.enumerations.safe_add(enumerations[key])
             else:
-                raise TypeError('value given is not int or spec.value')
+                raise TypeError('enumerations given is not int or Enumeration')
 
     @property
     def pint_unit(self):
@@ -168,8 +176,6 @@ class Segment:
             return parse.number(clean, self.unit)
 
         return clean
-
-    __str__ = helper.csv_by_attrs(('name', 'c_type', 'unit', 'start', 'length', 'signed', 'values'))
 
 
 np_dtypes = {

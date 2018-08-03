@@ -1,13 +1,15 @@
+from dataclasses import dataclass, field
+from typing import Any
+
 from .. import spec, plural
 
-
+@dataclass
 class Board:
-    def __init__(self, name, arch=None, location=None, publish=None, subscribe=None):
-        self.name = name
-        self.arch = arch
-        self.location = location
-        self.publish = publish
-        self.subscribe = subscribe
+    name: str
+    arch: Any = None
+    location: Any = None
+    publish: plural.Unique[spec.bus.BusFiltered]
+    subscribe: plural.Unique[spec.bus.BusFiltered]
 
     @property
     def publish(self):
@@ -15,7 +17,11 @@ class Board:
 
     @publish.setter
     def publish(self, publish):
-        self._publish = plural.Unique('name', type=spec.busFiltered)
+        self._publish = plural.Unique('name')
+
+        # TODO: Figure out this weird behavior when argument in init is not given
+        if isinstance(publish, property):
+            return
 
         for bus in publish or ():
             self._publish.safe_add(bus)
@@ -26,7 +32,11 @@ class Board:
 
     @subscribe.setter
     def subscribe(self, subscribe):
-        self._subscribe = plural.Unique('name', type=spec.busFiltered)
+        self._subscribe = plural.Unique('name')
+
+        # TODO: Figure out this weird behavior when argument in init is not given
+        if isinstance(subscribe, property):
+            return
 
         for bus in subscribe or ():
             self._subscribe.safe_add(bus)
