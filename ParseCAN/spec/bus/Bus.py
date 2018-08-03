@@ -73,7 +73,7 @@ class BusFiltered(Bus):
         for interest in interests:
             try:
                 if isinstance(interest, int):
-                    self.bus.messages.can_id[interest]
+                    self.bus.messages.id[interest]
                 elif isinstance(interest, str):
                     self.bus.messages.name[interest]
                 else:
@@ -87,7 +87,7 @@ class BusFiltered(Bus):
 
     def interested(self, msg):
         assert isinstance(msg, spec.message)
-        return msg.name in self.interests or msg.can_id in self.interests
+        return msg.name in self.interests or msg.id in self.interests
 
     @property
     def messages(self):

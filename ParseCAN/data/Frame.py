@@ -41,7 +41,7 @@ class Frame(meta.Message):
 
     __str__ = helper.csv_by_attrs(attributes, mapdict={
         'time': int,
-        'can_id': hex,
+        'id': hex,
         'data': hex
     })
 
@@ -53,7 +53,7 @@ class Frame(meta.Message):
 
 
 class FrameTimed(Frame):
-    attributes = ('time', 'can_id', 'data')
+    attributes = ('time', 'id', 'data')
     __slots__ = Frame.__slots__ + ('time',)
 
     def __init__(self, *args, time, **kwargs):

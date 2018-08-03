@@ -79,7 +79,7 @@ class Message(meta.message):
                                                 seg.slice.start, seg.slice.length)
 
         byteobj = bitstring.to_bytes(len(self), 'big')
-        return data.Frame(self.can_id, byteobj)
+        return data.Frame(self.id, byteobj)
 
     def unpack(self, frame, **kwargs):
         return {seg.name: seg.unpack(frame, **kwargs) for seg in self.segments}
