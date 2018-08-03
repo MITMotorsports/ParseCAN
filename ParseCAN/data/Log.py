@@ -24,9 +24,5 @@ class File(Log):
         return filter(bool, map(self.parser, self.src.open('r')))
 
 
-class List(Log):
-    def __init__(self, list):
-        self.list = list
-
-    def __iter__(self):
-        return iter(self.list)
+class List(Log, list):
+    pass
