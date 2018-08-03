@@ -15,12 +15,27 @@ def segtype(x):
 
 class Slice:
     def __init__(self, start=None, length=None):
-        if start:
-            self.start = int(start)
+        self.start = start
+        self.length = length
+
+    @property
+    def start(self, val):
+        return self._start
+
+    @start.setter
+    def start(self, val):
+        if val:
+            self._start = int(val)
             if self.start not in range(0, 65):
                 raise ValueError('start out of bounds: {}'.format(self.start))
 
-        self.length = int(length)
+    @property
+    def length(self, val):
+        return self._length
+
+    @length.setter
+    def length(self, val):
+        self._length = int(val)
         if self.length < 1:
             raise ValueError('length too small: {}'.format(self.length))
         if self.start + self.length > 64:
@@ -44,16 +59,10 @@ class Slice:
 
     @classmethod
     def from_string(cls, val):
-        if '-' in val:
-            start, stop = val.split('-')
-            return cls.from_slice(slice(int(start), int(stop)))
-        # elif 'to' in val:
-        #     start, stop = val.split('to')
-        #     return cls.from_slice(slice(int(start), int(stop)))
-        elif '+' in val:
+        if '+' in val:
             return cls(*val.split('+'))
         else:
-            return cls(start=int(val))
+            return cls(length=int(val))
 
 
 class Segment:
@@ -77,21 +86,20 @@ class Segment:
     def from_string(cls, name, string, **kwargs):
         '''
         Constructs an instance from a string of format
-        `START to STOP as TYPE in UNIT`
-        `START + LEN | TYPE | *SCALE | -OFFSET | *UNIT`
-        `START : STOP | TYPE | *SCALE | -OFFSET | log10 | exp2 | *UNIT`
+        `START + LEN | RAWTYPE | *SCALE | -OFFSET | *UNIT`
+        `LEN | RAWTYPE | TYPE | *SCALE | -OFFSET | log10 | exp2 | *UNIT`
         '''
         pipe = string.split('|')
         pipe = list(map(str.strip, pipe))
         return cls(name, pipe[0], pipe[1], '|'.join(pipe[2:]), **kwargs)
 
     @property
-    def values(self):
-        return self._values
+    def enum(self):
+        return self._enum
 
-    @values.setter
-    def values(self, values):
-        self._values = plural.unique('name', 'value', type=spec.value)
+    @enum.setter
+    def enum(self, values):
+        self._enum = plural.Unique('name', 'value', type=spec.value)
 
         if isinstance(values, list):
             # implicitly assign values to enum elements given as a list

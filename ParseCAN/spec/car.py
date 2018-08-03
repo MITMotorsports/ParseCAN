@@ -8,9 +8,9 @@ class Car:
         self._source = Path(source)
         self.name = name
         # A mapping of bus names to bus objects.
-        self.__buses = plural.unique('name', type=spec.bus)
+        self.__buses = plural.Unique('name', type=spec.bus)
         # A mapping of board names to board objects.
-        self.__boards = plural.unique('name', type=spec.board)
+        self.__boards = plural.Unique('name', type=spec.board)
         self.parse()
 
     # TODO: Must move to another module

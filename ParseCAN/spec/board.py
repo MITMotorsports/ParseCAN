@@ -15,7 +15,7 @@ class Board:
 
     @publish.setter
     def publish(self, publish):
-        self._publish = plural.unique('name', type=spec.busFiltered)
+        self._publish = plural.Unique('name', type=spec.busFiltered)
 
         for bus in publish or ():
             self._publish.safe_add(bus)
@@ -26,7 +26,7 @@ class Board:
 
     @subscribe.setter
     def subscribe(self, subscribe):
-        self._subscribe = plural.unique('name', type=spec.busFiltered)
+        self._subscribe = plural.Unique('name', type=spec.busFiltered)
 
         for bus in subscribe or ():
             self._subscribe.safe_add(bus)

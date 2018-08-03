@@ -25,7 +25,7 @@ class Message(meta.message):
 
     @segments.setter
     def segments(self, segments):
-        self._segments = plural.unique('name', type=spec.segment)
+        self._segments = plural.Unique('name', type=spec.segment)
 
         for segnm in segments or ():
             if isinstance(segments[segnm], dict):
