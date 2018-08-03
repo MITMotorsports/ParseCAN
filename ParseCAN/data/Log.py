@@ -5,9 +5,6 @@ class Log:
     def unpack(self, spec, **kwargs):
         return ((msg, spec.unpack(msg, **kwargs)) for msg in self)
 
-    def to_list(self):
-        return List(list(self))
-
 
 class File(Log):
     ''' A lazy-loaded logfile parser. '''
@@ -24,9 +21,5 @@ class File(Log):
         return filter(bool, map(self.parser, self.src.open('r')))
 
 
-class List(Log):
-    def __init__(self, list):
-        self.list = list
-
-    def __iter__(self):
-        return iter(self.list)
+class List(Log, list):
+    pass
