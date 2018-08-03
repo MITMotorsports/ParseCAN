@@ -6,7 +6,7 @@ class Log:
         return ((msg, spec.unpack(msg, **kwargs)) for msg in self)
 
     def to_list(self):
-        return List(list(self))
+        return List(self)
 
 
 class File(Log):
