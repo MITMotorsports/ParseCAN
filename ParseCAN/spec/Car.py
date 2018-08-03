@@ -3,7 +3,7 @@ from pathlib import Path
 from .. import data, spec, plural, parse
 
 
-class CarSpec:
+class Car:
     def __init__(self, source, name=''):
         self._source = Path(source)
         self.name = name

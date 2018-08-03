@@ -1,11 +1,9 @@
 from types import MappingProxyType
 
 
-class unique:
+class Unique:
     def __init__(self, *attributes: str, init=None, type=None):
         assert len(attributes) >= 1
-        # assert all(isinstance(attr, str) for attr in attributes)
-        # Unnecessary check. Error will get raised in dict comprehension.
         self.__store = {attrnm: {} for attrnm in attributes}
         self.__type = type if type else object
 
@@ -48,9 +46,6 @@ class unique:
 
     def safe_add(self, item):
         self.add(item, safe=True)
-
-    # def find(self, item):
-    #   return next(self[attrnm] for attrnm in self.attributes, None)
 
     def remove(self, item):
         assert isinstance(item, self.__type)
@@ -98,7 +93,7 @@ if __name__ == '__main__':
             if self.value < 0 or self.value > 1.8446744e+19:
                 raise ValueError('incorrect value: {}'.format(self.value))
 
-    a = unique('name', 'value')
+    a = Unique('name', 'value')
     b = ValueType('w', 2)
     c = ValueType('1', 4)
     print(a.add(b))

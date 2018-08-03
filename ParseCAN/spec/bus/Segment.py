@@ -56,7 +56,7 @@ class Slice:
             return cls(start=int(val))
 
 
-class SegmentType:
+class Segment:
     '''
     A specification for a segment of a larger data string.
     '''
@@ -67,12 +67,11 @@ class SegmentType:
         self.unit = str(unit)
         self.slice = Slice.from_general(slice)
 
-        # values synonymous to enum
         if enum and self.type != 'enum':
             raise ValueError('type not enum but enum provided')
 
         # TODO: Think about type == 'enum' vs the unicode of values
-        self.values = enum
+        self.enum = enum
 
     @classmethod
     def from_string(cls, name, string, **kwargs):

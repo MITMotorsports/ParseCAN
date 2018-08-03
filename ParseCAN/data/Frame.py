@@ -3,13 +3,13 @@ from .. import parse, data, meta, helper
 __all__ = ['Frame', 'FrameTimed']
 
 
-class Frame(meta.message):
-    attributes = ('can_id', 'data')
-    __slots__ = ('can_id', '_data', '_raw_data')
+class Frame(meta.Message):
+    attributes = ('id', 'data')
+    __slots__ = ('id', '_data', '_raw_data')
 
-    def __init__(self, can_id, data):
+    def __init__(self, id, data):
         # Store our attributes in the format we want them.
-        self.can_id = int(can_id)
+        self.id = int(id)
         self.data = data
 
     @property

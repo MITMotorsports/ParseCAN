@@ -1,7 +1,7 @@
-from .Bus import BusType as bus
-from .Bus import BusTypeFiltered as busFiltered
-from .Message import MessageType as message
-from .Segment import SegmentType as segment
-from .Value import ValueType as value
+from .Bus import Bus
+from .Bus import BusFiltered
+from .Message import Message
+from .Segment import Segment
+from .Enum import Enum
 
-__all__ = ['bus', 'busFiltered', 'message', 'segment', 'value']
+__all__ = ['Bus', 'BusFiltered', 'Message', 'Segment', 'Enum']

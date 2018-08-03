@@ -2,7 +2,7 @@ from ... import spec, data, meta, parse, helper, plural
 from math import ceil
 
 
-class MessageType(meta.message):
+class Message(meta.message):
     '''
     A specification describing an arbitrary CAN Message's format and contents.
     '''

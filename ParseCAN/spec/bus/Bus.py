@@ -2,7 +2,7 @@ from ... import data, spec, plural
 from typing import Sequence, Union
 
 
-class BusType:
+class Bus:
     '''
     A (CAN) bus specification.
     Describes the set of messages that flow through a CAN bus.
@@ -59,7 +59,7 @@ class BusType:
         return self.name
 
 
-class BusTypeFiltered(BusType):
+class BusFiltered(Bus):
     def __init__(self, bus: BusType, interests: Sequence[Union[int, str]]):
         self.bus = bus
         self.interests = interests

@@ -1,6 +1,6 @@
 from ... import helper
 
-class ValueType:
+class Enum:
     def __init__(self, name, value):
         self.name = str(name)
         self.value = int(value)

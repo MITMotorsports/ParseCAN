@@ -1,5 +1,5 @@
 from .bus import *
-from .board import BoardType as board
-from .Car import CarSpec as car
+from .board import Board
+from .Car import Car
 
 __all__ = ['bus', 'board']
