@@ -1,9 +1,13 @@
 from types import MappingProxyType
 from typing import Collection, T
+from copy import deepcopy
 
 
 class Unique(Collection[T]):
-    def __init__(self, *attributes: str):
+    def __init__(self, *attributes: str, store=None):
+        if store is not None:
+            self.__store = store
+
         assert len(attributes) >= 1
         self.__store = {attrnm: {} for attrnm in attributes}
 
@@ -41,6 +45,10 @@ class Unique(Collection[T]):
     def safe_add(self, item):
         self.add(item, safe=True)
 
+    def extend(self, iterable, **kwargs):
+        for val in iterable:
+            self.add(val, **kwargs)
+
     def remove(self, item):
         assert isinstance(item, self.__type)
 
@@ -49,6 +57,9 @@ class Unique(Collection[T]):
 
             if attr in self.__store[attrnm]:
                 del self.__store[attrnm][attr]
+
+    def copy(self):
+        return Unique(store=deepcopy(self.__store))
 
     def __getitem__(self, attrnm: str):
         if attrnm not in self.__store:
@@ -74,7 +85,8 @@ class Unique(Collection[T]):
         return iter(next(iter(self.__store.values())).values())
 
     def __repr__(self):
-        return repr(next(iter(self.__store.values())).values())
+        # Slice it to remove dict_keys( and the last parenthesis
+        return repr(next(iter(self.__store.values())).values())[12:-1]
 
 
 if __name__ == '__main__':

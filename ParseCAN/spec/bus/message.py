@@ -23,7 +23,16 @@ class Message(meta.Message):
 
     @segments.setter
     def segments(self, segments):
+        if isinstance(segments, plural.Unique):
+            self._segments = segments.copy()
+            # TODO: Make checks happen here too
+            return
+
         self._segments = plural.Unique('name')
+        
+        if isinstance(segments, list):
+            self._segments.extend(segments)
+            return
 
         for segnm in segments or ():
             if isinstance(segments[segnm], dict):

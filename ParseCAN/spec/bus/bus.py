@@ -24,7 +24,16 @@ class Bus:
 
     @messages.setter
     def messages(self, messages):
+        if isinstance(messages, plural.Unique):
+            self._messages = messages.copy()
+            # TODO: Make checks happen here too
+            return
+
         self._messages = plural.Unique('name', 'id')
+
+        if isinstance(messages, list):
+            self._messages.extend(messages)
+            return
 
         for msgnm in messages or ():
             if isinstance(messages[msgnm], dict):

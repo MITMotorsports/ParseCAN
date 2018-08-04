@@ -27,12 +27,12 @@ class Slice:
 
     @start.setter
     def start(self, val=None):
-        if val:
+        if val is None:
+            raise NotImplementedError('unable to handle implicit start yet')
+        else:
             self._start = int(val)
             if self.start not in range(0, 65):
                 raise ValueError('start out of bounds: {}'.format(self.start))
-        else:
-            raise NotImplementedError('unable to handle implicit start yet')
 
     @property
     def length(self):
@@ -70,6 +70,9 @@ class Slice:
         else:
             return cls(length=int(val))
 
+    def copy(self):
+        return Slice(start=self.start, length=self.length)
+
 
 @dataclass
 class Segment:
@@ -104,7 +107,16 @@ class Segment:
 
     @enumerations.setter
     def enumerations(self, enumerations):
+        if isinstance(enumerations, plural.Unique):
+            self._segments = enumerations.copy()
+            # TODO: Make checks happen here too
+            return
+
         self._enumerations = plural.Unique('name', 'value')
+
+        if isinstance(enumerations, list):
+            self._enumerations.extend(enumerations)
+            return
 
         # TODO: Figure out this weird behavior when argument in init is not given
         if isinstance(enumerations, property):
