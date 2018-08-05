@@ -25,7 +25,7 @@ class Board:
             return
 
         for bus in publish or ():
-            self._publish.safe_add(bus)
+            self._publish.add(bus)
 
     @property
     def subscribe(self):
@@ -40,4 +40,4 @@ class Board:
             return
 
         for bus in subscribe or ():
-            self._subscribe.safe_add(bus)
+            self._subscribe.add(bus)

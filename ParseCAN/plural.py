@@ -155,6 +155,9 @@ class Unique(Plural, Collection[T]):
     def add(self, *args, **kwargs):
         super().add(*args, safe=True, **kwargs)
 
+    def __repr__(self):
+        return 'Unique' + super().__repr__()[6:]
+
 
 if __name__ == '__main__':
     @dataclass

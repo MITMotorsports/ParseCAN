@@ -53,7 +53,7 @@ class Message(meta.Message):
             else:
                 seg = segments[segnm]
 
-            self.segments.safe_add(seg)
+            self.segments.add(seg)
 
             intersections = self.segment_intersections(seg)
             if intersections:

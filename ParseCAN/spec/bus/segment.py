@@ -129,7 +129,7 @@ class Segment:
         for key in enumerations or ():
             if isinstance(enumerations[key], int):
                 try:
-                    self.enumerations.safe_add(Enumeration(key, enumerations[key]))
+                    self.enumerations.add(Enumeration(key, enumerations[key]))
                 except Exception as e:
                     e.args = (
                         'in enumeration {}: {}'
@@ -141,7 +141,7 @@ class Segment:
 
                     raise
             elif isinstance(enumerations[key], Enumeration):
-                self.enumerations.safe_add(enumerations[key])
+                self.enumerations.add(enumerations[key])
             else:
                 raise TypeError('enumerations given is not int or Enumeration')
 

@@ -27,7 +27,7 @@ class Car:
         buses = prem['buses']
         for busnm in buses:
             try:
-                self.buses.safe_add(spec.bus.Bus(name=busnm, **buses[busnm]))
+                self.buses.add(spec.bus.Bus(name=busnm, **buses[busnm]))
             except Exception as e:
                 e.args = (
                     'in spec {}: in bus {}: {}'.format(

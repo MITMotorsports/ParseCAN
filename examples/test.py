@@ -3,6 +3,7 @@ sys.path.append('../ParseCAN')
 
 import ParseCAN as pcn
 from ParseCAN.spec import Bus, Message, Slice, Segment, Enumeration
+from ParseCAN.plural import Unique
 
 cr = pcn.spec.Car('examples/can_spec_my18.yml')
 print('OK')

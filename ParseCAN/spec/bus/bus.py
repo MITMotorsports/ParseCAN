@@ -38,7 +38,7 @@ class Bus:
         for msgnm in messages or ():
             if isinstance(messages[msgnm], dict):
                 try:
-                    self.messages.safe_add(Message(name=msgnm, **messages[msgnm]))
+                    self.messages.add(Message(name=msgnm, **messages[msgnm]))
                 except Exception as e:
                     e.args = (
                         'in message {}: {}'.format(
@@ -49,7 +49,7 @@ class Bus:
 
                     raise
             else:
-                self.messages.safe_add(messages[msgnm])
+                self.messages.add(messages[msgnm])
 
     def unpack(self, frame, **kwargs):
         '''
