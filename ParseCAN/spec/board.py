@@ -3,6 +3,7 @@ from typing import Any
 
 from .. import spec, plural
 
+
 @dataclass
 class Board:
     name: str

@@ -1,19 +1,72 @@
+from dataclasses import dataclass
+from functools import wraps
 from types import MappingProxyType
 from typing import Collection, T
-from copy import deepcopy
 
 
-class Unique(Collection[T]):
-    def __init__(self, *attributes: str, store=None):
-        if store is not None:
-            self.__store = store
+class Plural:
+    pass
 
+
+@dataclass
+class RuleSet:
+    rules: dict
+
+    _supported = ('pre', 'post')
+
+    _application_fmt = """
+old = cls.{function}
+
+@wraps(old)
+def new(*args, **kwargs):
+    {pre}
+    old(*args, **kwargs)
+    {post}
+
+cls.{function} = new
+"""
+
+    _callback_fmt = '{}(cls, *args, **kwargs)'
+    _default_callback_fmtdict = {fn: '' for fn in _supported}
+
+    def apply(self, cls, verbose=False):
+        '''
+        A decorator that applies the ruleset to a
+        class or to an instance (TODO: decide)?
+        '''
+
+        for fn in self.rules:
+            callbacks = self._default_callback_fmtdict.copy()
+            for rule in self.rules[fn]:
+                callbacks[rule] = self._callback_fmt.format(rule)
+
+            ruleset_application = self._application_fmt.format(function=fn, **callbacks)
+
+            namespace = dict(
+                __name__='RuleSet_apply_{}'.format(fn),
+                cls=cls,
+                wraps=wraps,
+                **self.rules[fn]
+            )
+            exec(ruleset_application, namespace)
+
+            if verbose:
+                print(ruleset_application)
+
+        return cls
+
+
+class Unique(Plural, Collection[T]):
+    def __init__(self, *attributes: str, init=None):
         assert len(attributes) >= 1
         self.__store = {attrnm: {} for attrnm in attributes}
 
+        if init is not None:
+            self.extend(init)
+
     @property
     def attributes(self):
-        return iter(self.__store.keys())
+        return self.__store.keys()
 
     def add(self, item, safe=False):
         '''
@@ -50,8 +103,6 @@ class Unique(Collection[T]):
             self.add(val, **kwargs)
 
     def remove(self, item):
-        assert isinstance(item, self.__type)
-
         for attrnm in self.attributes:
             attr = getattr(item, attrnm)
 
@@ -59,7 +110,8 @@ class Unique(Collection[T]):
                 del self.__store[attrnm][attr]
 
     def copy(self):
-        return Unique(store=deepcopy(self.__store))
+        # TODO: Figure out if ruleset should still apply.
+        return Unique(*self.attributes, init=self)
 
     def __getitem__(self, attrnm: str):
         if attrnm not in self.__store:
@@ -90,20 +142,22 @@ class Unique(Collection[T]):
 
 
 if __name__ == '__main__':
-    class ValueType:
-        attributes = ('name', 'value')
+    @dataclass
+    class Enumeration:
+        name: str
+        value: int
 
-        def __init__(self, name, value):
-            self.name = str(name)
-            self.value = int(value)
-            if self.value < 0 or self.value > 1.8446744e+19:
-                raise ValueError('incorrect value: {}'.format(self.value))
+    container = Unique('name', 'value')
+    a = Enumeration('w', 2)
+    b = Enumeration('1', 4)
+    c = Enumeration('q', 4)
 
-    a = Unique('name', 'value')
-    b = ValueType('w', 2)
-    c = ValueType('1', 4)
-    print(a.add(b))
-    print(a.safe_add(c))
-    print(a['name'])
-    print(a.name)
-    print(a)
+    def post_add(inst, item):
+        print('Added {} to {}!'.format(item, inst))
+
+    ruleset = RuleSet({'add': {'post': post_add}})
+    ruleset.apply(container, verbose=True)
+
+    container.add(a)
+    container.add(b)
+    container.safe_add(c)

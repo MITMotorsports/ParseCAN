@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from math import ceil
 from typing import Any
 
-from ... import spec, data, meta, plural
+from ... import data, meta, plural
 from . import Segment
 
 
@@ -29,7 +29,7 @@ class Message(meta.Message):
             return
 
         self._segments = plural.Unique('name')
-        
+
         if isinstance(segments, list):
             self._segments.extend(segments)
             return
