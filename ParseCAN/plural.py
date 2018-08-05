@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from functools import wraps
+from inspect import isclass
 from types import MappingProxyType
 from typing import Collection, T
 
@@ -10,12 +11,13 @@ class Plural:
 
 @dataclass
 class RuleSet:
+    # TODO: Fix type definition.
     rules: dict
 
     _supported = ('pre', 'post')
 
     _application_fmt = """\
-old = cls.{function}
+old = receiver.{function}
 
 @wraps(old)
 def new(*args, **kwargs):
@@ -23,28 +25,40 @@ def new(*args, **kwargs):
     old(*args, **kwargs)
     {post}
 
-cls.{function} = new
+receiver.{function} = new
 """
 
-    _callback_fmt = '{}(cls, *args, **kwargs)'
+    # TODO: Consider a better model for this.
+    # This ensures that the receiver (class or instance) gets passed to the callback.
     _default_callback_fmtdict = {fn: '' for fn in _supported}
+    _instance_callback_fmt = '{}(receiver, *args, **kwargs)'
+    _class_callback_fmt = '{}(*args, **kwargs)'
 
-    def apply(self, cls, verbose=False):
+    def apply(self, receiver, verbose=False):
         '''
-        A decorator that applies the ruleset to a
-        class or to an instance (TODO: decide)?
+        Apply this ruleset to `receiver`.
+        If `receiver` is a
+        - class the callback must take [cls, self, *args, **kwargs]
+        - instance the callback must take [self, *args, **kwargs]
         '''
+
+        # HACK: Applicable to class or instance with the same callback signature.
+        if isclass(receiver):
+            print('was class')
+            callback_fmt = self._class_callback_fmt
+        else:
+            callback_fmt = self._instance_callback_fmt
 
         for fn in self.rules:
             callbacks = self._default_callback_fmtdict.copy()
             for rule in self.rules[fn]:
-                callbacks[rule] = self._callback_fmt.format(rule)
+                callbacks[rule] = callback_fmt.format(rule)
 
             ruleset_application = self._application_fmt.format(function=fn, **callbacks)
 
             namespace = dict(
                 __name__='RuleSet_apply_{}'.format(fn),
-                cls=cls,
+                receiver=receiver,
                 wraps=wraps,
                 **self.rules[fn]
             )
@@ -53,7 +67,7 @@ cls.{function} = new
             if verbose:
                 print(ruleset_application)
 
-        return cls
+        return receiver
 
 
 class Unique(Plural, Collection[T]):
@@ -72,7 +86,7 @@ class Unique(Plural, Collection[T]):
         '''
         Add `item` to the internal representation.
 
-        Will raise ValuError if `safe` is True and there exists a conflict.
+        Will raise ValueError if `safe` and there exists an attribute conflict.
         '''
         removal = None
         remattr = None
@@ -138,7 +152,10 @@ class Unique(Plural, Collection[T]):
 
     def __repr__(self):
         # Slice it to remove dict_keys( and the last parenthesis
-        return repr(next(iter(self.__store.values())).values())[12:-1]
+        listview = repr(next(iter(self.__store.values())).values())[12:-1]
+        attrview = ', '.join('"{}"'.format(x) for x in self.attributes)
+
+        return 'Unique(' + attrview + ', init=' + listview + ')'
 
 
 if __name__ == '__main__':
@@ -152,11 +169,20 @@ if __name__ == '__main__':
     b = Enumeration('1', 4)
     c = Enumeration('q', 4)
 
-    def post_add(inst, item):
-        print('Added {} to {}!'.format(item, inst))
+    def post_add(instance, item, **kwargs):
+        print('Added {} to {} with {}!'.format(item, instance, kwargs))
 
     ruleset = RuleSet({'add': {'post': post_add}})
+
+    # Apply to all Unique instances
     ruleset.apply(Unique, verbose=True)
+
+    new_container = Unique('name', 'value')
+    new_container.add(a)
+
+    # Apply once more to container
+    # Expect a dual printout
+    ruleset.apply(container, verbose=True)
 
     container.add(a)
     container.add(b)
