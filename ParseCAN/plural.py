@@ -5,10 +5,6 @@ from types import MappingProxyType
 from typing import Collection, T
 
 
-class Plural:
-    pass
-
-
 @dataclass
 class RuleSet:
     # TODO: Fix type definition.
@@ -70,7 +66,7 @@ receiver.{function} = new
         return receiver
 
 
-class Unique(Plural, Collection[T]):
+class Plural:
     def __init__(self, *attributes: str, init=None):
         assert len(attributes) >= 1
         self.__store = {attrnm: {} for attrnm in attributes}
@@ -108,9 +104,6 @@ class Unique(Plural, Collection[T]):
             self.__store[attrnm][attr] = item
 
         return None
-
-    def safe_add(self, item):
-        self.add(item, safe=True)
 
     def extend(self, iterable, **kwargs):
         for val in iterable:
@@ -155,7 +148,12 @@ class Unique(Plural, Collection[T]):
         listview = repr(next(iter(self.__store.values())).values())[12:-1]
         attrview = ', '.join('"{}"'.format(x) for x in self.attributes)
 
-        return 'Unique(' + attrview + ', init=' + listview + ')'
+        return 'Plural(' + attrview + ', init=' + listview + ')'
+
+
+class Unique(Plural, Collection[T]):
+    def add(self, *args, **kwargs):
+        super().add(*args, safe=True, **kwargs)
 
 
 if __name__ == '__main__':
@@ -186,4 +184,4 @@ if __name__ == '__main__':
 
     container.add(a)
     container.add(b)
-    container.safe_add(c)
+    container.add(c)
