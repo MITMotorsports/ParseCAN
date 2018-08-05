@@ -14,7 +14,7 @@ class RuleSet:
 
     _supported = ('pre', 'post')
 
-    _application_fmt = """
+    _application_fmt = """\
 old = cls.{function}
 
 @wraps(old)
@@ -129,7 +129,7 @@ class Unique(Plural, Collection[T]):
         True if the exact instance of `item` is in `self`,
         False otherwise.
         '''
-        return any(self.__store[attrnm][vars(item)[attrnm]] == item
+        return any(self.__store[attrnm][vars(item)[attrnm]] is item
                    for attrnm in self.attributes
                    if getattr(item, attrnm) in self.__store[attrnm])
 
@@ -156,7 +156,7 @@ if __name__ == '__main__':
         print('Added {} to {}!'.format(item, inst))
 
     ruleset = RuleSet({'add': {'post': post_add}})
-    ruleset.apply(container, verbose=True)
+    ruleset.apply(Unique, verbose=True)
 
     container.add(a)
     container.add(b)
