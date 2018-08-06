@@ -18,6 +18,17 @@ buses:
     baudrate: 500000
     extended: false
     messages:
+      TestEnum:
+        id: 0x069
+        segments:
+          asd:
+            slice: 0 + 8
+            enumerations:
+              - one
+              - two
+              - three
+              - four
+              - five
       CellTemperatureRange:
         id: 0x016
         period: 101ms

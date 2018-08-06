@@ -39,13 +39,7 @@ class Bus:
 
         self.messages.extend(messages)
 
-
     def unpack(self, frame, **kwargs):
-        '''
-        unpacks a data.Frame instance based on this spec.can.
-        '''
-        assert isinstance(frame, data.Frame)
-
         ret = {}
         for msg in self.messages:
             potential = msg.unpack(frame, **kwargs)

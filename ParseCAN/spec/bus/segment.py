@@ -95,8 +95,8 @@ class Segment:
     '''
 
     name: str
-    type: Type
     slice: Slice
+    type: Type = ''
     unit: str = ''
     enumerations: plural.Unique[Enumeration] = plural.Unique('name', 'value')
 
@@ -109,10 +109,14 @@ class Segment:
         if isinstance(enumerations, (list, tuple)):
             # implicitly assign values to enumerations elements given as a list
             enumerations = {key: idx for idx, key in enumerate(enumerations)}
-        elif isinstance(enumerations, dict):
+            # Make the dictionary and fall through to the list creation
+
+        if isinstance(enumerations, dict):
             enumerations = [_enumeration_constr(k, v) for k, v in enumerations.items()]
 
-        self.enumerations.extend(enumerations)
+        # Recreate all enumerations to enforce the max value
+        mv = self.slice.length
+        self.enumerations.extend(Enumeration(x.name, x.value, max_value=mv) for x in enumerations)
 
     @classmethod
     def from_string(cls, name, string, **kwargs):
