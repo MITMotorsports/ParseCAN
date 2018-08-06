@@ -20,7 +20,7 @@ def _segment_constr(key, segment):
 
         return Segment(name=key, **segment)
     except Exception as e:
-        e.args = ('in segment {} with {}: {}'.format(key, segment, e),)
+        e.args = ('in segment {}: {}'.format(key, e),)
 
         raise
 

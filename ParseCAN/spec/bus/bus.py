@@ -10,7 +10,7 @@ def _message_constr(key, message):
         try:
             return Message(name=key, **message)
         except Exception as e:
-            e.args = ('in message {} with {}: {}'.format(key, message, e),)
+            e.args = ('in message {}: {}'.format(key, e),)
 
             raise
 
