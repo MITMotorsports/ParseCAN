@@ -33,14 +33,11 @@ receiver.{function} = new
     def apply(self, receiver, verbose=False):
         '''
         Apply this ruleset to `receiver`.
-        If `receiver` is a
-        - class the callback must take [cls, self, *args, **kwargs]
-        - instance the callback must take [self, *args, **kwargs]
+        The callback must take [self, *args, **kwargs].
         '''
 
         # HACK: Applicable to class or instance with the same callback signature.
         if isclass(receiver):
-            print('was class')
             callback_fmt = self._class_callback_fmt
         else:
             callback_fmt = self._instance_callback_fmt
