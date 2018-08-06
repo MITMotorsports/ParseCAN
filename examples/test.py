@@ -10,3 +10,5 @@ cr = pcn.spec.Car('examples/can_spec_my18.yml')
 print(cr.buses)
 print('OK')
 copy = eval(repr(cr.buses))
+
+print('Reconstruction success:', repr(copy) == repr(cr.buses))
