@@ -1,83 +1,70 @@
 import yaml
+from dataclasses import dataclass
 from pathlib import Path
-from .. import data, spec, plural, parse
+
+from .. import plural, parse, data
+from .board import Board
+from .bus import Bus, BusFiltered
 
 
+def _bus_constr(key, bus):
+    try:
+        return Bus(name=key, **bus)
+    except Exception as e:
+        e.args = ('in bus {}: {}'.format(key, e),)
+
+        raise
+
+
+def _board_constr(self, key, board):
+    if board.get('publish', None):
+        board['publish'] = [BusFiltered(self.buses.name[busnm], board['publish'][busnm]) for busnm in board['publish']]
+
+    if board.get('subscribe', None):
+        board['subscribe'] = [BusFiltered(self.buses.name[busnm], board['subscribe'][busnm]) for busnm in board['subscribe']]
+
+    return Board(name=key, **board)
+
+
+@dataclass
 class Car:
-    def __init__(self, source, name=''):
-        self._source = Path(source)
-        self.name = name
-        # A mapping of bus names to bus objects.
-        self.__buses = plural.Unique('name')
-        # A mapping of board names to board objects.
-        self.__boards = plural.Unique('name')
-        self.parse()
+    name: str
+    buses: plural.Unique[Bus] = plural.Unique('name')
+    boards: plural.Unique[Board] = plural.Unique('name')
 
-    # TODO: Must move to another module
-    def parse(self):
-        with self._source.open('r') as f:
+    def __post_init__(self):
+        buses = self.buses
+        self.buses = plural.Unique('name')
+        if isinstance(buses, dict):
+            buses = [_bus_constr(k, v) for k, v in buses.items()]
+        self.buses.extend(buses)
+
+        boards = self.boards
+        self.boards = plural.Unique('name')
+        if isinstance(boards, dict):
+            boards = [_board_constr(self, k, v) for k, v in boards.items()]
+        pass
+
+    @classmethod
+    def from_file(cls, filepath):
+        filepath = Path(filepath)
+        with filepath.open('r') as f:
             prem = yaml.safe_load(f)
 
         if prem['units']:
             for definition in prem['units']:
                 parse.ureg.define(definition)
 
-        self.name = prem['name']
-
+        name = prem['name']
         buses = prem['buses']
-        for busnm in buses:
-            try:
-                self.buses.add(spec.bus.Bus(name=busnm, **buses[busnm]))
-            except Exception as e:
-                e.args = (
-                    'in spec {}: in bus {}: {}'.format(
-                        self.name,
-                        busnm,
-                        e
-                    ),
-                )
-
-                raise
-
         boards = prem['boards']
-        for brdnm in boards:
-            if isinstance(boards[brdnm], dict):
-                kwargs = boards[brdnm]
 
-                try:
-                    # Prepare filtered bus representation
-                    if kwargs.get('publish', None):
-                        kwargs['publish'] = [spec.bus.busFiltered(self.buses.name[busnm], kwargs['publish'][busnm]) for busnm in kwargs['publish']]
-
-                    if kwargs.get('subscribe', None):
-                        kwargs['subscribe'] = [spec.bus.busFiltered(self.buses.name[busnm], kwargs['subscribe'][busnm]) for busnm in kwargs['subscribe']]
-
-                    self.boards.add(spec.Board(name=brdnm, **kwargs))
-                except Exception as e:
-                    e.args = (
-                        'in spec {}: in board {}: {}'.format(
-                            self.name,
-                            brdnm,
-                            e
-                        ),
-                    )
-
-                    raise
-
-    @property
-    def buses(self):
-        return self.__buses
-
-    @property
-    def boards(self):
-        return self.__boards
+        return cls(name=name, buses=buses, boards=boards)
 
     def unpack(self, frame, **kwargs):
         '''
         unpacks a data.Frame instance based on this spec.can.
         '''
-        assert isinstance(frame, data.Frame)
-
         # Inefficient way of doing this given current featureset.
         ret = {}
         # TODO: Make this a comprehension.

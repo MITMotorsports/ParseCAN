@@ -2,13 +2,12 @@ import sys
 sys.path.append('../ParseCAN')
 
 import ParseCAN as pcn
-# from ParseCAN.spec import Bus, Message, Slice, Segment, Enumeration
 from ParseCAN.spec import *
 from ParseCAN.plural import Unique
 
-cr = pcn.spec.Car('examples/can_spec_my18.yml')
-print(cr.buses)
+car = pcn.spec.Car.from_file('examples/can_spec_my18.yml')
+print(car)
 print('OK')
-copy = eval(repr(cr.buses))
+copy = eval(repr(car))
 
-print('Reconstruction success:', repr(copy) == repr(cr.buses))
+print('Reconstruction success:', repr(copy) == repr(car))

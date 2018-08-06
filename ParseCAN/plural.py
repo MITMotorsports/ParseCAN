@@ -143,7 +143,7 @@ class Plural:
     def __repr__(self):
         # Slice it to remove dict_keys( and the last parenthesis
         listview = repr(next(iter(self.__store.values())).values())[12:-1]
-        attrview = ', '.join('"{}"'.format(x) for x in self.attributes)
+        attrview = ', '.join(map(repr, self.attributes))
 
         return 'Plural(' + attrview + ', init=' + listview + ')'
 
