@@ -5,6 +5,18 @@ from ... import data, spec, plural
 from . import Message
 
 
+def _message_constr(key, message):
+    if isinstance(message, dict):
+        try:
+            return Message(name=key, **message)
+        except Exception as e:
+            e.args = ('in message {} with {}: {}'.format(key, message, e),)
+
+            raise
+
+    raise ValueError('malformed message representation {}: {}'.format(key, message))
+
+
 @dataclass
 class Bus:
     '''
@@ -16,40 +28,17 @@ class Bus:
     name: str
     baudrate: int
     extended: bool = False
-    messages: plural.Unique[Message]
+    messages: plural.Unique[Message] = plural.Unique('name', 'id')
 
-    @property
-    def messages(self):
-        return self._messages
+    def __post_init__(self):
+        messages = self.messages
+        self.messages = plural.Unique('name', 'id')
 
-    @messages.setter
-    def messages(self, messages):
-        if isinstance(messages, plural.Unique):
-            self._messages = messages.copy()
-            # TODO: Make checks happen here too
-            return
+        if isinstance(messages, dict):
+            messages = [_message_constr(k, v) for k, v in messages.items()]
 
-        self._messages = plural.Unique('name', 'id')
+        self.messages.extend(messages)
 
-        if isinstance(messages, list):
-            self._messages.extend(messages)
-            return
-
-        for msgnm in messages or ():
-            if isinstance(messages[msgnm], dict):
-                try:
-                    self.messages.add(Message(name=msgnm, **messages[msgnm]))
-                except Exception as e:
-                    e.args = (
-                        'in message {}: {}'.format(
-                            msgnm,
-                            e
-                        ),
-                    )
-
-                    raise
-            else:
-                self.messages.add(messages[msgnm])
 
     def unpack(self, frame, **kwargs):
         '''

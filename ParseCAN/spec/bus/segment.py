@@ -74,6 +74,20 @@ class Slice:
         return Slice(start=self.start, length=self.length)
 
 
+def _enumeration_constr(key, enumeration):
+        if isinstance(enumeration, int):
+            try:
+                return Enumeration(key, enumeration)
+            except Exception as e:
+                e.args = ('in enumeration {}: {}'.format(key, e),)
+
+                raise
+        elif isinstance(enumeration, Enumeration):
+            return enumeration
+        else:
+            raise TypeError('enumeration given is not int or Enumeration')
+
+
 @dataclass
 class Segment:
     '''
@@ -84,10 +98,21 @@ class Segment:
     type: Type
     slice: Slice
     unit: str = ''
-    enumerations: plural.Unique[Enumeration]
+    enumerations: plural.Unique[Enumeration] = plural.Unique('name', 'value')
 
     def __post_init__(self):
         self.slice = Slice.from_general(self.slice)
+
+        enumerations = self.enumerations
+        self.enumerations = plural.Unique('name', 'value')
+
+        if isinstance(enumerations, (list, tuple)):
+            # implicitly assign values to enumerations elements given as a list
+            enumerations = {key: idx for idx, key in enumerate(enumerations)}
+        elif isinstance(enumerations, dict):
+            enumerations = [_enumeration_constr(k, v) for k, v in enumerations.items()]
+
+        self.enumerations.extend(enumerations)
 
     @classmethod
     def from_string(cls, name, string, **kwargs):
@@ -100,50 +125,6 @@ class Segment:
         pipe = list(map(str.strip, pipe))
         return cls(name, slice=pipe[0], type=pipe[1],
                    unit='|'.join(pipe[2:]), **kwargs)
-
-    @property
-    def enumerations(self):
-        return self._enumerations
-
-    @enumerations.setter
-    def enumerations(self, enumerations):
-        if isinstance(enumerations, plural.Unique):
-            self._segments = enumerations.copy()
-            # TODO: Make checks happen here too
-            return
-
-        self._enumerations = plural.Unique('name', 'value')
-
-        if isinstance(enumerations, list):
-            self._enumerations.extend(enumerations)
-            return
-
-        # TODO: Figure out this weird behavior when argument in init is not given
-        if isinstance(enumerations, property):
-            return
-
-        if isinstance(enumerations, list):
-            # implicitly assign values to enumerations elements given as a list
-            enumerations = {key: idx for idx, key in enumerate(enumerations)}
-
-        for key in enumerations or ():
-            if isinstance(enumerations[key], int):
-                try:
-                    self.enumerations.add(Enumeration(key, enumerations[key]))
-                except Exception as e:
-                    e.args = (
-                        'in enumeration {}: {}'
-                        .format(
-                            key,
-                            e
-                        ),
-                    )
-
-                    raise
-            elif isinstance(enumerations[key], Enumeration):
-                self.enumerations.add(enumerations[key])
-            else:
-                raise TypeError('enumerations given is not int or Enumeration')
 
     @property
     def pint_unit(self):
