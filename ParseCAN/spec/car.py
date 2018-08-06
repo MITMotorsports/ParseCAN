@@ -43,7 +43,6 @@ class Car:
         self.boards = plural.Unique('name')
         if isinstance(boards, dict):
             boards = [_board_constr(self, k, v) for k, v in boards.items()]
-        pass
 
     @classmethod
     def from_file(cls, filepath):
@@ -62,10 +61,6 @@ class Car:
         return cls(name=name, buses=buses, boards=boards)
 
     def unpack(self, frame, **kwargs):
-        '''
-        unpacks a data.Frame instance based on this spec.can.
-        '''
-        # Inefficient way of doing this given current featureset.
         ret = {}
         # TODO: Make this a comprehension.
         # TODO: Make busFiltered interests receptive to message type objects.

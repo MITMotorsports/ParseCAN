@@ -1,3 +1,4 @@
+from copy import deepcopy
 from dataclasses import dataclass
 from functools import wraps
 from inspect import isclass
@@ -123,7 +124,7 @@ class Plural:
 
         return MappingProxyType(self.__store[attrnm])
 
-    __getattr__ = __getitem__
+    # __getattr__ = __getitem__
 
     def __len__(self):
         return len(next(iter(self.__store.values())))

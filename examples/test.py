@@ -11,3 +11,7 @@ print('OK')
 copy = eval(repr(car))
 
 print('Reconstruction success:', repr(copy) == repr(car))
+
+from dataclasses import asdict
+
+d = asdict(car)
