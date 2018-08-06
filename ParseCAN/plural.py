@@ -27,13 +27,13 @@ receiver.{function} = new
     # TODO: Consider a better model for this.
     # This ensures that the receiver (class or instance) gets passed to the callback.
     _default_callback_fmtdict = {fn: '' for fn in _supported}
-    _instance_callback_fmt = '{}(receiver, *args, **kwargs)'
-    _class_callback_fmt = '{}(*args, **kwargs)'
+    _instance_callback_fmt = '{}(receiver, *args, {} **kwargs)'
+    _class_callback_fmt = '{}(*args, {} **kwargs)'
 
-    def apply(self, receiver, verbose=False):
+    def apply(self, receiver, extension=None):
         '''
         Apply this ruleset to `receiver`.
-        The callback must take [self, *args, **kwargs].
+        The callback must take [self, extension, *args, **kwargs].
         '''
 
         # HACK: Applicable to class or instance with the same callback signature.
@@ -45,7 +45,8 @@ receiver.{function} = new
         for fn in self.rules:
             callbacks = self._default_callback_fmtdict.copy()
             for rule in self.rules[fn]:
-                callbacks[rule] = callback_fmt.format(rule)
+                extension_part = 'extension,' if extension is not None else ''
+                callbacks[rule] = callback_fmt.format(rule, extension_part)
 
             ruleset_application = self._application_fmt.format(function=fn, **callbacks)
 
@@ -53,12 +54,11 @@ receiver.{function} = new
                 __name__='RuleSet_apply_{}'.format(fn),
                 receiver=receiver,
                 wraps=wraps,
-                **self.rules[fn]
+                extension=extension,
+                **self.rules[fn],
             )
-            exec(ruleset_application, namespace)
 
-            if verbose:
-                print(ruleset_application)
+            exec(ruleset_application, namespace)
 
         return receiver
 
@@ -167,20 +167,22 @@ if __name__ == '__main__':
     b = Enumeration('1', 4)
     c = Enumeration('q', 4)
 
-    def post_add(instance, item, **kwargs):
+    def post_add(instance, item, extension=None, **kwargs):
         print('Added {} to {} with {}!'.format(item, instance, kwargs))
+        print('Extension is {}.'.format(extension))
+        print('\n\n')
 
     ruleset = RuleSet({'add': {'post': post_add}})
 
     # Apply to all Unique instances
-    ruleset.apply(Unique, verbose=True)
+    ruleset.apply(Unique)
 
     new_container = Unique('name', 'value')
     new_container.add(a)
 
     # Apply once more to container
     # Expect a dual printout
-    ruleset.apply(container, verbose=True)
+    ruleset.apply(container, extension=34)
 
     container.add(a)
     container.add(b)
