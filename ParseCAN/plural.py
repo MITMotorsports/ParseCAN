@@ -1,15 +1,13 @@
-from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import field, make_dataclass, dataclass
 from functools import wraps
 from inspect import isclass
 from types import MappingProxyType
-from typing import Collection, T
+from typing import ClassVar, Tuple, Mapping, Callable, Collection, Iterable, T
 
 
 @dataclass
 class RuleSet:
-    # TODO: Fix type definition.
-    rules: dict
+    rules: Mapping[str, Mapping[str, Callable]]
 
     _supported = ('pre', 'post')
 
@@ -64,17 +62,25 @@ receiver.{function} = new
         return receiver
 
 
-class Plural:
-    def __init__(self, *attributes: str, init=None):
-        assert len(attributes) >= 1
-        self.__store = {attrnm: {} for attrnm in attributes}
+class Plural(Collection[T]):
+    attributes: ClassVar[Tuple[str]]
 
-        if init is not None:
-            self.extend(init)
+    def __post_init__(self):
+        if not hasattr(self, 'attributes'):
+            raise AttributeError('attributes must be specified through make')
 
-    @property
-    def attributes(self):
-        return self.__store.keys()
+        self.__store = {attrnm: {} for attrnm in self.attributes}
+
+        self.extend(self.items)
+
+    @classmethod
+    def make(cls, *attributes):
+        new_class = make_dataclass(cls.__name__,
+                                   [('items', Iterable[T], field(default=tuple()))],
+                                   namespace=cls.__dict__.copy())
+        new_class.attributes = attributes
+
+        return new_class
 
     def add(self, item, safe=False):
         '''
@@ -114,17 +120,11 @@ class Plural:
             if attr in self.__store[attrnm]:
                 del self.__store[attrnm][attr]
 
-    def copy(self):
-        # TODO: Figure out if ruleset should still apply.
-        return Unique(*self.attributes, init=self)
-
     def __getitem__(self, attrnm: str):
         if attrnm not in self.__store:
             raise KeyError('there is no mapping by {}'.format(attrnm))
 
         return MappingProxyType(self.__store[attrnm])
-
-    # __getattr__ = __getitem__
 
     def __len__(self):
         return len(next(iter(self.__store.values())))
@@ -149,7 +149,7 @@ class Plural:
         return 'Plural(' + attrview + ', init=' + listview + ')'
 
 
-class Unique(Plural, Collection[T]):
+class Unique(Plural):
     def add(self, *args, **kwargs):
         super().add(*args, safe=True, **kwargs)
 
@@ -163,10 +163,13 @@ if __name__ == '__main__':
         name: str
         value: int
 
-    container = Unique('name', 'value')
+    Container_class = Unique.make('name', 'value')
+
     a = Enumeration('w', 2)
     b = Enumeration('1', 4)
     c = Enumeration('q', 4)
+
+    container = Container_class([a])
 
     def post_add(instance, item, extension=None, **kwargs):
         print('Added {} to {} with {}!'.format(item, instance, kwargs))
@@ -175,16 +178,14 @@ if __name__ == '__main__':
 
     ruleset = RuleSet({'add': {'post': post_add}})
 
-    # Apply to all Unique instances
-    ruleset.apply(Unique)
+    # Apply to all Container_class instances
+    ruleset.apply(Container_class)
 
-    new_container = Unique('name', 'value')
-    new_container.add(a)
+    new_container = Container_class([a])
 
-    # Apply once more to container
-    # Expect a dual printout
+    # Apply once more to container instance
+    # Expect a dual printout for adds on container instance
     ruleset.apply(container, extension=34)
 
-    container.add(a)
     container.add(b)
     container.add(c)
