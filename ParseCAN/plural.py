@@ -29,10 +29,10 @@ receiver.{function} = new
     _instance_callback_fmt = '{}(receiver, *args, {} **kwargs)'
     _class_callback_fmt = '{}(*args, {} **kwargs)'
 
-    def apply(self, receiver, extension=None):
+    def apply(self, receiver, metadata=None):
         '''
         Apply this ruleset to `receiver`.
-        The callback must take [self, extension, *args, **kwargs].
+        The callback must take [self, metadata, *args, **kwargs].
         '''
 
         # HACK: Applicable to class or instance with the same callback signature.
@@ -44,8 +44,8 @@ receiver.{function} = new
         for fn in self.rules:
             callbacks = self._default_callback_fmtdict.copy()
             for rule in self.rules[fn]:
-                extension_part = 'extension,' if extension is not None else ''
-                callbacks[rule] = callback_fmt.format(rule, extension_part)
+                metadata_part = 'metadata,' if metadata is not None else ''
+                callbacks[rule] = callback_fmt.format(rule, metadata_part)
 
             ruleset_application = self._application_fmt.format(function=fn, **callbacks)
 
@@ -53,7 +53,7 @@ receiver.{function} = new
                 __name__='RuleSet_apply_{}'.format(fn),
                 receiver=receiver,
                 wraps=wraps,
-                extension=extension,
+                metadata=metadata,
                 **self.rules[fn],
             )
 
@@ -65,24 +65,28 @@ receiver.{function} = new
 class Plural(Collection[T]):
     attributes: ClassVar[Tuple[str]]
 
-    def __post_init__(self):
+    def __init__(self, init=None):
         if not hasattr(self, 'attributes'):
             raise AttributeError('attributes must be specified through make')
 
-        self.__store = {attrnm: {} for attrnm in self.attributes}
+        self._store = {attrnm: {} for attrnm in self.attributes}
 
-        self.extend(self.items)
+        if init:
+            self.extend(init)
 
     @classmethod
     def make(cls, *attributes):
-        new_class = make_dataclass(cls.__name__,
-                                   [('items', Iterable[T], field(default=tuple()))],
-                                   namespace=cls.__dict__.copy())
+        class new_class(cls):
+            @classmethod
+            def make(cls, *attributes):
+                raise TypeError('deep inheritance not allowed')
+
         new_class.attributes = attributes
+        new_class.__name__ = cls.__name__
 
         return new_class
 
-    def add(self, item, safe=False):
+    def add(self, item: T, safe=False):
         '''
         Add `item` to the internal representation.
 
@@ -93,8 +97,8 @@ class Plural(Collection[T]):
         for attrnm in self.attributes:
             attr = getattr(item, attrnm)
 
-            if attr in self.__store[attrnm]:
-                removal = self.__store[attrnm][attr]
+            if attr in self._store[attrnm]:
+                removal = self._store[attrnm][attr]
                 remattr = attrnm
 
                 self.remove(removal)
@@ -105,7 +109,7 @@ class Plural(Collection[T]):
                         .format(item, removal, remattr)
                     )
 
-            self.__store[attrnm][attr] = item
+            self._store[attrnm][attr] = item
 
         return None
 
@@ -113,43 +117,43 @@ class Plural(Collection[T]):
         for val in iterable:
             self.add(val, **kwargs)
 
-    def remove(self, item):
+    def remove(self, item: T):
         for attrnm in self.attributes:
             attr = getattr(item, attrnm)
 
-            if attr in self.__store[attrnm]:
-                del self.__store[attrnm][attr]
+            if attr in self._store[attrnm]:
+                del self._store[attrnm][attr]
 
     def __getitem__(self, attrnm: str):
-        if attrnm not in self.__store:
+        if attrnm not in self._store:
             raise KeyError('there is no mapping by {}'.format(attrnm))
 
-        return MappingProxyType(self.__store[attrnm])
+        return MappingProxyType(self._store[attrnm])
 
     def __len__(self):
-        return len(next(iter(self.__store.values())))
+        return len(next(iter(self._store.values())))
 
     def __contains__(self, item):
         '''
         True if the exact instance of `item` is in `self`,
         False otherwise.
         '''
-        return any(self.__store[attrnm][vars(item)[attrnm]] is item
+        return any(self._store[attrnm][vars(item)[attrnm]] is item
                    for attrnm in self.attributes
-                   if getattr(item, attrnm) in self.__store[attrnm])
+                   if getattr(item, attrnm) in self._store[attrnm])
 
     def __iter__(self):
-        return iter(next(iter(self.__store.values())).values())
+        return iter(next(iter(self._store.values())).values())
 
     def __repr__(self):
         # Slice it to remove dict_keys( and the last parenthesis
-        listview = repr(next(iter(self.__store.values())).values())[12:-1]
+        listview = repr(next(iter(self._store.values())).values())[12:-1]
         attrview = ', '.join(map(repr, self.attributes))
 
         return 'Plural(' + attrview + ', init=' + listview + ')'
 
 
-class Unique(Plural):
+class Unique(Plural, Collection[T]):
     def add(self, *args, **kwargs):
         super().add(*args, safe=True, **kwargs)
 
@@ -163,29 +167,29 @@ if __name__ == '__main__':
         name: str
         value: int
 
-    Container_class = Unique.make('name', 'value')
+    ManyEnum = Unique[Enumeration].make('name', 'value')
 
     a = Enumeration('w', 2)
     b = Enumeration('1', 4)
     c = Enumeration('q', 4)
 
-    container = Container_class([a])
+    container = ManyEnum([a])
 
-    def post_add(instance, item, extension=None, **kwargs):
+    def post_add(instance, item, metadata=None, **kwargs):
         print('Added {} to {} with {}!'.format(item, instance, kwargs))
-        print('Extension is {}.'.format(extension))
+        print('Metadata is {}.'.format(metadata))
         print('\n\n')
 
     ruleset = RuleSet({'add': {'post': post_add}})
 
     # Apply to all Container_class instances
-    ruleset.apply(Container_class)
+    ruleset.apply(ManyEnum)
 
-    new_container = Container_class([a])
+    new_container = ManyEnum([a])
 
     # Apply once more to container instance
     # Expect a dual printout for adds on container instance
-    ruleset.apply(container, extension=34)
+    ruleset.apply(container, metadata=34)
 
     container.add(b)
     container.add(c)

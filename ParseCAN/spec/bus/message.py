@@ -50,8 +50,7 @@ class Message(meta.Message):
 
     def segment_intersections(self, seg: Segment):
         '''
-        Returns a list of the segments in self
-        with which `seg` intersects.
+        Returns a list of the segments in self with which `seg` intersects.
         '''
         def w(x, s):
             return x.slice.start <= s.slice.start <= x.slice.start + x.slice.length - 1 or x.slice.start <= s.slice.start + s.slice.length - 1 <= x.slice.start + x.slice.length - 1
