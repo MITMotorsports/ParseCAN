@@ -88,6 +88,9 @@ def _enumeration_constr(key, enumeration):
             raise TypeError('enumeration given is not int or Enumeration')
 
 
+EnumerationUnique = plural.Unique[Enumeration].make('EnumerationUnique', ['name', 'value'])
+
+
 @dataclass
 class Segment:
     '''
@@ -98,13 +101,13 @@ class Segment:
     slice: Slice
     type: Type = ''
     unit: str = ''
-    enumerations: plural.Unique[Enumeration] = plural.Unique('name', 'value')
+    enumerations: EnumerationUnique = EnumerationUnique()
 
     def __post_init__(self):
         self.slice = Slice.from_general(self.slice)
 
         enumerations = self.enumerations
-        self.enumerations = plural.Unique('name', 'value')
+        self.enumerations = EnumerationUnique()
 
         if isinstance(enumerations, (list, tuple)):
             # implicitly assign values to enumerations elements given as a list

@@ -75,14 +75,14 @@ class Plural(Collection[T]):
             self.extend(init)
 
     @classmethod
-    def make(cls, *attributes):
+    def make(cls, name, attributes):
         class new_class(cls):
             @classmethod
-            def make(cls, *attributes):
+            def make(cls, name, attributes):
                 raise TypeError('deep inheritance not allowed')
 
-        new_class.attributes = attributes
-        new_class.__name__ = cls.__name__
+        new_class.attributes = set(attributes)
+        new_class.__name__ = name
 
         return new_class
 
@@ -125,7 +125,7 @@ class Plural(Collection[T]):
                 del self._store[attrnm][attr]
 
     def __getitem__(self, attrnm: str):
-        if attrnm not in self._store:
+        if attrnm not in self.attributes:
             raise KeyError('there is no mapping by {}'.format(attrnm))
 
         return MappingProxyType(self._store[attrnm])
@@ -138,9 +138,8 @@ class Plural(Collection[T]):
         True if the exact instance of `item` is in `self`,
         False otherwise.
         '''
-        return any(self._store[attrnm][vars(item)[attrnm]] is item
-                   for attrnm in self.attributes
-                   if getattr(item, attrnm) in self._store[attrnm])
+        return any(self._store[attrnm].get(getattr(item, attrnm), None) is item
+                   for attrnm in self.attributes)
 
     def __iter__(self):
         return iter(next(iter(self._store.values())).values())
@@ -148,17 +147,13 @@ class Plural(Collection[T]):
     def __repr__(self):
         # Slice it to remove dict_keys( and the last parenthesis
         listview = repr(next(iter(self._store.values())).values())[12:-1]
-        attrview = ', '.join(map(repr, self.attributes))
 
-        return 'Plural(' + attrview + ', init=' + listview + ')'
+        return type(self).__name__ + '(' + listview + ')'
 
 
 class Unique(Plural, Collection[T]):
     def add(self, *args, **kwargs):
         super().add(*args, safe=True, **kwargs)
-
-    def __repr__(self):
-        return 'Unique' + super().__repr__()[6:]
 
 
 if __name__ == '__main__':

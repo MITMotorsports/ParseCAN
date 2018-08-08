@@ -2,7 +2,7 @@ import yaml
 from dataclasses import dataclass
 from pathlib import Path
 
-from .. import plural, parse, data
+from .. import plural, parse
 from .board import Board
 from .bus import Bus, BusFiltered
 
@@ -26,21 +26,25 @@ def _board_constr(self, key, board):
     return Board(name=key, **board)
 
 
+BusUnique = plural.Unique[Bus].make('BusUnique', ['name'])
+BoardUnique = plural.Unique[Board].make('BoardUnique', ['name'])
+
+
 @dataclass
 class Car:
     name: str
-    buses: plural.Unique[Bus] = plural.Unique('name')
-    boards: plural.Unique[Board] = plural.Unique('name')
+    buses: BusUnique = BusUnique()
+    boards: BoardUnique = BoardUnique()
 
     def __post_init__(self):
         buses = self.buses
-        self.buses = plural.Unique('name')
+        self.buses = BusUnique()
         if isinstance(buses, dict):
             buses = [_bus_constr(k, v) for k, v in buses.items()]
         self.buses.extend(buses)
 
         boards = self.boards
-        self.boards = plural.Unique('name')
+        self.boards = BoardUnique()
         if isinstance(boards, dict):
             boards = [_board_constr(self, k, v) for k, v in boards.items()]
 

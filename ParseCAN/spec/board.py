@@ -5,13 +5,16 @@ from .. import plural
 from .bus import BusFiltered
 
 
+BusFilteredUnique = plural.Unique[BusFiltered].make('BusFilteredUnique', ['name'])
+
+
 @dataclass
 class Board:
     name: str
     arch: Any = None
     location: Any = None
-    publish: plural.Unique[BusFiltered] = plural.Unique('name')
-    subscribe: plural.Unique[BusFiltered] = plural.Unique('name')
+    publish: BusFilteredUnique = BusFilteredUnique()
+    subscribe: BusFilteredUnique = BusFilteredUnique()
 
     def __post_init__(self):
         pass

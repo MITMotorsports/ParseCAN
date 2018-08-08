@@ -25,6 +25,9 @@ def _segment_constr(key, segment):
         raise
 
 
+SegmentUnique = plural.Unique[Segment].make('SegmentUnique', ['name'])
+
+
 @dataclass
 class Message(meta.Message):
     '''
@@ -34,14 +37,14 @@ class Message(meta.Message):
     name: str
     id: int
     period: Any = None
-    segments: plural.Unique[Segment] = plural.Unique('name')
+    segments: SegmentUnique = SegmentUnique()
 
     segment_ruleset = plural.RuleSet(dict(add=dict(pre=_segment_pre_add)))
 
     def __post_init__(self):
         segments = self.segments
-        self.segments = plural.Unique('name')
-        self.segment_ruleset.apply(self.segments, extension=self)
+        self.segments = SegmentUnique()
+        self.segment_ruleset.apply(self.segments, metadata=self)
 
         if isinstance(segments, dict):
             segments = [_segment_constr(k, v) for k, v in segments.items()]
