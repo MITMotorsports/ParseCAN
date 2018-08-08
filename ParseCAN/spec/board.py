@@ -11,7 +11,7 @@ BusFilteredUnique = plural.Unique[BusFiltered].make('BusFilteredUnique', ['name'
 @dataclass
 class Board:
     name: str
-    arch: Any = None
+    architecture: str
     location: Any = None
     publish: BusFilteredUnique = BusFilteredUnique()
     subscribe: BusFilteredUnique = BusFilteredUnique()

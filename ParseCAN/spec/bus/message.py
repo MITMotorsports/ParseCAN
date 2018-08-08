@@ -6,8 +6,8 @@ from ... import data, meta, plural
 from . import Segment
 
 
-def _segment_pre_add(self, item, extension):
-    intersections = extension.segment_intersections(item)
+def _segment_pre_add(self, item, metadata):
+    intersections = metadata.segment_intersections(item)
 
     if intersections:
         raise ValueError('segment {} intersects with {}'.format(item, intersections))
@@ -44,6 +44,7 @@ class Message(meta.Message):
     def __post_init__(self):
         segments = self.segments
         self.segments = SegmentUnique()
+        # TODO: Find a good way to apply to SegmentUnique but keep metadata.
         self.segment_ruleset.apply(self.segments, metadata=self)
 
         if isinstance(segments, dict):

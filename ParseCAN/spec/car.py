@@ -1,8 +1,9 @@
 import yaml
 from dataclasses import dataclass
 from pathlib import Path
+from typing import List, Set
 
-from .. import plural, parse
+from .. import plural
 from .board import Board
 from .bus import Bus, BusFiltered
 
@@ -30,11 +31,22 @@ BusUnique = plural.Unique[Bus].make('BusUnique', ['name'])
 BoardUnique = plural.Unique[Board].make('BoardUnique', ['name'])
 
 
+def _board_pre_add(self, board, metadata):
+    if board.architecture:
+        if board.architecture not in metadata.architectures:
+            raise ValueError('unknown architecture in board {}: {}'
+                             .format(board.name, board.architecture))
+
+
 @dataclass
 class Car:
     name: str
+    architectures: Set[str]
+    units: List
     buses: BusUnique = BusUnique()
     boards: BoardUnique = BoardUnique()
+
+    board_ruleset = plural.RuleSet(dict(add=dict(pre=_board_pre_add)))
 
     def __post_init__(self):
         buses = self.buses
@@ -45,8 +57,11 @@ class Car:
 
         boards = self.boards
         self.boards = BoardUnique()
+        self.board_ruleset.apply(self.boards, metadata=self)
+
         if isinstance(boards, dict):
             boards = [_board_constr(self, k, v) for k, v in boards.items()]
+        self.boards.extend(boards)
 
     @classmethod
     def from_file(cls, filepath):
@@ -54,15 +69,7 @@ class Car:
         with filepath.open('r') as f:
             prem = yaml.safe_load(f)
 
-        if prem['units']:
-            for definition in prem['units']:
-                parse.ureg.define(definition)
-
-        name = prem['name']
-        buses = prem['buses']
-        boards = prem['boards']
-
-        return cls(name=name, buses=buses, boards=boards)
+        return cls(**prem)
 
     def unpack(self, frame, **kwargs):
         ret = {}

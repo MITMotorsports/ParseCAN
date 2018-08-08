@@ -1,8 +1,8 @@
-from dataclasses import field, make_dataclass, dataclass
+from dataclasses import dataclass
 from functools import wraps
 from inspect import isclass
 from types import MappingProxyType
-from typing import ClassVar, Tuple, Mapping, Callable, Collection, Iterable, T
+from typing import ClassVar, Set, Mapping, Callable, Collection, T
 
 
 @dataclass
@@ -63,7 +63,7 @@ receiver.{function} = new
 
 
 class Plural(Collection[T]):
-    attributes: ClassVar[Tuple[str]]
+    attributes: ClassVar[Set[str]]
 
     def __init__(self, init=None):
         if not hasattr(self, 'attributes'):
@@ -131,6 +131,9 @@ class Plural(Collection[T]):
     @property
     def values(self):
         return next(iter(self._store.values())).values()
+
+    def __bool__(self):
+        return bool(self.values)
 
     def __iter__(self):
         return iter(self.values)

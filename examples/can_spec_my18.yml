@@ -3,16 +3,16 @@ units:
   - newtonmeter = N * m = J = Nm
   - tick = 3 ms
   - RPM = 360 deg / min
-archs:
+architectures:
   - lpc11cx4
   - stm32f205
 boards:
   can_node:
-    arch: lpc11cx4
+    architecture: lpc11cx4
   vcu:
-    arch: stm32f205
+    architecture: stm32f205
   dash:
-    arch: lpc11cx4
+    architecture: lpc11cx4
 buses:
   can0:
     baudrate: 500000
