@@ -17,6 +17,9 @@ class Enumeration:
     @value.setter
     def value(self, val):
         self._value = val
+        self.check()
+
+    def check(self):
         if self.value < 0 or self.value > self.max_value:
             raise ValueError('value {} out of range: {}'.format(self.name, self.value))
 

@@ -117,9 +117,12 @@ class Segment:
         if isinstance(enumerations, dict):
             enumerations = [_enumeration_constr(k, v) for k, v in enumerations.items()]
 
-        # Recreate all enumerations to enforce the max value
-        mv = self.slice.length
-        self.enumerations.extend(Enumeration(x.name, x.value, max_value=mv) for x in enumerations)
+        # Enforce the max value
+        for x in enumerations:
+            x.max_value = self.slice.length
+            x.check()
+
+        self.enumerations.extend(enumerations)
 
     @classmethod
     def from_string(cls, name, string, **kwargs):
@@ -139,12 +142,12 @@ class Segment:
 
     @property
     def np_dtype(self):
-        if self.values:
+        if self.enumerations:
             '''
             Return a unicode string with length equal to the maximum possible
             length of any of the contained value names.
             '''
-            return 'U' + str(max(len(val.name) for val in self.values))
+            return 'U' + str(max(len(val.name) for val in self.enumerations))
 
         return np_dtypes.get(self.c_type, None)
 
@@ -153,8 +156,8 @@ class Segment:
 
         raw = frame[self.start, self.length]
 
-        if self.values:
-            retval = self.values.value[raw].name
+        if self.enumerations:
+            retval = self.enumerations.value[raw].name
 
             if kwargs.get('segtuple', False):
                 return retval, self

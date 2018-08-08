@@ -124,6 +124,17 @@ class Plural(Collection[T]):
             if attr in self._store[attrnm]:
                 del self._store[attrnm][attr]
 
+    def clean(self):
+        del self._store
+        self.__init__()
+
+    @property
+    def values(self):
+        return next(iter(self._store.values())).values()
+
+    def __iter__(self):
+        return iter(self.values)
+
     def __getitem__(self, attrnm: str):
         if attrnm not in self.attributes:
             raise KeyError('there is no mapping by {}'.format(attrnm))
@@ -140,9 +151,6 @@ class Plural(Collection[T]):
         '''
         return any(self._store[attrnm].get(getattr(item, attrnm), None) is item
                    for attrnm in self.attributes)
-
-    def __iter__(self):
-        return iter(next(iter(self._store.values())).values())
 
     def __repr__(self):
         # Slice it to remove dict_keys( and the last parenthesis
