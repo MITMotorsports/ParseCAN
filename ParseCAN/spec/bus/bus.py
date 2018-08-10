@@ -14,7 +14,7 @@ def _message_constr(key, message):
 
             raise
 
-    raise ValueError('malformed message representation {}: {}'.format(key, message))
+    raise ValueError(f'malformed message representation {key}: {message}')
 
 
 MessageUnique = plural.Unique[Message].make('MessageUnique', ['name', 'id'])
@@ -74,11 +74,13 @@ class BusFiltered(Bus):
                 elif isinstance(interest, str):
                     self.bus.messages.name[interest]
                 else:
-                    raise ValueError('in bus {}: in interest {}: must be of type int or str'.format(
-                        self.bus, interest))
+                    raise ValueError(f'in bus {self.bus}: '
+                                     f'in interest {interest}: '
+                                     'must be of type int or str')
             except KeyError:
-                raise ValueError('in bus {}: in interest {}: does not exist in the bus'.format(
-                    self.bus, interest))
+                raise KeyError(f'in bus {self.bus}: '
+                               f'in interest {interest}: '
+                               'does not exist in the bus')
 
         self._interests = interests
 

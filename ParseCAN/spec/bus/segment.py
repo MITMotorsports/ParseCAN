@@ -11,7 +11,7 @@ class Type:
         self.dtype = np.dtype(x)
 
         if x[0] not in ('>', '<') and self.dtype.byteorder != '|':
-            raise ValueError('endianness not specified: {}'.format(x))
+            raise TypeError(f'endianness not specified: {x}')
 
 
 @dataclass
@@ -32,7 +32,7 @@ class Slice:
         else:
             self._start = int(val)
             if self.start not in range(0, 65):
-                raise ValueError('start out of bounds: {}'.format(self.start))
+                raise ValueError(f'start out of bounds: {self.start}')
 
     @property
     def length(self):
@@ -42,9 +42,9 @@ class Slice:
     def length(self, val):
         self._length = int(val)
         if self.length < 1:
-            raise ValueError('length too small: {}'.format(self.length))
+            raise ValueError(f'length too small: {self.length}')
         if self.start + self.length > 64:
-            raise ValueError('length overflows: {}'.format(self.length))
+            raise ValueError(f'length overflows: {self.start} + {self.length}')
 
     @property
     def size(self):
@@ -126,12 +126,12 @@ class Segment:
         if isinstance(enumerations, (list, tuple)):
             # implicitly assign values to enumerations elements given as a list
             enumerations = {key: idx for idx, key in enumerate(enumerations)}
-            # Make the dictionary and fall through to the list creation
+            # make the dictionary and fall through to the list creation
 
         if isinstance(enumerations, dict):
             enumerations = [_enumeration_constr(k, v) for k, v in enumerations.items()]
 
-        # Enforce the max value
+        # enforce the max value
         for x in enumerations:
             x.max_value = self.slice.size - 1  # zero-based enumeration
             x.check()
@@ -147,8 +147,9 @@ class Segment:
         '''
         pipe = string.split('|')
         pipe = list(map(str.strip, pipe))
-        return cls(name, slice=pipe[0], type=pipe[1],
-                   unit='|'.join(pipe[2:]), **kwargs)
+        slice, type, *unit = pipe
+
+        return cls(name=name, slice=slice, type=type, unit=unit, **kwargs)
 
     @property
     def pint_unit(self):
@@ -166,7 +167,7 @@ class Segment:
         return np_dtypes.get(self.c_type, None)
 
     def unpack(self, frame, **kwargs):
-        assert isinstance(frame, data.Frame)
+        raise NotImplementedError('not updated yet')
 
         raw = frame[self.start, self.length]
 

@@ -21,7 +21,7 @@ class Enumeration:
 
     def check(self):
         if self.value < 0 or self.value > self.max_value:
-            raise ValueError('value {} out of range: {}'.format(self.name, self.value))
+            raise ValueError(f'value out of range: {self.value}')
 
     def __contains__(self, data):
         return self.value == data

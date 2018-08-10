@@ -10,7 +10,8 @@ def _segment_pre_add(self, item, metadata):
     intersections = metadata.segment_intersections(item)
 
     if intersections:
-        raise ValueError('segment {} intersects with {}'.format(item, intersections))
+        formatted = ', '.join(intersections)
+        raise ValueError(f'segment {item} intersects with {formatted}')
 
 
 def _segment_constr(key, segment):

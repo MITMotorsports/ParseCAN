@@ -102,10 +102,8 @@ class Plural(Collection[T]):
                 self.remove(removal)
 
                 if safe:
-                    raise ValueError(
-                        '{} and {} have equal \'{}\' attributes'
-                        .format(item, removal, remattr)
-                    )
+                    raise ValueError(f'{item} and {removal} have equal '
+                                     f'{remattr!r} attributes')
 
             self._store[attrnm][attr] = item
 
@@ -138,7 +136,7 @@ class Plural(Collection[T]):
 
     def __getitem__(self, attrnm: str):
         if attrnm not in self.attributes:
-            raise KeyError('there is no mapping by {}'.format(attrnm))
+            raise KeyError(f'there is no mapping by {attrnm}')
 
         return types.MappingProxyType(self._store[attrnm])
 
@@ -150,14 +148,17 @@ class Plural(Collection[T]):
         True if the exact instance of `item` is in `self`,
         False otherwise.
         '''
+        # Use an assignment expression and a condition on hasattr
+        # s.t. this also works in cases when item is None
         return any(self._store[attrnm].get(getattr(item, attrnm), None) is item
                    for attrnm in self.attributes)
 
     def __repr__(self):
-        # Slice it to remove dict_keys( and the last parenthesis
-        listview = repr(next(iter(self._store.values())).values())[12:-1]
+        name = type(self).__name__
+        commasep = ', '.join(map(repr, self.values))
+        args = f'[{commasep}]' if len(self) else ''
 
-        return type(self).__name__ + '(' + listview + ')'
+        return f'{name}({args})'
 
 
 class Unique(Plural, Collection[T]):

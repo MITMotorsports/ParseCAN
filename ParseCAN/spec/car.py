@@ -19,10 +19,14 @@ def _bus_constr(key, bus):
 
 def _board_constr(self, key, board):
     if board.get('publish', None):
-        board['publish'] = [BusFiltered(self.buses.name[busnm], board['publish'][busnm]) for busnm in board['publish']]
+        board['publish'] = [BusFiltered(self.buses.name[busnm],
+                                        board['publish'][busnm])
+                            for busnm in board['publish']]
 
     if board.get('subscribe', None):
-        board['subscribe'] = [BusFiltered(self.buses.name[busnm], board['subscribe'][busnm]) for busnm in board['subscribe']]
+        board['subscribe'] = [BusFiltered(self.buses.name[busnm],
+                                          board['subscribe'][busnm])
+                              for busnm in board['subscribe']]
 
     return Board(name=key, **board)
 
@@ -34,8 +38,8 @@ BoardUnique = plural.Unique[Board].make('BoardUnique', ['name'])
 def _board_pre_add(self, board, metadata):
     if board.architecture:
         if board.architecture not in metadata.architectures:
-            raise ValueError('unknown architecture in board {}: {}'
-                             .format(board.name, board.architecture))
+            raise ValueError(f'in board {board.name}: '
+                             f'unknown architecture: {board.architecture}')
 
 
 @dataclass
