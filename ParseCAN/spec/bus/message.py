@@ -46,7 +46,7 @@ def _segment_intersections(self: SegmentUnique, seg: Segment) -> List[Segment]:
         return head or tail
 
     # half isn't commutative so let's apply it twice instead of defining full
-    return [x for x in self if seg != x and (half(x, seg) or half(seg, x))]
+    return [x for x in self if seg is not x and (half(x, seg) or half(seg, x))]
 
 
 SegmentUnique.intersections = _segment_intersections
