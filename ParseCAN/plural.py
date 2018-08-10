@@ -1,7 +1,7 @@
+import types
 from dataclasses import dataclass
 from functools import wraps
 from inspect import isclass
-from types import MappingProxyType
 from typing import ClassVar, Set, Mapping, Callable, Collection, T
 
 
@@ -76,15 +76,13 @@ class Plural(Collection[T]):
 
     @classmethod
     def make(cls, name, attributes):
-        class new_class(cls):
-            @classmethod
-            def make(cls, name, attributes):
-                raise TypeError('deep inheritance not allowed')
+        @classmethod
+        def _disable_make(cls, name, attributes):
+            raise TypeError('deep inheritance not necessary')
 
-        new_class.attributes = set(attributes)
-        new_class.__name__ = name
+        nspace = dict(attributes=set(attributes), make=_disable_make)
 
-        return new_class
+        return types.new_class(name, (cls,), {}, lambda ns: ns.update(nspace))
 
     def add(self, item: T, safe=False):
         '''
@@ -142,7 +140,7 @@ class Plural(Collection[T]):
         if attrnm not in self.attributes:
             raise KeyError('there is no mapping by {}'.format(attrnm))
 
-        return MappingProxyType(self._store[attrnm])
+        return types.MappingProxyType(self._store[attrnm])
 
     def __len__(self):
         return len(next(iter(self._store.values())))
@@ -173,11 +171,13 @@ if __name__ == '__main__':
         name: str
         value: int
 
-    ManyEnum = Unique[Enumeration].make('name', 'value')
+    ManyEnum = Unique[Enumeration].make('ManyEnum', ('name', 'value'))
 
     a = Enumeration('w', 2)
     b = Enumeration('1', 4)
     c = Enumeration('q', 4)
+
+    print(ManyEnum.attributes)
 
     container = ManyEnum([a])
 
@@ -198,4 +198,8 @@ if __name__ == '__main__':
     ruleset.apply(container, metadata=34)
 
     container.add(b)
-    container.add(c)
+
+    try:
+        container.add(c)
+    except ValueError as e:
+        print(e)
