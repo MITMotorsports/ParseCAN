@@ -70,15 +70,3 @@ class Car:
             prem = yaml.safe_load(f)
 
         return cls(**prem)
-
-    def unpack(self, frame, **kwargs):
-        ret = {}
-        # TODO: Make this a comprehension.
-        # TODO: Make busFiltered interests receptive to message type objects.
-        for bus in self.buses:
-            x = bus.messages.id.get(frame.id, None)
-
-            if x:
-                ret[bus.name] = {x.name: x.unpack(frame, **kwargs)}
-
-        return ret
