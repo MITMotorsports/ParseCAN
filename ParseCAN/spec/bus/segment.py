@@ -46,6 +46,11 @@ class Slice:
         if self.start + self.length > 64:
             raise ValueError('length overflows: {}'.format(self.length))
 
+    @property
+    def size(self):
+        '= 2 ** length = the number of combinations this slice can represent'
+        return 1 << self.length
+
     @classmethod
     def from_general(cls, val):
         return {
@@ -74,18 +79,27 @@ class Slice:
         return Slice(start=self.start, length=self.length)
 
 
-def _enumeration_constr(key, enumeration):
-        if isinstance(enumeration, int):
-            try:
-                return Enumeration(key, enumeration)
-            except Exception as e:
-                e.args = ('in enumeration {}: {}'.format(key, e),)
+def _enumeration_pre_add(self, item, metadata):
+    # This was also ensured through Enumeration.max_value and the
+    # value uniqueness predicate, but this is a clearer error message.
+    slice = metadata.slice
+    max_len = slice.size
+    if len(self) + 1 > max_len:
+        raise ValueError(f'too many enumerations for segment of length {slice.length}')
 
-                raise
-        elif isinstance(enumeration, Enumeration):
-            return enumeration
-        else:
-            raise TypeError('enumeration given is not int or Enumeration')
+
+def _enumeration_constr(key, enumeration):
+    if isinstance(enumeration, int):
+        try:
+            return Enumeration(key, enumeration)
+        except Exception as e:
+            e.args = ('in enumeration {}: {}'.format(key, e),)
+
+            raise
+    elif isinstance(enumeration, Enumeration):
+        return enumeration
+    else:
+        raise TypeError('enumeration given is not int or Enumeration')
 
 
 EnumerationUnique = plural.Unique[Enumeration].make('EnumerationUnique', ['name', 'value'])
@@ -93,21 +107,21 @@ EnumerationUnique = plural.Unique[Enumeration].make('EnumerationUnique', ['name'
 
 @dataclass
 class Segment:
-    '''
-    A specification for a segment of a larger data string.
-    '''
-
     name: str
     slice: Slice
     type: Type = ''
     unit: str = ''
     enumerations: EnumerationUnique = EnumerationUnique()
 
+    enumeration_ruleset = plural.RuleSet(dict(add=dict(pre=_enumeration_pre_add)))
+
     def __post_init__(self):
         self.slice = Slice.from_general(self.slice)
 
         enumerations = self.enumerations
         self.enumerations = EnumerationUnique()
+
+        self.enumeration_ruleset.apply(self.enumerations, metadata=self)
 
         if isinstance(enumerations, (list, tuple)):
             # implicitly assign values to enumerations elements given as a list
@@ -119,7 +133,7 @@ class Segment:
 
         # Enforce the max value
         for x in enumerations:
-            x.max_value = self.slice.length
+            x.max_value = self.slice.size - 1  # zero-based enumeration
             x.check()
 
         self.enumerations.extend(enumerations)
