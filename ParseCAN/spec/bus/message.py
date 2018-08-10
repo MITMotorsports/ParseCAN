@@ -29,7 +29,7 @@ def _segment_constr(key, segment):
 SegmentUnique = plural.Unique[Segment].make('SegmentUnique', ['name'])
 
 
-def _segment_intersections(self, seg: Segment) -> List[Segment]:
+def _segment_intersections(self: SegmentUnique, seg: Segment) -> List[Segment]:
     '''
     a list of the segments in self with which `seg` intersects.
 
