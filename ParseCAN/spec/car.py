@@ -1,5 +1,5 @@
 import yaml
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Set
 
@@ -31,8 +31,8 @@ def _board_constr(self, key, board):
     return Board(name=key, **board)
 
 
-BusUnique = plural.Unique[Bus].make('BusUnique', ['name'])
-BoardUnique = plural.Unique[Board].make('BoardUnique', ['name'])
+BusUnique = plural.Unique[Bus].make('BusUnique', ['name'], main='name')
+BoardUnique = plural.Unique[Board].make('BoardUnique', ['name'], main='name')
 
 
 def _board_pre_add(self, board, metadata):
@@ -47,8 +47,8 @@ class Car:
     name: str
     architectures: Set[str]
     units: List
-    buses: BusUnique = BusUnique()
-    boards: BoardUnique = BoardUnique()
+    buses: BusUnique = field(default_factory=BusUnique)
+    boards: BoardUnique = field(default_factory=BusUnique)
 
     board_ruleset = plural.RuleSet(dict(add=dict(pre=_board_pre_add)))
 
@@ -68,9 +68,5 @@ class Car:
         self.boards.extend(boards)
 
     @classmethod
-    def from_file(cls, filepath):
-        filepath = Path(filepath)
-        with filepath.open('r') as f:
-            prem = yaml.safe_load(f)
-
-        return cls(**prem)
+    def from_yaml(cls, stream):
+        return cls(**yaml.safe_load(stream))

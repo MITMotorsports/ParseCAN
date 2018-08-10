@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from math import ceil
 from typing import Any, List
 
@@ -26,7 +26,7 @@ def _segment_constr(key, segment):
         raise
 
 
-SegmentUnique = plural.Unique[Segment].make('SegmentUnique', ['name'])
+SegmentUnique = plural.Unique[Segment].make('SegmentUnique', ['name'], main='name')
 
 
 def _segment_intersections(self: SegmentUnique, seg: Segment) -> List[Segment]:
@@ -64,7 +64,7 @@ class Message(meta.Message):
     name: str
     id: int
     period: Any = None
-    segments: SegmentUnique = SegmentUnique()
+    segments: SegmentUnique = field(default_factory=SegmentUnique)
 
     segment_ruleset = _segment_ruleset
 

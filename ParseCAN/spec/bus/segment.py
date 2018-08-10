@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Union, Tuple
 import numpy as np
 
@@ -90,13 +90,18 @@ class Slice:
         return slice(self.start, self.start + self.length)
 
 
-def _enumeration_pre_add(self, item, metadata):
+def _enumeration_pre_add(self, item):
     # This was also ensured through Enumeration.max_value and the
     # value uniqueness predicate, but this is a clearer error message.
-    slice = metadata.slice
+
+    slice = self.segment.slice
     max_len = slice.size
     if len(self) + 1 > max_len:
         raise ValueError(f'too many enumerations for segment of length {slice.length}')
+
+    # enforce the max value
+    item.max_value = slice.size - 1  # zero-based enumeration
+    item.check()
 
 
 def _enumeration_constr(key, enumeration):
@@ -113,7 +118,12 @@ def _enumeration_constr(key, enumeration):
         raise TypeError('enumeration given is not int or Enumeration')
 
 
-EnumerationUnique = plural.Unique[Enumeration].make('EnumerationUnique', ['name', 'value'])
+EnumerationUnique = plural.Unique[Enumeration].make('EnumerationUnique',
+                                                    ['name', 'value'],
+                                                    main='name')
+
+_enumeration_ruleset = plural.RuleSet(dict(add=dict(pre=_enumeration_pre_add)))
+_enumeration_ruleset.apply(EnumerationUnique)
 
 
 @dataclass
@@ -122,17 +132,14 @@ class Segment:
     slice: Slice
     type: Type = ''
     unit: str = ''
-    enumerations: EnumerationUnique = EnumerationUnique()
-
-    enumeration_ruleset = plural.RuleSet(dict(add=dict(pre=_enumeration_pre_add)))
+    enumerations: EnumerationUnique = tuple()  # = field(default_factory=EnumerationUnique)
 
     def __post_init__(self):
         self.slice = Slice.from_general(self.slice)
 
         enumerations = self.enumerations
         self.enumerations = EnumerationUnique()
-
-        self.enumeration_ruleset.apply(self.enumerations, metadata=self)
+        self.enumerations.segment = self
 
         if isinstance(enumerations, (list, tuple)):
             # implicitly assign values to enumerations elements given as a list
@@ -141,11 +148,6 @@ class Segment:
 
         if isinstance(enumerations, dict):
             enumerations = [_enumeration_constr(k, v) for k, v in enumerations.items()]
-
-        # enforce the max value
-        for x in enumerations:
-            x.max_value = self.slice.size - 1  # zero-based enumeration
-            x.check()
 
         self.enumerations.extend(enumerations)
 
@@ -157,8 +159,7 @@ class Segment:
         `LEN | RAWTYPE | TYPE | *SCALE | -OFFSET | log10 | exp2 | *UNIT`
         '''
         pipe = string.split('|')
-        pipe = list(map(str.strip, pipe))
-        slice, type, *unit = pipe
+        slice, type, *unit = map(str.strip, pipe)
 
         return cls(name=name, slice=slice, type=type, unit=unit, **kwargs)
 

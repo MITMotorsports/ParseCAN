@@ -1,8 +1,10 @@
+import copy
 import types
-from dataclasses import dataclass
+import dataclasses
+from dataclasses import dataclass, field
 from functools import wraps
 from inspect import isclass
-from typing import ClassVar, Set, Mapping, Callable, Collection, T
+from typing import ClassVar, Set, Mapping, Callable, Dict, T
 
 
 @dataclass
@@ -62,8 +64,9 @@ receiver.{function} = new
         return receiver
 
 
-class Plural(Collection[T]):
+class Plural(Dict[str, T]):
     attributes: ClassVar[Set[str]]
+    main: str = field(default=None, repr=False, hash=False)
 
     def __init__(self, init=None):
         if not hasattr(self, 'attributes'):
@@ -75,12 +78,17 @@ class Plural(Collection[T]):
             self.extend(init)
 
     @classmethod
-    def make(cls, name, attributes):
+    def make(cls, name, attributes, main=None):
         @classmethod
-        def _disable_make(cls, name, attributes):
+        def _disable_make(cls, name, attributes, main=None):
             raise TypeError('deep inheritance not necessary')
 
-        nspace = dict(attributes=set(attributes), make=_disable_make)
+        attributes = set(attributes)
+
+        if main is not None and main not in attributes:
+            raise ValueError('main argument is not in the attributes set')
+
+        nspace = dict(attributes=attributes, main=main, make=_disable_make)
 
         return types.new_class(name, (cls,), {}, lambda ns: ns.update(nspace))
 
@@ -124,19 +132,37 @@ class Plural(Collection[T]):
         del self._store
         self.__init__()
 
-    @property
-    def values(self):
-        return next(iter(self._store.values())).values()
+    def _check_key(self, key):
+        if key is None and not self.main:
+            raise KeyError('key argument nor self.main are defined')
+
+    def keys(self, key=None):
+        self._check_key(key)
+
+        key = key or self.main
+        return self._store[key].keys()
+
+    def values(self, key=None):
+        self._check_key(key)
+
+        key = key or self.main
+        return self._store[key].values()
+
+    def items(self, key=None):
+        self._check_key(key)
+
+        key = key or self.main
+        return self._store[key].items()
 
     def __bool__(self):
-        return bool(self.values)
+        return bool(self.values())
 
     def __iter__(self):
-        return iter(self.values)
+        return iter(self.values())
 
     def __getitem__(self, attrnm: str):
         if attrnm not in self.attributes:
-            raise KeyError(f'there is no mapping by {attrnm}')
+            raise KeyError(f'there is no mapping key {attrnm}')
 
         return types.MappingProxyType(self._store[attrnm])
 
@@ -155,15 +181,39 @@ class Plural(Collection[T]):
 
     def __repr__(self):
         name = type(self).__name__
-        commasep = ', '.join(map(repr, self.values))
+        commasep = ', '.join(map(repr, self.values()))
         args = f'[{commasep}]' if len(self) else ''
 
         return f'{name}({args})'
 
 
-class Unique(Plural, Collection[T]):
+class Unique(Plural[T]):
     def add(self, *args, **kwargs):
         super().add(*args, safe=True, **kwargs)
+
+    def values(self):
+        return next(iter(self._store.values())).values()
+
+
+def asdict(obj, *, dict_factory=dict):
+    if isinstance(obj, Plural):
+        return dict_factory((asdict(k, dict_factory=dict_factory),
+                             asdict(v, dict_factory=dict_factory))
+                            for k, v in obj.items())
+    elif dataclasses._is_dataclass_instance(obj):
+        result = []
+        for f in dataclasses.fields(obj):
+            value = asdict(getattr(obj, f.name), dict_factory=dict_factory)
+            result.append((f.name, value))
+        return dict_factory(result)
+    elif isinstance(obj, (list, tuple)):
+        return type(obj)(asdict(v, dict_factory=dict_factory) for v in obj)
+    elif isinstance(obj, dict):
+        return type(obj)((asdict(k, dict_factory=dict_factory),
+                          asdict(v, dict_factory=dict_factory))
+                         for k, v in obj.items())
+    else:
+        return copy.deepcopy(obj)
 
 
 if __name__ == '__main__':
@@ -172,7 +222,7 @@ if __name__ == '__main__':
         name: str
         value: int
 
-    ManyEnum = Unique[Enumeration].make('ManyEnum', ('name', 'value'))
+    ManyEnum = Unique[Enumeration].make('ManyEnum', ('name', 'value'), 'name')
 
     a = Enumeration('w', 2)
     b = Enumeration('1', 4)
@@ -203,4 +253,10 @@ if __name__ == '__main__':
     try:
         container.add(c)
     except ValueError as e:
-        print(e)
+        print('Error is:', e)
+
+    print('\n\n')
+    for k, v in container.items():
+        print(k, v)
+
+    print(len(container))

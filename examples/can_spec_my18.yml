@@ -18,11 +18,29 @@ buses:
     baudrate: 500000
     extended: false
     messages:
+    # frames:
+    #   TestEnum:
+    #     id: 0x069
+    #     multiplex:
+    #       slice: 0 + 1
+    #       messages:
+    #         first:
+    #           period: 10ms
+    #           segments:
+    #             asd:
+    #               slice: 1 + 8
+    #               enumerations:
+    #                 - one
+    #                 - two
+    #                 - three
+    #                 - four
+    #                 - five
       TestEnum:
         id: 0x069
         segments:
           asd:
             slice: 0 + 8
+            # slice: 0 + 2
             enumerations:
               - one
               - two

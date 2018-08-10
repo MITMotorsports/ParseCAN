@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Sequence, Union
 
 from ... import spec, plural
@@ -17,7 +17,9 @@ def _message_constr(key, message):
     raise ValueError(f'malformed message representation {key}: {message}')
 
 
-MessageUnique = plural.Unique[Message].make('MessageUnique', ['name', 'id'])
+MessageUnique = plural.Unique[Message].make('MessageUnique',
+                                            ['name', 'id'],
+                                            main='name')
 
 
 @dataclass
@@ -31,7 +33,7 @@ class Bus:
     name: str
     baudrate: int
     extended: bool = False
-    messages: MessageUnique = MessageUnique()
+    messages: MessageUnique = field(default_factory=MessageUnique)
 
     def __post_init__(self):
         messages = self.messages
