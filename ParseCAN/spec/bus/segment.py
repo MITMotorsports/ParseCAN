@@ -51,6 +51,11 @@ class Slice:
         '= 2 ** length = the number of combinations this slice can represent'
         return 1 << self.length
 
+    @property
+    def stop(self):
+        'the stop value of the slice (inclusive)'
+        return self.start + self.length - 1
+
     @classmethod
     def from_general(cls, val):
         return {
@@ -77,6 +82,12 @@ class Slice:
 
     def copy(self):
         return Slice(start=self.start, length=self.length)
+
+    def __iter__(self):
+        return iter((self.start, self.length))
+
+    def __slice__(self):
+        return slice(self.start, self.start + self.length)
 
 
 def _enumeration_pre_add(self, item, metadata):
