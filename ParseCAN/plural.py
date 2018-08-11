@@ -117,27 +117,28 @@ class Plural(Mapping[str, T]):
         del self._store
         self.__init__()
 
-    def _check_key(self, key):
-        if key is None and not self.main:
-            raise KeyError('key argument nor self.main are defined')
+    def _verify_attr(self, attr):
+        if attr not in self.attributes:
+            raise KeyError(f'{attr} not in declared attributes')
 
     def keys(self, key=None):
-        self._check_key(key)
-
         key = key or self.main
+        self._verify_attr(key)
         return self._store[key].keys()
 
     def values(self, key=None):
-        self._check_key(key)
-
         key = key or self.main
+        self._verify_attr(key)
         return self._store[key].values()
 
     def items(self, key=None):
-        self._check_key(key)
-
         key = key or self.main
+        self._verify_attr(key)
         return self._store[key].items()
+
+    def __getitem__(self, attr: str):
+        self._verify_attr(attr)
+        return types.MappingProxyType(self._store[attr])
 
     def __bool__(self):
         return bool(self.values())
@@ -145,24 +146,14 @@ class Plural(Mapping[str, T]):
     def __iter__(self):
         return iter(self.values())
 
-    def __getitem__(self, attrnm: str):
-        if attrnm not in self.attributes:
-            raise KeyError(f'there is no mapping key {attrnm}')
-
-        return types.MappingProxyType(self._store[attrnm])
-
     def __len__(self):
         return len(next(iter(self._store.values())))
 
     def __contains__(self, item):
-        '''
-        True if the exact instance of `item` is in `self`,
-        False otherwise.
-        '''
         # Use an assignment expression and a condition on hasattr
         # s.t. this also works in cases when item is None
-        return any(self._store[attrnm].get(getattr(item, attrnm), None) is item
-                   for attrnm in self.attributes)
+        return any(self._store[attr].get(getattr(item, attr), None) == item
+                   for attr in self.attributes)
 
     def __repr__(self):
         name = type(self).__name__
@@ -189,7 +180,7 @@ class Unique(Plural[T]):
         return None
 
     def values(self):
-        return next(iter(self._store.values())).values()
+        return next(iter(self._store.values()), {}).values()
 
 
 def asdict(obj, *, dict_factory=dict):
