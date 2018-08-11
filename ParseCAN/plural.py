@@ -4,7 +4,7 @@ import dataclasses
 from dataclasses import dataclass, field
 from functools import wraps
 from inspect import isclass
-from typing import ClassVar, Set, Mapping, Callable, Dict, T
+from typing import ClassVar, Set, Mapping, Callable, Iterable, Dict, T
 
 
 @dataclass
@@ -64,7 +64,7 @@ receiver.{function} = new
         return receiver
 
 
-class Plural(Dict[str, T]):
+class Plural(Mapping[str, T]):
     attributes: ClassVar[Set[str]]
     main: str = field(default=None, repr=False, hash=False)
 
@@ -72,6 +72,7 @@ class Plural(Dict[str, T]):
         if not hasattr(self, 'attributes'):
             raise AttributeError('attributes must be specified through make')
 
+        self._store: Dict[Dict[str, T]]
         self._store = {attrnm: {} for attrnm in self.attributes}
 
         if init:
@@ -92,32 +93,16 @@ class Plural(Dict[str, T]):
 
         return types.new_class(name, (cls,), {}, lambda ns: ns.update(nspace))
 
-    def add(self, item: T, safe=False):
-        '''
-        Add `item` to the internal representation.
-
-        Will raise ValueError if `safe` and there exists an attribute conflict.
-        '''
-        removal = None
-        remattr = None
+    def add(self, item: T):
         for attrnm in self.attributes:
             attr = getattr(item, attrnm)
 
             if attr in self._store[attrnm]:
-                removal = self._store[attrnm][attr]
-                remattr = attrnm
-
-                self.remove(removal)
-
-                if safe:
-                    raise ValueError(f'{item} and {removal} have equal '
-                                     f'{remattr!r} attributes')
+                self.remove(self._store[attrnm][attr])
 
             self._store[attrnm][attr] = item
 
-        return None
-
-    def extend(self, iterable, **kwargs):
+    def extend(self, iterable: Iterable[T], **kwargs):
         for val in iterable:
             self.add(val, **kwargs)
 
@@ -188,8 +173,20 @@ class Plural(Dict[str, T]):
 
 
 class Unique(Plural[T]):
-    def add(self, *args, **kwargs):
-        super().add(*args, safe=True, **kwargs)
+    def add(self, item: T):
+        for attrnm in self.attributes:
+            attr = getattr(item, attrnm)
+
+            if attr in self._store[attrnm]:
+                conflict = self._store[attrnm][attr]
+                raise ValueError(f'{item} and {conflict} have equal '
+                                 f'{attr!r} attributes')
+
+        for attrnm in self.attributes:
+            attr = getattr(item, attrnm)
+            self._store[attrnm][attr] = item
+
+        return None
 
     def values(self):
         return next(iter(self._store.values())).values()
@@ -260,3 +257,5 @@ if __name__ == '__main__':
         print(k, v)
 
     print(len(container))
+
+    print(asdict(container))
