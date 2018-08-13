@@ -1,13 +1,14 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 
 
 @dataclass
 class Enumeration:
     name: str
     value: int
-    max_value: int = field(repr=False, compare=False, hash=False, default=2 ** 64)
+    max_value: InitVar[int] = field(repr=False, compare=False, hash=False, default=2 ** 64)
 
-    def __post_init__(self):
+    def __post_init__(self, max_value):
+        self.max_value = max_value
         self.value = self.value
 
     @property

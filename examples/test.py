@@ -11,7 +11,27 @@ car = pcn.spec.Car.from_yaml(open('examples/can_spec_my18.yml', 'r'))
 print(car)
 print('OK')
 
-d = pcn.plural.asdict(car, dict_factory=OrderedDict)
+oldD = pcn.plural.asdict(car, dict_factory=OrderedDict)
+
+
+def compact_dict(items, dict_factory=OrderedDict):
+    ret = dict_factory()
+
+    for k, v in items:
+        if isinstance(v, Slice):
+            v = str(v)
+        if isinstance(v, Segment):
+            print('seg', v)
+            unit = ' | '.join(v.unit)
+            pipe = [str(v.slice), str(v.type), unit]
+            v = ' | '.join(pipe)
+
+        ret[k] = v
+
+    return ret
+
+
+d = pcn.plural.asdict(car, dict_factory=compact_dict)
 
 
 def clean(d):
@@ -42,6 +62,6 @@ def dump(d, stream):
     return yaml.dump(d, stream, Dumper=SafeDumper, default_flow_style=False)
 
 
-clean(d['buses'])
-clean(d['boards'])
-dump(d, open('dump.yml', 'w'))
+# clean(d['buses'])
+# clean(d['boards'])
+dump(d, open('examples/dump.yml', 'w'))
