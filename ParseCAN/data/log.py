@@ -3,6 +3,9 @@ from pathlib import Path
 
 class Log:
     def unpack(self, spec, **kwargs):
+        return (spec.unpack(msg, **kwargs) for msg in self)
+
+    def unpack_pair_raw(self, spec, **kwargs):
         return ((msg, spec.unpack(msg, **kwargs)) for msg in self)
 
 

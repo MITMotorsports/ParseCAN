@@ -30,9 +30,6 @@ class Frame:
 
         return evil_macros.EXTRACT(as_int, position, length)
 
-    def __iter__(self):
-        return (getattr(self, x) for x in self.attributes)
-
     def unpack(self, spec, **kwargs):
         return spec.unpack(self, **kwargs)
 
