@@ -2,7 +2,9 @@ from dataclasses import dataclass, field
 from typing import Sequence, Union
 
 from ... import spec, plural
-from . import Message
+from . import Frame
+
+Message = Frame
 
 
 def _message_constr(key, message):

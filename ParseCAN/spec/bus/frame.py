@@ -56,7 +56,7 @@ _segment_ruleset.apply(SegmentUnique)
 
 
 @dataclass
-class Message(meta.Message):
+class Frame:
     '''
     A specification describing an arbitrary CAN Message's format and contents.
     '''
