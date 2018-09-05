@@ -42,7 +42,7 @@ class Frame(meta.message):
     __str__ = helper.csv_by_attrs(attributes, mapdict={
         'time': int,
         'can_id': hex,
-        'data': hex
+        'data': bytes
     })
 
     def __iter__(self):

@@ -77,7 +77,6 @@ class SegmentType:
         assert isinstance(frame, data.Frame)
 
         raw = frame[self.position, self.length]
-
         if self.values:
             retval = self.values.value[raw].name
 

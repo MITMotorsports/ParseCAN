@@ -45,15 +45,11 @@ class BusType:
         unpacks a data.Frame instance based on this spec.can.
         '''
         assert isinstance(frame, data.Frame)
+        msg = self.messages.can_id.get(frame.can_id, None)
+        if msg:
+            return {msg.name: msg.unpack(frame, **kwargs)}
 
-        ret = {}
-        for msg in self.messages:
-            potential = msg.unpack(frame, **kwargs)
-
-            if potential:
-                ret[msg.name] = potential
-
-        return ret
+        return {}
 
     def __str__(self):
         return self.name

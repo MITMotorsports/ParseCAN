@@ -87,6 +87,7 @@ class CarSpec:
         '''
         unpacks a data.Frame instance based on this spec.can.
         '''
+        raise NotImplementedError('Do not unpack on car')
         assert isinstance(frame, data.Frame)
 
         # Inefficient way of doing this given current featureset.

@@ -11,7 +11,7 @@ from ParseCAN import spec, data
 
 car = spec.car('../MY18/can_spec_my18.yml')
 
-serial_port = serial.Serial('/dev/ttyUSB0', 115200)
+serial_port = serial.Serial('COM8', 115200)
 xbee = XBee(serial_port)
 
 
