@@ -1,9 +1,14 @@
 from dataclasses import dataclass, field
-from math import ceil
 from typing import Any, List
 
-from ... import data, meta, plural
+from ... import plural, meta
+from ...helper import Slice
 from . import Segment
+
+
+@dataclass
+class Frame:
+    id: int
 
 
 def _segment_pre_add(self, item):
@@ -55,12 +60,7 @@ _segment_ruleset = plural.RuleSet(dict(add=dict(pre=_segment_pre_add)))
 _segment_ruleset.apply(SegmentUnique)
 
 
-@dataclass
-class Frame:
-    '''
-    A specification describing an arbitrary CAN Message's format and contents.
-    '''
-
+class SingleFrame(Frame):
     name: str
     id: int
     period: Any = None
@@ -77,18 +77,31 @@ class Frame:
 
         self.segments.extend(segments)
 
-    def __len__(self):
-        return ceil(max(seg.slice.start + seg.slice.length for seg in self.segments) / 8)
-
-    def pack(self, by='name', **kwargs):
-        bitstring = 0
-        for segnm in kwargs:
-            seg = self.segments[by][segnm]
-            bitstring = data.evil_macros.INSERT(kwargs[segnm], bitstring,
-                                                seg.slice.start, seg.slice.length)
-
-        byteobj = bitstring.to_bytes(len(self), 'big')
-        return data.Frame(self.id, byteobj)
-
     def unpack(self, frame, **kwargs):
         return {seg.name: seg.unpack(frame, **kwargs) for seg in self.segments}
+
+
+SingleFrameUnique = plural.Unique[SingleFrame].make('SingleFrameUnique',
+                                                    ['name', 'id'],
+                                                    main='name')
+
+
+@dataclass
+class MultiplexedFrame(Frame):
+    name: str
+    id: int
+    slice: Slice  # TODO: maybe default to Slice(None, 0). interesting.
+    frames: SingleFrameUnique = field(default_factory=SingleFrameUnique)
+
+    def __post_init__(self):
+        pass
+
+    # def pack(self, by='name', **kwargs):
+    #     bitstring = 0
+    #     for segnm in kwargs:
+    #         seg = self.segments[by][segnm]
+    #         bitstring = data.evil_macros.INSERT(kwargs[segnm], bitstring,
+    #                                             seg.slice.start, seg.slice.length)
+    #
+    #     byteobj = bitstring.to_bytes(len(self), 'big')
+    #     return data.Frame(self.id, byteobj)

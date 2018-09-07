@@ -1,26 +1,81 @@
-def dict_key_populated(D: dict, key, value) -> bool:
-    '''
-    Returns True if `D[key]` is populated by a value that is not `value`,
-    False otherwise.
-    '''
-    return key in D and D[key] != value
+from dataclasses import dataclass
+from typing import Union
 
 
-def tuples_to_dict_list(L):
-    '''
-    Converts an iterable of tuples of key, value pairs into a dictionary
-    with each key mapping to a list values.
+@dataclass
+class Slice:
+    _START_T = Union[int, type(None)]
 
-    tuples_to_dict_list([('A', 1), ('A', 1), ('A', 3), ('B', 1)]) == {'A': [1, 1, 3], 'B': [1]}
-    '''
-    D = {}
-    for k, v in L:
-        if k in D:
-            D[k].append(v)
+    start: _START_T
+    length: int
+
+    @property
+    def start(self):
+        return self._start
+
+    @start.setter
+    def start(self, val=None):
+        if val is None:
+            raise NotImplementedError('unable to handle implicit start yet')
         else:
-            D[k] = [v]
+            self._start = int(val)
+            if self.start not in range(0, 65):
+                raise ValueError(f'start out of bounds: {self.start}')
 
-    return D
+    @property
+    def length(self):
+        return self._length
+
+    @length.setter
+    def length(self, val):
+        self._length = int(val)
+        if self.length < 1:
+            raise ValueError(f'length too small: {self.length}')
+        if self.start + self.length > 64:
+            raise ValueError(f'length overflows: {self.start} + {self.length}')
+
+    @property
+    def size(self):
+        '= 2 ** length = the number of combinations this slice can represent'
+        return 1 << self.length
+
+    @property
+    def stop(self):
+        'the stop value of the slice (inclusive)'
+        return self.start + self.length - 1
+
+    @classmethod
+    def from_general(cls, val):
+        return {
+            cls: lambda val: val.copy(),
+            slice: cls.from_slice,
+            str: cls.from_string,
+            tuple: cls.from_tuple,
+        }[type(val)](val)
+
+    @classmethod
+    def from_tuple(cls, val: Tuple[_START_T, int]):
+        return cls(*val)
+
+    @classmethod
+    def from_slice(cls, val: slice):
+        return cls(val.start, val.stop - val.start)
+
+    @classmethod
+    def from_string(cls, val: str):
+        if '+' in val:
+            return cls(*val.split('+'))
+        else:
+            return cls(length=int(val))
+
+    def copy(self):
+        return Slice(start=self.start, length=self.length)
+
+    def __iter__(self):
+        return iter((self.start, self.length))
+
+    def __slice__(self):
+        return slice(self.start, self.start + self.length)
 
 
 def attr_extract(obj, attrs, mapdict=None):

@@ -25,6 +25,7 @@ buses:
     #       slice: 0 + 1
     #       messages:
     #         first:
+    #           id: 0
     #           period: 10ms
     #           segments:
     #             asd:

@@ -4,60 +4,39 @@ from typing import Sequence, Union
 from ... import spec, plural
 from . import Frame
 
-Message = Frame
 
-
-def _message_constr(key, message):
-    if isinstance(message, dict):
+def _frame_constr(key, frame):
+    if isinstance(frame, dict):
         try:
-            return Message(name=key, **message)
+            return Frame(name=key, **frame)
         except Exception as e:
-            e.args = ('in message {}: {}'.format(key, e),)
+            e.args = ('in frame {}: {}'.format(key, e),)
 
             raise
 
-    raise ValueError(f'malformed message representation {key}: {message}')
+    raise ValueError(f'malformed frame representation {key}: {frame}')
 
 
-MessageUnique = plural.Unique[Message].make('MessageUnique',
-                                            ['name', 'id'],
-                                            main='name')
+FrameUnique = plural.Unique[Frame].make('FrameUnique',
+                                        ['name', 'id'],
+                                        main='name')
 
 
 @dataclass
 class Bus:
-    '''
-    A (CAN) bus specification.
-    Describes the set of messages that flow through a CAN bus.
-    Can unpack CAN Messages that were sent based on this spec.bus.
-    '''
-
     name: str
     baudrate: int
     extended: bool = False
-    messages: MessageUnique = field(default_factory=MessageUnique)
+    frames: FrameUnique = field(default_factory=FrameUnique)
 
     def __post_init__(self):
-        messages = self.messages
-        self.messages = MessageUnique()
+        frames = self.frames
+        self.frames = FrameUnique()
 
-        if isinstance(messages, dict):
-            messages = [_message_constr(k, v) for k, v in messages.items()]
+        if isinstance(frames, dict):
+            frames = [_frame_constr(k, v) for k, v in frames.items()]
 
-        self.messages.extend(messages)
-
-    def unpack(self, frame, **kwargs):
-        ret = {}
-        for msg in self.messages:
-            potential = msg.unpack(frame, **kwargs)
-
-            if potential:
-                ret[msg.name] = potential
-
-        return ret
-
-    def __str__(self):
-        return self.name
+        self.frames.extend(frames)
 
 
 class BusFiltered(Bus):
@@ -74,9 +53,9 @@ class BusFiltered(Bus):
         for interest in interests:
             try:
                 if isinstance(interest, int):
-                    self.bus.messages.id[interest]
+                    self.bus.frames.id[interest]
                 elif isinstance(interest, str):
-                    self.bus.messages.name[interest]
+                    self.bus.frames.name[interest]
                 else:
                     raise ValueError(f'in bus {self.bus}: '
                                      f'in interest {interest}: '
@@ -89,12 +68,12 @@ class BusFiltered(Bus):
         self._interests = interests
 
     def interested(self, msg):
-        assert isinstance(msg, spec.message)
+        assert isinstance(msg, spec.frame)
         return msg.name in self.interests or msg.id in self.interests
 
     @property
-    def messages(self):
-        return filter(self.interested, self.bus.messages)
+    def frames(self):
+        return filter(self.interested, self.bus.frames)
 
     def __getattr__(self, attr):
         return getattr(self.bus, attr)
