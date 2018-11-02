@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, List
 
-from ... import plural, meta
+from ... import plural
 from ...helper import Slice
 from . import Segment
 
@@ -60,6 +60,7 @@ _segment_ruleset = plural.RuleSet(dict(add=dict(pre=_segment_pre_add)))
 _segment_ruleset.apply(SegmentUnique)
 
 
+@dataclass
 class SingleFrame(Frame):
     name: str
     id: int

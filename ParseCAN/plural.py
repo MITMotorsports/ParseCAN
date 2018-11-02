@@ -4,7 +4,7 @@ import dataclasses
 from dataclasses import dataclass, field
 from functools import wraps
 from inspect import isclass
-from typing import ClassVar, Set, Mapping, Callable, Iterable, Dict, T, T_co
+from typing import ClassVar, Set, Mapping, Callable, Iterable, Dict, T, Any
 
 
 @dataclass
@@ -64,7 +64,7 @@ receiver.{function} = new
         return receiver
 
 
-class Plural(Mapping[T_co, T]):
+class Plural(Mapping[Any, T]):
     attributes: ClassVar[Set[str]]
     main: str = field(default=None, repr=False, hash=False)
 
@@ -72,7 +72,7 @@ class Plural(Mapping[T_co, T]):
         if not hasattr(self, 'attributes'):
             raise AttributeError('attributes must be specified through make')
 
-        self._store: Dict[str, Dict[T_co, T]]
+        self._store: Dict[str, Dict[Any, T]]
         self._store = {attrnm: {} for attrnm in self.attributes}
 
         if init:

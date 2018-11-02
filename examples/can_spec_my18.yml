@@ -17,13 +17,13 @@ buses:
   can0:
     baudrate: 500000
     extended: false
-    messages:
+    frames:
     # frames:
     #   TestEnum:
     #     id: 0x069
     #     multiplex:
     #       slice: 0 + 1
-    #       messages:
+    #       frames:
     #         first:
     #           id: 0
     #           period: 10ms

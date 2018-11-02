@@ -2,13 +2,13 @@ from dataclasses import dataclass, field
 from typing import Sequence, Union
 
 from ... import spec, plural
-from . import Frame
+from .frame import Frame, SingleFrame
 
 
 def _frame_constr(key, frame):
     if isinstance(frame, dict):
         try:
-            return Frame(name=key, **frame)
+            return SingleFrame(name=key, **frame)
         except Exception as e:
             e.args = ('in frame {}: {}'.format(key, e),)
 

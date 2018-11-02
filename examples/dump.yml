@@ -1,0 +1,446 @@
+name: MY18
+architectures:
+- lpc11cx4
+- stm32f205
+units:
+- newtonmeter = N * m = J = Nm
+- tick = 3 ms
+- RPM = 360 deg / min
+buses:
+  can0:
+    name: can0
+    baudrate: 500000
+    extended: false
+    frames:
+      TestEnum:
+        id: 105
+        name: TestEnum
+        period: null
+        segments:
+          asd:
+            name: asd
+            slice:
+              start: 0
+              length: 8
+            type: ''
+            unit: ''
+            enumerations:
+              one:
+                name: one
+                value: 0
+              two:
+                name: two
+                value: 1
+              three:
+                name: three
+                value: 2
+              four:
+                name: four
+                value: 3
+              five:
+                name: five
+                value: 4
+      CellTemperatureRange:
+        id: 22
+        name: CellTemperatureRange
+        period: 101ms
+        segments:
+          min:
+            name: min
+            slice:
+              start: 0
+              length: 10
+            type: '>i2'
+            unit:
+            - decidegC
+            enumerations: {}
+          argmin:
+            name: argmin
+            slice:
+              start: 10
+              length: 8
+            type: '>u1'
+            unit: ''
+            enumerations: {}
+          max0:
+            name: max0
+            slice:
+              start: 18
+              length: 10
+            type: '>i2'
+            unit: decidegC
+            enumerations: {}
+          argmax0:
+            name: argmax0
+            slice:
+              start: 28
+              length: 8
+            type: '>u1'
+            unit: ''
+            enumerations: {}
+          max1:
+            name: max1
+            slice:
+              start: 36
+              length: 10
+            type: '>i2'
+            unit: decidegC
+            enumerations: {}
+          argmax1:
+            name: argmax1
+            slice:
+              start: 46
+              length: 8
+            type: '>u1'
+            unit: ''
+            enumerations: {}
+          max2:
+            name: max2
+            slice:
+              start: 54
+              length: 10
+            type: '>i2'
+            unit: decidegC
+            enumerations: {}
+      CellTemperatureVariance:
+        id: 240
+        name: CellTemperatureVariance
+        period: 103ms
+        segments:
+          mean:
+            name: mean
+            slice:
+              start: 0
+              length: 10
+            type: '>i2'
+            unit: decidegC
+            enumerations: {}
+          variance:
+            name: variance
+            slice:
+              start: 10
+              length: 16
+            type: '>u2'
+            unit: decidegC ** 2
+            enumerations: {}
+      CellVoltageRange:
+        id: 23
+        name: CellVoltageRange
+        period: 31ms
+        segments:
+          min:
+            name: min
+            slice:
+              start: 0
+              length: 14
+            type: '>u2'
+            unit: mV
+            enumerations: {}
+          max:
+            name: max
+            slice:
+              start: 14
+              length: 14
+            type: '>u2'
+            unit: mV
+            enumerations: {}
+          sum:
+            name: sum
+            slice:
+              start: 28
+              length: 32
+            type: '>u4'
+            unit: mV
+            enumerations: {}
+      BMSHeartbeat:
+        id: 223
+        name: BMSHeartbeat
+        period: 103ms
+        segments:
+          error_pec:
+            name: error_pec
+            slice:
+              start: 0
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_cvst:
+            name: error_cvst
+            slice:
+              start: 1
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_owt:
+            name: error_owt
+            slice:
+              start: 2
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_L_contactor_error:
+            name: error_L_contactor_error
+            slice:
+              start: 3
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_H_contactor_error:
+            name: error_H_contactor_error
+            slice:
+              start: 4
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_L_contactor_weld:
+            name: error_L_contactor_weld
+            slice:
+              start: 5
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_H_contactor_weld:
+            name: error_H_contactor_weld
+            slice:
+              start: 6
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_cell_under_voltage:
+            name: error_cell_under_voltage
+            slice:
+              start: 7
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_cell_over_voltage:
+            name: error_cell_over_voltage
+            slice:
+              start: 8
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_cell_underemp:
+            name: error_cell_underemp
+            slice:
+              start: 9
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_cell_overemp:
+            name: error_cell_overemp
+            slice:
+              start: 10
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_control_flow:
+            name: error_control_flow
+            slice:
+              start: 11
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          error_force_over_can:
+            name: error_force_over_can
+            slice:
+              start: 12
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          L_contactor_closed:
+            name: L_contactor_closed
+            slice:
+              start: 13
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          H_contactor_closed:
+            name: H_contactor_closed
+            slice:
+              start: 14
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          L_contactor_welded:
+            name: L_contactor_welded
+            slice:
+              start: 15
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          H_contactor_welded:
+            name: H_contactor_welded
+            slice:
+              start: 16
+              length: 1
+            type: bool
+            unit: ''
+            enumerations: {}
+          soc:
+            name: soc
+            slice:
+              start: 17
+              length: 8
+            type: '>u1'
+            unit: ''
+            enumerations: {}
+      SBG_EKF_Euler:
+        id: 306
+        name: SBG_EKF_Euler
+        period: null
+        segments:
+          roll:
+            name: roll
+            slice:
+              start: 0
+              length: 16
+            type: <i2
+            unit: 0.1 mrad
+            enumerations: {}
+          pitch:
+            name: pitch
+            slice:
+              start: 16
+              length: 16
+            type: <i2
+            unit: 0.1 mrad
+            enumerations: {}
+          yaw:
+            name: yaw
+            slice:
+              start: 32
+              length: 16
+            type: <i2
+            unit: 0.1 mrad
+            enumerations: {}
+      SBG_EKF_Quaternion:
+        id: 305
+        name: SBG_EKF_Quaternion
+        period: null
+        segments:
+          q0:
+            name: q0
+            slice:
+              start: 0
+              length: 16
+            type: <i2
+            unit: 3.0517578125e-05
+            enumerations: {}
+          q1:
+            name: q1
+            slice:
+              start: 16
+              length: 16
+            type: <i2
+            unit: 3.0517578125e-05
+            enumerations: {}
+          q2:
+            name: q2
+            slice:
+              start: 32
+              length: 16
+            type: <i2
+            unit: 3.0517578125e-05
+            enumerations: {}
+          q3:
+            name: q3
+            slice:
+              start: 48
+              length: 16
+            type: <i2
+            unit: 3.0517578125e-05
+            enumerations: {}
+      SBG_IMU_Gyroscope:
+        id: 290
+        name: SBG_IMU_Gyroscope
+        period: null
+        segments:
+          x:
+            name: x
+            slice:
+              start: 0
+              length: 16
+            type: <i2
+            unit: mrad / s
+            enumerations: {}
+          y:
+            name: y
+            slice:
+              start: 16
+              length: 16
+            type: <i2
+            unit: mrad / s
+            enumerations: {}
+          z:
+            name: z
+            slice:
+              start: 32
+              length: 16
+            type: <i2
+            unit: mrad / s
+            enumerations: {}
+      SBG_IMU_Accelerometer:
+        id: 289
+        name: SBG_IMU_Accelerometer
+        period: null
+        segments:
+          x:
+            name: x
+            slice:
+              start: 0
+              length: 16
+            type: <i2
+            unit: cm / (s ** 2)
+            enumerations: {}
+          y:
+            name: y
+            slice:
+              start: 16
+              length: 16
+            type: <i2
+            unit: cm / (s ** 2)
+            enumerations: {}
+          z:
+            name: z
+            slice:
+              start: 32
+              length: 16
+            type: <i2
+            unit: cm / (s ** 2)
+            enumerations: {}
+boards:
+  can_node:
+    name: can_node
+    architecture: lpc11cx4
+    location: null
+    publish: {}
+    subscribe: {}
+  vcu:
+    name: vcu
+    architecture: stm32f205
+    location: null
+    publish: {}
+    subscribe: {}
+  dash:
+    name: dash
+    architecture: lpc11cx4
+    location: null
+    publish: {}
+    subscribe: {}
