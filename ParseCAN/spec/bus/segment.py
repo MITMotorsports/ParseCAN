@@ -10,6 +10,7 @@ from . import Enumeration
 #     BIG = 0
 #     LITTLE = 1
 
+
 class Endianness(str):
     BIG = 'big'
     LITTLE = 'little'
@@ -59,12 +60,10 @@ class Type:
         endianness = Endianness.from_str(endianness)
         return cls(type, endianness)
 
-    @property
-    def integer(self):
+    def isinteger(self):
         return self.type.startswith('int') or self.type.startswith('uint')
 
-    @property
-    def signed(self):
+    def issigned(self):
         if self.type.startswith('int'):
             return True
 
@@ -72,6 +71,20 @@ class Type:
             return False
 
         return None
+
+    def size(self):
+        '''
+        Size, in bits, of this type.
+        '''
+        if self.type == 'bool':
+            return 1
+
+        if self.isinteger():
+            num = self.type[-2:]
+            if not num[0].isdigit():
+                return int(num[1])
+
+            return int(num)
 
 
 def _enumeration_pre_add(self, item):
@@ -156,6 +169,8 @@ class Segment:
 
     @property
     def np_dtype(self):
+        raise NotImplementedError('not updated yet')
+
         if self.enumerations:
             '''
             Return a unicode string with length equal to the maximum possible
