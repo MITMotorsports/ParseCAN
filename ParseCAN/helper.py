@@ -49,7 +49,7 @@ class Slice:
         return {
             cls: lambda val: val.copy(),
             slice: cls.from_slice,
-            str: cls.from_string,
+            str: cls.from_str,
             tuple: cls.from_tuple,
         }[type(val)](val)
 
@@ -62,7 +62,7 @@ class Slice:
         return cls(val.start, val.stop - val.start)
 
     @classmethod
-    def from_string(cls, val: str):
+    def from_str(cls, val: str):
         if '+' in val:
             return cls(*val.split('+'))
         else:

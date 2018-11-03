@@ -113,40 +113,40 @@ buses:
         segments:
           accel_1:
             slice: 0 + 16
-            type: uint16
+            type: uint16 big
           accel_2:
             slice: 16 + 16
-            type: uint16
+            type: uint16 big
           brake_1:
             slice: 32 + 10
-            type: uint16
+            type: uint16 big
           brake_2:
             slice: 42 + 10
-            type: uint16
+            type: uint16 big
           accel_1_under:
             slice: 52 + 1
-            type: bool
+            type: bool big
           accel_1_over:
             slice: 53 + 1
-            type: bool
+            type: bool big
           accel_2_under:
             slice: 54 + 1
-            type: bool
+            type: bool big
           accel_2_over:
             slice: 55 + 1
-            type: bool
+            type: bool big
           brake_1_under:
             slice: 56 + 1
-            type: bool
+            type: bool big
           brake_1_over:
             slice: 57 + 1
-            type: bool
+            type: bool big
           brake_2_under:
             slice: 58 + 1
-            type: bool
+            type: bool big
           brake_2_over:
             slice: 59 + 1
-            type: bool
+            type: bool big
       FrontCanNodeLeftWheelSpeed:
         id: 0x0E0
         # is_big_endian: true
@@ -155,12 +155,12 @@ buses:
           # Wheel speed from 32-bit timer (accurate at most speeds)
           left_32b:
             slice: 0 + 32
-            type: uint32
+            type: uint32 big
             unit: mRPM
           # Wheel speed from 16-bit timer (accurate only at high speeds)
           left_16b:
             slice: 32 + 32
-            type: uint32
+            type: uint32 big
             unit: mRPM
       FrontCanNodeRightWheelSpeed:
         id: 0x0E1
@@ -170,12 +170,12 @@ buses:
           # Wheel speed from 32-bit timer (accurate at most speeds)
           right_32b:
             slice: 0 + 32
-            type: uint32
+            type: uint32 big
             unit: mRPM
           # Wheel speed from 16-bit timer (accurate only at high speeds)
           right_16b:
             slice: 32 + 32
-            type: uint32
+            type: uint32 big
             unit: mRPM
       SensorNodeWheelSpeed:
         id: 0x0E2
@@ -184,11 +184,11 @@ buses:
         segments:
           left_32b:
             slice: 0 + 32
-            type: uint32
+            type: uint32 big
             unit: mRPM
           right_32b:
             slice: 32 + 32
-            type: uint32
+            type: uint32 big
             unit: mRPM
       CellTemperatureRange:
         id: 0x016
@@ -197,28 +197,28 @@ buses:
         segments:
           min:
             slice: 0 + 10
-            type: int16
+            type: int16 big
             unit: decidegC
           argmin:
             slice: 10 + 8
-            type: uint8
+            type: uint8 big
           max0:
             slice: 18 + 10
-            type: int16
+            type: int16 big
             unit: decidegC
           argmax0:
             slice: 28 + 8
-            type: uint8
+            type: uint8 big
           max1:
             slice: 36 + 10
-            type: int16
+            type: int16 big
             unit: decidegC
           argmax1:
             slice: 46 + 8
-            type: uint8
+            type: uint8 big
           max2:
             slice: 54 + 10
-            type: int16
+            type: int16 big
             unit: decidegC
       CellTemperatureVariance:
         id: 0x0F0
@@ -227,11 +227,11 @@ buses:
         segments:
           mean:
             slice: 0 + 10
-            type: int16
+            type: int16 big
             unit: decidegC
           variance:
             slice: 10 + 16
-            type: uint16
+            type: uint16 big
             unit: decidegC ** 2
       CellVoltageRange:
         id: 0x017
@@ -240,15 +240,15 @@ buses:
         segments:
           min:
             slice: 0 + 14
-            type: uint16
+            type: uint16 big
             unit: mV
           max:
             slice: 14 + 14
-            type: uint16
+            type: uint16 big
             unit: mV
           sum:
             slice: 28 + 32
-            type: uint32
+            type: uint32 big
             unit: mV
       BMSHeartbeat:
         id: 0x0DF
@@ -257,65 +257,65 @@ buses:
         segments:
           error_pec:
             slice: 0 + 1
-            type: bool
+            type: bool big
           error_cvst:
             slice: 1 + 1
-            type: bool
+            type: bool big
           error_owt:
             slice: 2 + 1
-            type: bool
+            type: bool big
           error_L_contactor_error:
             slice: 3 + 1
-            type: bool
+            type: bool big
           error_H_contactor_error:
             slice: 4 + 1
-            type: bool
+            type: bool big
           error_L_contactor_weld:
             slice: 5 + 1
-            type: bool
+            type: bool big
           error_H_contactor_weld:
             slice: 6 + 1
-            type: bool
+            type: bool big
           error_cell_under_voltage:
             slice: 7 + 1
-            type: bool
+            type: bool big
           error_cell_over_voltage:
             slice: 8 + 1
-            type: bool
+            type: bool big
           error_cell_underemp:
             slice: 9 + 1
-            type: bool
+            type: bool big
           error_cell_overemp:
             slice: 10 + 1
-            type: bool
+            type: bool big
           error_control_flow:
             slice: 11 + 1
-            type: bool
+            type: bool big
           error_force_over_can:
             slice: 12 + 1
-            type: bool
+            type: bool big
           L_contactor_closed:
             slice: 13 + 1
-            type: bool
+            type: bool big
           H_contactor_closed:
             slice: 14 + 1
-            type: bool
+            type: bool big
           L_contactor_welded:
             slice: 15 + 1
-            type: bool
+            type: bool big
           H_contactor_welded:
             slice: 16 + 1
-            type: bool
+            type: bool big
           soc:
             slice: 17 + 8
-            type: uint8
+            type: uint8 big
       BMSRequest:
         id: 0x0D3
         # is_big_endian: true
         segments:
           force_error:
             slice: 0 + 1
-            type: bool
+            type: bool big
       VCUHeartbeat:
         id: 0x0F3
         period: 41ms
@@ -323,7 +323,7 @@ buses:
         segments:
           vcu_state:
             slice: 0 + 3
-            type: enumerations
+            type: enum big
             enumerations:
               VCU_STATE_ROOT: 0
               VCU_STATE_LV: 1
@@ -332,14 +332,14 @@ buses:
               VCU_STATE_DRIVING: 4
           error_state:
             slice: 3 + 3
-            type: enumerations
+            type: enum big
             enumerations:
               NO_ERROR_STATE: 0x0
               RECOVERABLE_ERROR_STATE: 0x1
               FATAL_ERROR_STATE: 0x2
           estop_hit:
             slice: 6 + 1
-            type: bool
+            type: bool big
       VCUErrors:
         id: 0x0F4
         period: 111ms
@@ -347,40 +347,40 @@ buses:
         segments:
           recoverable_conflict:
             slice: 0 + 1
-            type: bool
+            type: bool big
           recoverable_gate:
             slice: 1 + 1
-            type: bool
+            type: bool big
           recoverable_heartbeat:
             slice: 2 + 1
-            type: bool
+            type: bool big
           recoverable_contactor:
             slice: 3 + 1
-            type: bool
+            type: bool big
           fatal_contactor:
             slice: 4 + 1
-            type: bool
+            type: bool big
           fatal_gate:
             slice: 5 + 1
-            type: bool
+            type: bool big
           fatal_precharge:
             slice: 6 + 1
-            type: bool
+            type: bool big
           fatal_conflict:
             slice: 7 + 1
-            type: bool
+            type: bool big
           gate_sdn:
             slice: 8 + 1
-            type: bool
+            type: bool big
           gate_bpd:
             slice: 9 + 1
-            type: bool
+            type: bool big
           gate_bms:
             slice: 10 + 1
-            type: bool
+            type: bool big
           gate_imd:
             slice: 11 + 1
-            type: bool
+            type: bool big
       CurrentSensor_Current:
         id: 0x521
         period: 0.05s
@@ -388,25 +388,25 @@ buses:
         segments:
           mux_id:
             slice: 0 + 8
-            type: uint8
+            type: uint8 big
           msg_count:
             slice: 8 + 4
-            type: uint8
+            type: uint8 big
           over_current_signal:
             slice: 12 + 1
-            type: bool
+            type: bool big
           channel_error:
             slice: 13 + 1
-            type: bool
+            type: bool big
           measurement_error:
             slice: 14 + 1
-            type: bool
+            type: bool big
           system_error:
             slice: 15 + 1
-            type: bool
+            type: bool big
           result:
             slice: 16 + 32
-            type: int32
+            type: int32 big
             unit: mA
       CurrentSensor_Voltage1:
         id: 0x522
@@ -415,25 +415,25 @@ buses:
         segments:
           mux_id:
             slice: 0 + 8
-            type: uint8
+            type: uint8 big
           msg_count:
             slice: 8 + 4
-            type: uint8
+            type: uint8 big
           over_current_signal:
             slice: 12 + 1
-            type: bool
+            type: bool big
           channel_error:
             slice: 13 + 1
-            type: bool
+            type: bool big
           measurement_error:
             slice: 14 + 1
-            type: bool
+            type: bool big
           system_error:
             slice: 15 + 1
-            type: bool
+            type: bool big
           result:
             slice: 16 + 32
-            type: int32
+            type: int32 big
             unit: mV
       CurrentSensor_Voltage2:
         id: 0x523
@@ -442,25 +442,25 @@ buses:
         segments:
           mux_id:
             slice: 0 + 8
-            type: uint8
+            type: uint8 big
           msg_count:
             slice: 8 + 4
-            type: uint8
+            type: uint8 big
           over_current_signal:
             slice: 12 + 1
-            type: bool
+            type: bool big
           channel_error:
             slice: 13 + 1
-            type: bool
+            type: bool big
           measurement_error:
             slice: 14 + 1
-            type: bool
+            type: bool big
           system_error:
             slice: 15 + 1
-            type: bool
+            type: bool big
           result:
             slice: 16 + 32
-            type: int32
+            type: int32 big
             unit: mV
       CurrentSensor_Voltage3:
         id: 0x524
@@ -469,25 +469,25 @@ buses:
         segments:
           mux_id:
             slice: 0 + 8
-            type: uint8
+            type: uint8 big
           msg_count:
             slice: 8 + 4
-            type: uint8
+            type: uint8 big
           over_current_signal:
             slice: 12 + 1
-            type: bool
+            type: bool big
           channel_error:
             slice: 13 + 1
-            type: bool
+            type: bool big
           measurement_error:
             slice: 14 + 1
-            type: bool
+            type: bool big
           system_error:
             slice: 15 + 1
-            type: bool
+            type: bool big
           result:
             slice: 16 + 32
-            type: int32
+            type: int32 big
             unit: mV
       CurrentSensor_Power:
         id: 0x526
@@ -496,25 +496,25 @@ buses:
         segments:
           mux_id:
             slice: 0 + 8
-            type: uint8
+            type: uint8 big
           msg_count:
             slice: 8 + 4
-            type: uint8
+            type: uint8 big
           over_current_signal:
             slice: 12 + 1
-            type: bool
+            type: bool big
           channel_error:
             slice: 13 + 1
-            type: bool
+            type: bool big
           measurement_error:
             slice: 14 + 1
-            type: bool
+            type: bool big
           system_error:
             slice: 15 + 1
-            type: bool
+            type: bool big
           result:
             slice: 16 + 32
-            type: int32
+            type: int32 big
             unit: W
       CurrentSensor_Energy:
         id: 0x528
@@ -523,25 +523,25 @@ buses:
         segments:
           mux_id:
             slice: 0 + 8
-            type: uint8
+            type: uint8 big
           msg_count:
             slice: 8 + 4
-            type: uint8
+            type: uint8 big
           over_current_signal:
             slice: 12 + 1
-            type: bool
+            type: bool big
           channel_error:
             slice: 13 + 1
-            type: bool
+            type: bool big
           measurement_error:
             slice: 14 + 1
-            type: bool
+            type: bool big
           system_error:
             slice: 15 + 1
-            type: bool
+            type: bool big
           result:
             slice: 16 + 32
-            type: int32
+            type: int32 big
             unit: Wh
       DashRequest:
         id: 0x0D2
@@ -550,37 +550,37 @@ buses:
         segments:
           using_regen:
             slice: 0 + 1
-            type: bool
+            type: bool big
           using_voltage_limiting:
             slice: 1 + 1
-            type: bool
+            type: bool big
           usingemp_limiting:
             slice: 2 + 1
-            type: bool
+            type: bool big
           regen_bias: # Ranges from 0 to 100
             slice: 3 + 8
-            type: uint8
+            type: uint8 big
           limp_factor: # Ranges from 0 to 100
             slice: 11 + 8
-            type: uint8
+            type: uint8 big
           temp_lim_min_gain:
             slice: 19 + 8
-            type: uint8
+            type: uint8 big
           temp_limhreshemp:
             slice: 27 + 8
-            type: uint8
+            type: uint8 big
           volt_lim_min_gain:
             slice: 35 + 8
-            type: uint8
+            type: uint8 big
           volt_lim_min_voltage:
             slice: 43 + 16
-            type: uint16
+            type: uint16 big
           active_aero_enabled:
             slice: 59 + 1
-            type: bool
+            type: bool big
           daq_mark:
             slice: 60 + 1
-            type: bool
+            type: bool big
       DashRequestLC:
         id: 0x0D5
         # is_big_endian: true
@@ -588,19 +588,19 @@ buses:
         segments:
           speeding_uporque:
             slice: 0 + 16
-            type: uint16
+            type: uint16 big
           speeding_up_speed:
             slice: 16 + 16
-            type: uint16
+            type: uint16 big
           wshresh:
             slice: 32 + 16
-            type: uint16
+            type: uint16 big
           launch_ctrl_slip_ratio: # Ranges from 105 to 115
             slice: 48 + 9
-            type: uint16
+            type: uint16 big
           using_launch_ctrl:
             slice: 57 + 1
-            type: bool
+            type: bool big
       VCUControlsParams:
         id: 0x0D4
         # is_big_endian: true
@@ -608,37 +608,37 @@ buses:
         segments:
           using_regen:
             slice: 0 + 1
-            type: bool
+            type: bool big
           using_voltage_limiting:
             slice: 1 + 1
-            type: bool
+            type: bool big
           usingemp_limiting:
             slice: 2 + 1
-            type: bool
+            type: bool big
           regen_bias: # Ranges from 0 to 100
             slice: 3 + 8
-            type: uint8
+            type: uint8 big
           limp_factor: # Ranges from 0 to 100
             slice: 11 + 8
-            type: uint8
+            type: uint8 big
           temp_lim_min_gain:
             slice: 19 + 8
-            type: uint8
+            type: uint8 big
           temp_limhreshemp:
             slice: 27 + 8
-            type: uint8
+            type: uint8 big
           volt_lim_min_gain:
             slice: 35 + 8
-            type: uint8
+            type: uint8 big
           volt_lim_min_voltage:
             slice: 43 + 16
-            type: uint16
+            type: uint16 big
           active_aero_enabled:
             slice: 59 + 1
-            type: bool
+            type: bool big
           torqueemp_limited:
             slice: 60 + 1
-            type: bool
+            type: bool big
       VCUControlsParamsLC:
         id: 0x0D6
         # is_big_endian: true
@@ -646,22 +646,22 @@ buses:
         segments:
           speeding_uporque:
             slice: 0 + 16
-            type: uint16
+            type: uint16 big
           speeding_up_speed:
             slice: 16 + 16
-            type: uint16
+            type: uint16 big
           wshresh:
             slice: 32 + 16
-            type: uint16
+            type: uint16 big
           launch_ctrl_slip_ratio: # Ranges from 105 to 115
             slice: 48 + 8
-            type: uint16
+            type: uint16 big
           using_launch_ctrl:
             slice: 56 + 1
-            type: bool
+            type: bool big
           lc_state:
             slice: 57 + 3
-            type: enumerations
+            type: enum big
             enumerations:
               BEFORE: 0
               SPEEDING_UP: 1
@@ -675,16 +675,16 @@ buses:
         segments:
           RTD:
             slice: 0 + 1
-            type: bool
+            type: bool big
           DriverReset:
             slice: 1 + 1
-            type: bool
+            type: bool big
           A:
             slice: 2 + 1
-            type: bool
+            type: bool big
           B:
             slice: 3 + 1
-            type: bool
+            type: bool big
       ADC_Data1:
         id: 0xD9
         period: 10ms
@@ -692,16 +692,16 @@ buses:
         segments:
           shockpot:
             slice: 0 + 16
-            type: uint16
+            type: uint16 big
           load_cell:
             slice: 16 + 16
-            type: uint16
+            type: uint16 big
           ext_adc_ch2:
             slice: 32 + 16
-            type: uint16
+            type: uint16 big
           ext_adc_ch3:
             slice: 48 + 16
-            type: uint16
+            type: uint16 big
       ADC_Data2:
         id: 0xDB
         period: 10ms
@@ -709,16 +709,16 @@ buses:
         segments:
           ext_adc_ch4:
             slice: 0 + 16
-            type: uint16
+            type: uint16 big
           ext_adc_ch5:
             slice: 16 + 16
-            type: uint16
+            type: uint16 big
           ext_adc_ch6:
             slice: 32 + 16
-            type: uint16
+            type: uint16 big
           ext_adc_ch7:
             slice: 48 + 16
-            type: uint16
+            type: uint16 big
       ADC_Data3:
         id: 0xDD
         period: 10ms
@@ -726,16 +726,16 @@ buses:
         segments:
           int_adc_ch2:
             slice: 0 + 16
-            type: uint16
+            type: uint16 big
           int_adc_ch3:
             slice: 16 + 16
-            type: uint16
+            type: uint16 big
           int_adc_ch4:
             slice: 32 + 16
-            type: uint16
+            type: uint16 big
           int_adc_ch5:
             slice: 48 + 16
-            type: uint16
+            type: uint16 big
       VCUSpeedCntrlKpTimes1000:
         id:  0x223
         period: 200ms
@@ -743,7 +743,7 @@ buses:
         segments:
           kpimes_1000:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlKiTimes1000:
         id:  0x225
         period: 200ms
@@ -751,7 +751,7 @@ buses:
         segments:
           kiimes_1000:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlKdTimes1000:
         id:  0x227
         period: 200ms
@@ -759,7 +759,7 @@ buses:
         segments:
           kdimes_1000:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlIWindupMax:
         id:  0x229
         period: 200ms
@@ -767,7 +767,7 @@ buses:
         segments:
           i_windup_max:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlIWindupMin:
         id:  0x22B
         period: 200ms
@@ -775,7 +775,7 @@ buses:
         segments:
           i_windup_min:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlMinOutputValue:
         id:  0x22D
         period: 200ms
@@ -783,7 +783,7 @@ buses:
         segments:
           min_output_value:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlMaxOutputValue:
         id:  0x22F
         period: 200ms
@@ -791,7 +791,7 @@ buses:
         segments:
           max_output_value:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlMinInputValue:
         id:  0x231
         period: 200ms
@@ -799,7 +799,7 @@ buses:
         segments:
           min_input_value:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlMaxInputValue:
         id:  0x233
         period: 200ms
@@ -807,7 +807,7 @@ buses:
         segments:
           max_input_value:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlErrorUpdateTimeout:
         id:  0x235
         period: 200ms
@@ -815,7 +815,7 @@ buses:
         segments:
           error_updateimeout:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlDt:
         id:  0x237
         period: 200ms
@@ -823,7 +823,7 @@ buses:
         segments:
           dt:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlEnabled:
         id: 0x239
         period: 200ms
@@ -831,7 +831,7 @@ buses:
         segments:
           enabled:
             slice: 0 + 1
-            type: bool
+            type: bool big
       VCUSpeedCntrlOutOfInputRangeThrottled:
         id: 0x23B
         period: 200ms
@@ -839,7 +839,7 @@ buses:
         segments:
           out_of_input_rangehrottled:
             slice: 0 + 1
-            type: bool
+            type: bool big
       VCUSpeedCntrlOutOfOutputRangeThrottled:
         id: 0x23D
         period: 200ms
@@ -847,7 +847,7 @@ buses:
         segments:
           out_of_output_rangehrottled:
             slice: 0 + 1
-            type: bool
+            type: bool big
       VCUSpeedCntrlErrorUpdateTimedOut:
         id: 0x23F
         period: 200ms
@@ -855,7 +855,7 @@ buses:
         segments:
           error_updateimed_out:
             slice: 0 + 1
-            type: bool
+            type: bool big
       VCUSpeedCntrlRPMSetpoint:
         id: 0x241
         period: 200ms
@@ -863,7 +863,7 @@ buses:
         segments:
           rpm_setpoint:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlCommandedTorque:
         id: 0x243
         period: 200ms
@@ -871,7 +871,7 @@ buses:
         segments:
           commandedorque:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlRPMError:
         id: 0x245
         period: 200ms
@@ -879,7 +879,7 @@ buses:
         segments:
           rpm_error:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlLastRPMError:
         id: 0x247
         period: 200ms
@@ -887,7 +887,7 @@ buses:
         segments:
           last_rpm_error:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlDerivRPMError:
         id: 0x249
         period: 200ms
@@ -895,7 +895,7 @@ buses:
         segments:
           deriv_rpm_error:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlRPMErrorAccumulated:
         id: 0x24B
         period: 200ms
@@ -903,7 +903,7 @@ buses:
         segments:
           rpm_error_accumulated:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       VCUSpeedCntrlLastErrorUpdateTimestamp:
         id: 0x24D
         period: 200ms
@@ -911,7 +911,7 @@ buses:
         segments:
           last_error_updateimestamp:
             slice: 0 + 32
-            type: uint32
+            type: uint32 big
       DashSpeedCntrlKpTimes1000:
         id:  0x224
         period: 200ms
@@ -919,7 +919,7 @@ buses:
         segments:
           kpimes_1000:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       DashSpeedCntrlKiTimes1000:
         id:  0x226
         period: 200ms
@@ -927,7 +927,7 @@ buses:
         segments:
           kiimes_1000:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       DashSpeedCntrlRPMSetpoint:
         id: 0x242
         period: 200ms
@@ -935,7 +935,7 @@ buses:
         segments:
           rpm_setpoint:
             slice: 0 + 32
-            type: int32
+            type: int32 big
       MCCommand:
         id: 0x0C0 # From manual
         period: 9ms  # MC needs a message at 2 Hz or higher
@@ -943,27 +943,27 @@ buses:
         segments:
           torque:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: dNm
           angular_vel:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: RPM
           direction_is_counterclockwise: # when viewed from shaft end of motor
             slice: 39 + 1
-            type: bool
+            type: bool big
           inverter_enabled:
             slice: 47 + 1
-            type: bool
+            type: bool big
           discharge_enabled:
             slice: 46 + 1
-            type: bool
+            type: bool big
           speed_mode:
             slice: 45 + 1
-            type: bool
+            type: bool big
           torque_limit:
             slice: 48 + 16
-            type: int16
+            type: int16 big
             unit: dNm
       MCParameterRequest:
         id: 0x0C1
@@ -971,15 +971,15 @@ buses:
         segments:
           address:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: dNm
           write:  # make an enumerations {read, write}
             slice: 23 + 1
-            type: bool
+            type: bool big
             unit: RPM
           data:
             slice: 32 + 16
-            type: int16
+            type: int16 big
       MCVoltage:
         id: 0x0A7
         period: 1cs
@@ -988,19 +988,19 @@ buses:
           bus:
             slice: 0 + 16
             unit: dV
-            type: int16
+            type: int16 big
           out:
             slice: 16 + 16
             unit: dV
-            type: int16
+            type: int16 big
           VAB_Vd:
             slice: 32 + 16
             unit: dV
-            type: int16
+            type: int16 big
           VBC_Vq:
             slice: 48 + 16
             unit: dV
-            type: int16
+            type: int16 big
       MCMotorPositionInfo:
         id: 0x0A5
         period: 0.01s
@@ -1008,19 +1008,19 @@ buses:
         segments:
           motor_angle:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: decideg
           motor_speed:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: RPM
           electrical_output_freq:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: dHz
           delta_resolved_filter:
             slice: 48 + 16
-            type: int16
+            type: int16 big
             unit: decideg
       MCFluxInfo:
         id: 0x0A8
@@ -1029,19 +1029,19 @@ buses:
         segments:
           flux_command:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: mWb
           flux_feedback:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: mWb
           Iq_feedback:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: dA
           Id_feedback:
             slice: 48 + 16
-            type: int16
+            type: int16 big
             unit: dA
       MCFaultCodes:
         id: 0x0AB
@@ -1049,166 +1049,166 @@ buses:
         segments:
           post_hw_gate_desaturation_fault:
             slice: 0 + 1
-            type: bool
+            type: bool big
           hw_over_current_fualt:
             slice: 1 + 1
-            type: bool
+            type: bool big
           accel_shorted:
             slice: 2 + 1
-            type: bool
+            type: bool big
           accel_open:
             slice: 3 + 1
-            type: bool
+            type: bool big
           current_sensor_lo:
             slice: 4 + 1
-            type: bool
+            type: bool big
           current_sensor_hi:
             slice: 5 + 1
-            type: bool
+            type: bool big
           moduleemp_lo:
             slice: 6 + 1
-            type: bool
+            type: bool big
           moduleemp_hi:
             slice: 7 + 1
-            type: bool
+            type: bool big
           control_pcbemp_lo:
             slice: 8 + 1
-            type: bool
+            type: bool big
           control_pcbemp_hi:
             slice: 9 + 1
-            type: bool
+            type: bool big
           gate_drive_pcbemp_lo:
             slice: 10 + 1
-            type: bool
+            type: bool big
           gate_drive_pcbemp_hi:
             slice: 11 + 1
-            type: bool
+            type: bool big
           sense_5v_lo:
             slice: 12 + 1
-            type: bool
+            type: bool big
           sense_5v_hi:
             slice: 13 + 1
-            type: bool
+            type: bool big
           sense_12v_lo:
             slice: 14 + 1
-            type: bool
+            type: bool big
           sense_12v_hi:
             slice: 15 + 1
-            type: bool
+            type: bool big
           sense_2_5v_lo:
             slice: 16 + 1
-            type: bool
+            type: bool big
           sense_2_5v_hi:
             slice: 17 + 1
-            type: bool
+            type: bool big
           sense_1_5v_lo:
             slice: 18 + 1
-            type: bool
+            type: bool big
           sense_1_5v_hi:
             slice: 19 + 1
-            type: bool
+            type: bool big
           dc_bus_voltage_hi:
             slice: 20 + 1
-            type: bool
+            type: bool big
           dc_bus_voltage_lo:
             slice: 21 + 1
-            type: bool
+            type: bool big
           pre_chargeimeout:
             slice: 22 + 1
-            type: bool
+            type: bool big
           pre_charge_failure:
             slice: 23 + 1
-            type: bool
+            type: bool big
           eeprom_checksum_invalid:
             slice: 24 + 1
-            type: bool
+            type: bool big
           eeprom_checksum_data_out_of_range:
             slice: 25 + 1
-            type: bool
+            type: bool big
           eeprom_checksum_update_required:
             slice: 26 + 1
-            type: bool
+            type: bool big
           post_brake_shorted:
             slice: 30 + 1
-            type: bool
+            type: bool big
           post_brake_open:
             slice: 31 + 1
-            type: bool
+            type: bool big
           motor_over_speed_fault:
             slice: 32 + 1
-            type: bool
+            type: bool big
           over_current_fault:
             slice: 33 + 1
-            type: bool
+            type: bool big
           over_voltage_fault:
             slice: 34 + 1
-            type: bool
+            type: bool big
           inverter_overemp_fault:
             slice: 35 + 1
-            type: bool
+            type: bool big
           accel_input_shorted_fault:
             slice: 36 + 1
-            type: bool
+            type: bool big
           accel_input_open_fault:
             slice: 37 + 1
-            type: bool
+            type: bool big
           direction_command_fault:
             slice: 38 + 1
-            type: bool
+            type: bool big
           inverter_respimeout_fault:
             slice: 39 + 1
-            type: bool
+            type: bool big
           run_hw_gate_desaturation_fault:
             slice: 40 + 1
-            type: bool
+            type: bool big
           run_hw_over_current_fualt:
             slice: 41 + 1
-            type: bool
+            type: bool big
           under_voltage_fault:
             slice: 42 + 1
-            type: bool
+            type: bool big
           can_command_msg_lost_fault:
             slice: 43 + 1
-            type: bool
+            type: bool big
           motor_overemp_fault:
             slice: 44 + 1
-            type: bool
+            type: bool big
           run_brake_shorted:
             slice: 48 + 1
-            type: bool
+            type: bool big
           run_brake_open:
             slice: 49 + 1
-            type: bool
+            type: bool big
           module_A_overemp_fault:
             slice: 50 + 1
-            type: bool
+            type: bool big
           module_B_overemp_fault:
             slice: 51 + 1
-            type: bool
+            type: bool big
           module_C_overemp_fault:
             slice: 52 + 1
-            type: bool
+            type: bool big
           pcb_overemp_fault:
             slice: 53 + 1
-            type: bool
+            type: bool big
           gate_drive_board_1_overemp:
             slice: 54 + 1
-            type: bool
+            type: bool big
           gate_drive_board_2_overemp:
             slice: 55 + 1
-            type: bool
+            type: bool big
           gate_drive_board_3_overemp:
             slice: 56 + 1
-            type: bool
+            type: bool big
           current_sensor_fault:
             slice: 57 + 1
-            type: bool
+            type: bool big
           resolver_not_connected:
             slice: 62 + 1
-            type: bool
+            type: bool big
           inverter_discharge_active:
             slice: 63 + 1
-            type: bool
+            type: bool big
       MCTorqueTimerInfo:
         id: 0x0AC
         period: 0.01s
@@ -1216,15 +1216,15 @@ buses:
         segments:
           commandedorque:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: dNm
           torque_feedback:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: dNm
           power_onimer:
             slice: 32 + 32
-            type: uint32
+            type: uint32 big
             unit: tick
       MCModulationIndxFluxWeakeningInfo:
         id: 0x0AD
@@ -1233,18 +1233,18 @@ buses:
         segments:
           modulation_index:
             slice: 0 + 16
-            type: uint16
+            type: uint16 big
           flux_weakening_output:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: dA
           Id_command:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: dA
           Iq_command:
             slice: 48 + 16
-            type: int16
+            type: int16 big
             unit: dA
       CurrentSensor_Config:
         id: 0x411
@@ -1252,28 +1252,28 @@ buses:
         segments:
           muxbyte:
             slice: 0 + 8
-            type: uint8
+            type: uint8 big
           db1:
             slice: 8 + 8
-            type: uint8
+            type: uint8 big
           db2:
             slice: 16 + 8
-            type: uint8
+            type: uint8 big
           db3:
             slice: 24 + 8
-            type: uint8
+            type: uint8 big
           db4:
             slice: 32 + 8
-            type: uint8
+            type: uint8 big
           db5:
             slice: 40 + 8
-            type: uint8
+            type: uint8 big
           db6:
             slice: 48 + 8
-            type: uint8
+            type: uint8 big
           db7:
             slice: 56 + 8
-            type: uint8
+            type: uint8 big
       MCTemperature:
         id: 0x0A0
         # is_big_endian: false
@@ -1281,34 +1281,34 @@ buses:
           module_aemp:
             slice: 0 + 16
             unit: decidegC
-            type: int16
+            type: int16 big
           module_bemp:
             slice: 16 + 16
             unit: decidegC
-            type: int16
+            type: int16 big
           module_cemp:
             slice: 32 + 16
             unit: decidegC
-            type: int16
+            type: int16 big
           gate_driveremp:
             slice: 48 + 16
             unit: decidegC
-            type: int16
+            type: int16 big
       SBG_EKF_Velocity_ACC:
         id: 312
         # is_big_endian: false
         segments:
           north:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: cm / s
           east:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: cm / s
           down:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: cm / s
       SBG_EKF_Velocity:
         id: 311
@@ -1316,15 +1316,15 @@ buses:
         segments:
           north:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: cm / s
           east:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: cm / s
           down:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: cm / s
       SBG_EKF_Position_ACC:
         id: 310
@@ -1332,15 +1332,15 @@ buses:
         segments:
           latitude:
             slice: 0 + 16
-            type: uint16
+            type: uint16 big
             unit: cm
           longitude:
             slice: 16 + 16
-            type: uint16
+            type: uint16 big
             unit: cm
           altitude:
             slice: 32 + 16
-            type: uint16
+            type: uint16 big
             unit: cm
       SBG_EKF_Position:
         id: 308
@@ -1348,11 +1348,11 @@ buses:
         segments:
           latitude:
             slice: 0 + 32
-            type: int32
+            type: int32 big
             unit: 1e-7 deg
           longitude:
             slice: 32 + 32
-            type: int32
+            type: int32 big
             unit: 1e-7 deg
       SBG_EKF_Altitude:
         id: 309
@@ -1360,11 +1360,11 @@ buses:
         segments:
           altitude:
             slice: 0 + 32
-            type: int32
+            type: int32 big
             unit: mm
           undulation:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: 5 mm
       SBG_EKF_Orientation_ACC:
         id: 307
@@ -1372,15 +1372,15 @@ buses:
         segments:
           pitch:
             slice: 0 + 16
-            type: uint16
+            type: uint16 big
             unit: 0.1 mrad
           roll:
             slice: 16 + 16
-            type: uint16
+            type: uint16 big
             unit: 0.1 mrad
           yaw:
             slice: 32 + 16
-            type: uint16
+            type: uint16 big
             unit: 0.1 mrad
       SBG_EKF_Euler:
         id: 306
@@ -1388,15 +1388,15 @@ buses:
         segments:
           roll:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: 0.1 mrad
           pitch:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: 0.1 mrad
           yaw:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: 0.1 mrad
       SBG_EKF_Quaternion:
         id: 305
@@ -1404,19 +1404,19 @@ buses:
         segments:
           q0:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: 3.0517578125e-5
           q1:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: 3.0517578125e-5
           q2:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: 3.0517578125e-5
           q3:
             slice: 48 + 16
-            type: int16
+            type: int16 big
             unit: 3.0517578125e-5
       SBG_IMU_DeltaAngle:
         id: 292
@@ -1424,15 +1424,15 @@ buses:
         segments:
           x:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: mrad / s
           y:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: mrad / s
           z:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: mrad / s
       SBG_IMU_DeltaVelocity:
         id: 291
@@ -1440,15 +1440,15 @@ buses:
         segments:
           x:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: cm / (s ** 2)
           y:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: cm / (s ** 2)
           z:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: cm / (s ** 2)
       SBG_IMU_Gyroscope:
         id: 290
@@ -1456,15 +1456,15 @@ buses:
         segments:
           x:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: mrad / s
           y:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: mrad / s
           z:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: mrad / s
       SBG_IMU_Accelerometer:
         id: 289
@@ -1472,15 +1472,15 @@ buses:
         segments:
           x:
             slice: 0 + 16
-            type: int16
+            type: int16 big
             unit: cm / (s ** 2)
           y:
             slice: 16 + 16
-            type: int16
+            type: int16 big
             unit: cm / (s ** 2)
           z:
             slice: 32 + 16
-            type: int16
+            type: int16 big
             unit: cm / (s ** 2)
       SBG_LOG_UTC:
         id: 272
@@ -1488,11 +1488,11 @@ buses:
         segments:
           timestamp:
             slice: 0 + 32
-            type: uint32
+            type: uint32 big
             unit: ms
           timeofweek:
             slice: 32 + 32
-            type: uint32
+            type: uint32 big
             unit: ms
       VCUControlsMonitoring:
         id: 0x600
@@ -1501,18 +1501,18 @@ buses:
         segments:
           raworque:
             slice: 0 + 16
-            type: int16
+            type: int16 big
           vl_gain:
             slice: 16 + 8
-            type: uint8
+            type: uint8 big
           tl_gain:
             slice: 24 + 8
-            type: uint8
+            type: uint8 big
           filteredemp:
             unit: centidegC
             slice: 32 + 16
-            type: uint16
+            type: uint16 big
           voltage_used:
             unit: cV
             slice: 48 + 16
-            type: int16
+            type: int16 big

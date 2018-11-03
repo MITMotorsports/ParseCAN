@@ -1,17 +1,77 @@
-from dataclasses import dataclass
-import numpy as np
+from dataclasses import dataclass, field
+from enum import Enum
 
 from ... import data, plural, parse
 from ...helper import Slice
 from . import Enumeration
 
+# TODO: Make PyYAML understand how to represent this
+# class Endianness(Enum):
+#     BIG = 0
+#     LITTLE = 1
 
+class Endianness(str):
+    BIG = 'big'
+    LITTLE = 'little'
+
+    @classmethod
+    def from_str(cls, string: str):
+        if string.lower() == 'big':
+            return cls.BIG
+
+        if string.lower() == 'little':
+            return cls.LITTLE
+
+        raise ValueError('endianness string must be either `big` or `little`')
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+
+@dataclass
 class Type:
-    def __init__(self, x):
-        self.dtype = np.dtype(x)
+    type: str
+    endianness: Endianness
 
-        if x[0] not in ('>', '<') and self.dtype.byteorder != '|':
-            raise TypeError(f'endianness not specified: {x}')
+    valid_types = set((
+        'bool',
+        'enum',
+        'int8',
+        'uint8',
+        'int16',
+        'uint16',
+        'int32',
+        'uint32',
+        'int64',
+        'uint64',
+    ))
+
+    def __post_init__(self):
+        if self.type not in self.valid_types:
+            raise ValueError(f'{self.type} is not a valid type')
+
+    @classmethod
+    def from_str(cls, string: str):
+        type, endianness = string.split(' ')
+        endianness = Endianness.from_str(endianness)
+        return cls(type, endianness)
+
+    @property
+    def integer(self):
+        return self.type.startswith('int') or self.type.startswith('uint')
+
+    @property
+    def signed(self):
+        if self.type.startswith('int'):
+            return True
+
+        if self.type.startswith('uint'):
+            return False
+
+        return None
 
 
 def _enumeration_pre_add(self, item):
@@ -54,12 +114,15 @@ _enumeration_ruleset.apply(EnumerationUnique)
 class Segment:
     name: str
     slice: Slice
-    type: Type = ''
+    type: Type = field(default_factory=Type)
     unit: str = ''
     enumerations: EnumerationUnique = tuple()  # = field(default_factory=EnumerationUnique)
 
     def __post_init__(self):
         self.slice = Slice.from_general(self.slice)
+
+        if not isinstance(self.type, Type):
+            self.type = Type.from_str(self.type)
 
         enumerations = self.enumerations
         self.enumerations = EnumerationUnique()
@@ -76,7 +139,7 @@ class Segment:
         self.enumerations.extend(enumerations)
 
     @classmethod
-    def from_string(cls, name, string, **kwargs):
+    def from_str(cls, name, string, **kwargs):
         '''
         Constructs an instance from a string of format
         `START + LEN | RAWTYPE | *SCALE | -OFFSET | *UNIT`
@@ -131,18 +194,6 @@ class Segment:
 
         return clean
 
-
-np_dtypes = {
-    'bool': 'bool',
-    'int8_t': 'int8',
-    'uint8_t': 'uint8',
-    'int16_t': 'int16',
-    'uint16_t': 'uint16',
-    'int32_t': 'int32',
-    'uint32_t': 'uint32',
-    'int64_t': 'int64',
-    'uint64_t': 'uint64',
-}
 
 casts = {
     'bool': lambda x, **kw: bool(x),

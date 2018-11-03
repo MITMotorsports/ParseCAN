@@ -22,7 +22,7 @@ def _segment_pre_add(self, item):
 def _segment_constr(key, segment):
     try:
         if isinstance(segment, str):
-            return Segment.from_string(name=key, string=segment)
+            return Segment.from_str(name=key, string=segment)
 
         return Segment(name=key, **segment)
     except Exception as e:

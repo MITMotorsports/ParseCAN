@@ -7,7 +7,7 @@ import ParseCAN as pcn
 from ParseCAN.spec import *
 from collections import OrderedDict
 
-car = pcn.spec.Car.from_yaml(open('examples/can_spec_my18.yml', 'r'))
+car = pcn.spec.Car.from_yaml(open('examples/my18_can_spec.yml', 'r'))
 print(car)
 print('OK')
 

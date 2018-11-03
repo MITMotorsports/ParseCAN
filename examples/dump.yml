@@ -12,34 +12,206 @@ buses:
     baudrate: 500000
     extended: false
     frames:
-      TestEnum:
-        id: 105
-        name: TestEnum
-        period: null
+      FrontCanNodeBrakeThrottle:
+        id: 144
+        name: FrontCanNodeBrakeThrottle
+        period: 13ms
         segments:
-          asd:
-            name: asd
+          accel_1:
+            name: accel_1
             slice:
               start: 0
-              length: 8
-            type: ''
+              length: 16
+            type:
+              type: uint16
+              endianness: big
             unit: ''
-            enumerations:
-              one:
-                name: one
-                value: 0
-              two:
-                name: two
-                value: 1
-              three:
-                name: three
-                value: 2
-              four:
-                name: four
-                value: 3
-              five:
-                name: five
-                value: 4
+            enumerations: {}
+          accel_2:
+            name: accel_2
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          brake_1:
+            name: brake_1
+            slice:
+              start: 32
+              length: 10
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          brake_2:
+            name: brake_2
+            slice:
+              start: 42
+              length: 10
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          accel_1_under:
+            name: accel_1_under
+            slice:
+              start: 52
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          accel_1_over:
+            name: accel_1_over
+            slice:
+              start: 53
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          accel_2_under:
+            name: accel_2_under
+            slice:
+              start: 54
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          accel_2_over:
+            name: accel_2_over
+            slice:
+              start: 55
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          brake_1_under:
+            name: brake_1_under
+            slice:
+              start: 56
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          brake_1_over:
+            name: brake_1_over
+            slice:
+              start: 57
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          brake_2_under:
+            name: brake_2_under
+            slice:
+              start: 58
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          brake_2_over:
+            name: brake_2_over
+            slice:
+              start: 59
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      FrontCanNodeLeftWheelSpeed:
+        id: 224
+        name: FrontCanNodeLeftWheelSpeed
+        period: 10ms
+        segments:
+          left_32b:
+            name: left_32b
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: uint32
+              endianness: big
+            unit: mRPM
+            enumerations: {}
+          left_16b:
+            name: left_16b
+            slice:
+              start: 32
+              length: 32
+            type:
+              type: uint32
+              endianness: big
+            unit: mRPM
+            enumerations: {}
+      FrontCanNodeRightWheelSpeed:
+        id: 225
+        name: FrontCanNodeRightWheelSpeed
+        period: 10ms
+        segments:
+          right_32b:
+            name: right_32b
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: uint32
+              endianness: big
+            unit: mRPM
+            enumerations: {}
+          right_16b:
+            name: right_16b
+            slice:
+              start: 32
+              length: 32
+            type:
+              type: uint32
+              endianness: big
+            unit: mRPM
+            enumerations: {}
+      SensorNodeWheelSpeed:
+        id: 226
+        name: SensorNodeWheelSpeed
+        period: 10ms
+        segments:
+          left_32b:
+            name: left_32b
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: uint32
+              endianness: big
+            unit: mRPM
+            enumerations: {}
+          right_32b:
+            name: right_32b
+            slice:
+              start: 32
+              length: 32
+            type:
+              type: uint32
+              endianness: big
+            unit: mRPM
+            enumerations: {}
       CellTemperatureRange:
         id: 22
         name: CellTemperatureRange
@@ -50,16 +222,19 @@ buses:
             slice:
               start: 0
               length: 10
-            type: '>i2'
-            unit:
-            - decidegC
+            type:
+              type: int16
+              endianness: big
+            unit: decidegC
             enumerations: {}
           argmin:
             name: argmin
             slice:
               start: 10
               length: 8
-            type: '>u1'
+            type:
+              type: uint8
+              endianness: big
             unit: ''
             enumerations: {}
           max0:
@@ -67,7 +242,9 @@ buses:
             slice:
               start: 18
               length: 10
-            type: '>i2'
+            type:
+              type: int16
+              endianness: big
             unit: decidegC
             enumerations: {}
           argmax0:
@@ -75,7 +252,9 @@ buses:
             slice:
               start: 28
               length: 8
-            type: '>u1'
+            type:
+              type: uint8
+              endianness: big
             unit: ''
             enumerations: {}
           max1:
@@ -83,7 +262,9 @@ buses:
             slice:
               start: 36
               length: 10
-            type: '>i2'
+            type:
+              type: int16
+              endianness: big
             unit: decidegC
             enumerations: {}
           argmax1:
@@ -91,7 +272,9 @@ buses:
             slice:
               start: 46
               length: 8
-            type: '>u1'
+            type:
+              type: uint8
+              endianness: big
             unit: ''
             enumerations: {}
           max2:
@@ -99,7 +282,9 @@ buses:
             slice:
               start: 54
               length: 10
-            type: '>i2'
+            type:
+              type: int16
+              endianness: big
             unit: decidegC
             enumerations: {}
       CellTemperatureVariance:
@@ -112,7 +297,9 @@ buses:
             slice:
               start: 0
               length: 10
-            type: '>i2'
+            type:
+              type: int16
+              endianness: big
             unit: decidegC
             enumerations: {}
           variance:
@@ -120,7 +307,9 @@ buses:
             slice:
               start: 10
               length: 16
-            type: '>u2'
+            type:
+              type: uint16
+              endianness: big
             unit: decidegC ** 2
             enumerations: {}
       CellVoltageRange:
@@ -133,7 +322,9 @@ buses:
             slice:
               start: 0
               length: 14
-            type: '>u2'
+            type:
+              type: uint16
+              endianness: big
             unit: mV
             enumerations: {}
           max:
@@ -141,7 +332,9 @@ buses:
             slice:
               start: 14
               length: 14
-            type: '>u2'
+            type:
+              type: uint16
+              endianness: big
             unit: mV
             enumerations: {}
           sum:
@@ -149,7 +342,9 @@ buses:
             slice:
               start: 28
               length: 32
-            type: '>u4'
+            type:
+              type: uint32
+              endianness: big
             unit: mV
             enumerations: {}
       BMSHeartbeat:
@@ -162,7 +357,9 @@ buses:
             slice:
               start: 0
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_cvst:
@@ -170,7 +367,9 @@ buses:
             slice:
               start: 1
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_owt:
@@ -178,7 +377,9 @@ buses:
             slice:
               start: 2
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_L_contactor_error:
@@ -186,7 +387,9 @@ buses:
             slice:
               start: 3
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_H_contactor_error:
@@ -194,7 +397,9 @@ buses:
             slice:
               start: 4
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_L_contactor_weld:
@@ -202,7 +407,9 @@ buses:
             slice:
               start: 5
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_H_contactor_weld:
@@ -210,7 +417,9 @@ buses:
             slice:
               start: 6
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_cell_under_voltage:
@@ -218,7 +427,9 @@ buses:
             slice:
               start: 7
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_cell_over_voltage:
@@ -226,7 +437,9 @@ buses:
             slice:
               start: 8
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_cell_underemp:
@@ -234,7 +447,9 @@ buses:
             slice:
               start: 9
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_cell_overemp:
@@ -242,7 +457,9 @@ buses:
             slice:
               start: 10
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_control_flow:
@@ -250,7 +467,9 @@ buses:
             slice:
               start: 11
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           error_force_over_can:
@@ -258,7 +477,9 @@ buses:
             slice:
               start: 12
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           L_contactor_closed:
@@ -266,7 +487,9 @@ buses:
             slice:
               start: 13
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           H_contactor_closed:
@@ -274,7 +497,9 @@ buses:
             slice:
               start: 14
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           L_contactor_welded:
@@ -282,7 +507,9 @@ buses:
             slice:
               start: 15
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           H_contactor_welded:
@@ -290,7 +517,9 @@ buses:
             slice:
               start: 16
               length: 1
-            type: bool
+            type:
+              type: bool
+              endianness: big
             unit: ''
             enumerations: {}
           soc:
@@ -298,8 +527,2769 @@ buses:
             slice:
               start: 17
               length: 8
-            type: '>u1'
+            type:
+              type: uint8
+              endianness: big
             unit: ''
+            enumerations: {}
+      BMSRequest:
+        id: 211
+        name: BMSRequest
+        period: null
+        segments:
+          force_error:
+            name: force_error
+            slice:
+              start: 0
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUHeartbeat:
+        id: 243
+        name: VCUHeartbeat
+        period: 41ms
+        segments:
+          vcu_state:
+            name: vcu_state
+            slice:
+              start: 0
+              length: 3
+            type:
+              type: enum
+              endianness: big
+            unit: ''
+            enumerations:
+              VCU_STATE_ROOT:
+                name: VCU_STATE_ROOT
+                value: 0
+              VCU_STATE_LV:
+                name: VCU_STATE_LV
+                value: 1
+              VCU_STATE_PRECHARGING:
+                name: VCU_STATE_PRECHARGING
+                value: 2
+              VCU_STATE_RTD:
+                name: VCU_STATE_RTD
+                value: 3
+              VCU_STATE_DRIVING:
+                name: VCU_STATE_DRIVING
+                value: 4
+          error_state:
+            name: error_state
+            slice:
+              start: 3
+              length: 3
+            type:
+              type: enum
+              endianness: big
+            unit: ''
+            enumerations:
+              NO_ERROR_STATE:
+                name: NO_ERROR_STATE
+                value: 0
+              RECOVERABLE_ERROR_STATE:
+                name: RECOVERABLE_ERROR_STATE
+                value: 1
+              FATAL_ERROR_STATE:
+                name: FATAL_ERROR_STATE
+                value: 2
+          estop_hit:
+            name: estop_hit
+            slice:
+              start: 6
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUErrors:
+        id: 244
+        name: VCUErrors
+        period: 111ms
+        segments:
+          recoverable_conflict:
+            name: recoverable_conflict
+            slice:
+              start: 0
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          recoverable_gate:
+            name: recoverable_gate
+            slice:
+              start: 1
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          recoverable_heartbeat:
+            name: recoverable_heartbeat
+            slice:
+              start: 2
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          recoverable_contactor:
+            name: recoverable_contactor
+            slice:
+              start: 3
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          fatal_contactor:
+            name: fatal_contactor
+            slice:
+              start: 4
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          fatal_gate:
+            name: fatal_gate
+            slice:
+              start: 5
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          fatal_precharge:
+            name: fatal_precharge
+            slice:
+              start: 6
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          fatal_conflict:
+            name: fatal_conflict
+            slice:
+              start: 7
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          gate_sdn:
+            name: gate_sdn
+            slice:
+              start: 8
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          gate_bpd:
+            name: gate_bpd
+            slice:
+              start: 9
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          gate_bms:
+            name: gate_bms
+            slice:
+              start: 10
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          gate_imd:
+            name: gate_imd
+            slice:
+              start: 11
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      CurrentSensor_Current:
+        id: 1313
+        name: CurrentSensor_Current
+        period: 0.05s
+        segments:
+          mux_id:
+            name: mux_id
+            slice:
+              start: 0
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          msg_count:
+            name: msg_count
+            slice:
+              start: 8
+              length: 4
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          over_current_signal:
+            name: over_current_signal
+            slice:
+              start: 12
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          channel_error:
+            name: channel_error
+            slice:
+              start: 13
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          measurement_error:
+            name: measurement_error
+            slice:
+              start: 14
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          system_error:
+            name: system_error
+            slice:
+              start: 15
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          result:
+            name: result
+            slice:
+              start: 16
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: mA
+            enumerations: {}
+      CurrentSensor_Voltage1:
+        id: 1314
+        name: CurrentSensor_Voltage1
+        period: 10ms
+        segments:
+          mux_id:
+            name: mux_id
+            slice:
+              start: 0
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          msg_count:
+            name: msg_count
+            slice:
+              start: 8
+              length: 4
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          over_current_signal:
+            name: over_current_signal
+            slice:
+              start: 12
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          channel_error:
+            name: channel_error
+            slice:
+              start: 13
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          measurement_error:
+            name: measurement_error
+            slice:
+              start: 14
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          system_error:
+            name: system_error
+            slice:
+              start: 15
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          result:
+            name: result
+            slice:
+              start: 16
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: mV
+            enumerations: {}
+      CurrentSensor_Voltage2:
+        id: 1315
+        name: CurrentSensor_Voltage2
+        period: 50ms
+        segments:
+          mux_id:
+            name: mux_id
+            slice:
+              start: 0
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          msg_count:
+            name: msg_count
+            slice:
+              start: 8
+              length: 4
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          over_current_signal:
+            name: over_current_signal
+            slice:
+              start: 12
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          channel_error:
+            name: channel_error
+            slice:
+              start: 13
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          measurement_error:
+            name: measurement_error
+            slice:
+              start: 14
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          system_error:
+            name: system_error
+            slice:
+              start: 15
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          result:
+            name: result
+            slice:
+              start: 16
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: mV
+            enumerations: {}
+      CurrentSensor_Voltage3:
+        id: 1316
+        name: CurrentSensor_Voltage3
+        period: 50ms
+        segments:
+          mux_id:
+            name: mux_id
+            slice:
+              start: 0
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          msg_count:
+            name: msg_count
+            slice:
+              start: 8
+              length: 4
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          over_current_signal:
+            name: over_current_signal
+            slice:
+              start: 12
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          channel_error:
+            name: channel_error
+            slice:
+              start: 13
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          measurement_error:
+            name: measurement_error
+            slice:
+              start: 14
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          system_error:
+            name: system_error
+            slice:
+              start: 15
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          result:
+            name: result
+            slice:
+              start: 16
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: mV
+            enumerations: {}
+      CurrentSensor_Power:
+        id: 1318
+        name: CurrentSensor_Power
+        period: 50ms
+        segments:
+          mux_id:
+            name: mux_id
+            slice:
+              start: 0
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          msg_count:
+            name: msg_count
+            slice:
+              start: 8
+              length: 4
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          over_current_signal:
+            name: over_current_signal
+            slice:
+              start: 12
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          channel_error:
+            name: channel_error
+            slice:
+              start: 13
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          measurement_error:
+            name: measurement_error
+            slice:
+              start: 14
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          system_error:
+            name: system_error
+            slice:
+              start: 15
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          result:
+            name: result
+            slice:
+              start: 16
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: W
+            enumerations: {}
+      CurrentSensor_Energy:
+        id: 1320
+        name: CurrentSensor_Energy
+        period: 50ms
+        segments:
+          mux_id:
+            name: mux_id
+            slice:
+              start: 0
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          msg_count:
+            name: msg_count
+            slice:
+              start: 8
+              length: 4
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          over_current_signal:
+            name: over_current_signal
+            slice:
+              start: 12
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          channel_error:
+            name: channel_error
+            slice:
+              start: 13
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          measurement_error:
+            name: measurement_error
+            slice:
+              start: 14
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          system_error:
+            name: system_error
+            slice:
+              start: 15
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          result:
+            name: result
+            slice:
+              start: 16
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: Wh
+            enumerations: {}
+      DashRequest:
+        id: 210
+        name: DashRequest
+        period: 69ms
+        segments:
+          using_regen:
+            name: using_regen
+            slice:
+              start: 0
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          using_voltage_limiting:
+            name: using_voltage_limiting
+            slice:
+              start: 1
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          usingemp_limiting:
+            name: usingemp_limiting
+            slice:
+              start: 2
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          regen_bias:
+            name: regen_bias
+            slice:
+              start: 3
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          limp_factor:
+            name: limp_factor
+            slice:
+              start: 11
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          temp_lim_min_gain:
+            name: temp_lim_min_gain
+            slice:
+              start: 19
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          temp_limhreshemp:
+            name: temp_limhreshemp
+            slice:
+              start: 27
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          volt_lim_min_gain:
+            name: volt_lim_min_gain
+            slice:
+              start: 35
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          volt_lim_min_voltage:
+            name: volt_lim_min_voltage
+            slice:
+              start: 43
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          active_aero_enabled:
+            name: active_aero_enabled
+            slice:
+              start: 59
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          daq_mark:
+            name: daq_mark
+            slice:
+              start: 60
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      DashRequestLC:
+        id: 213
+        name: DashRequestLC
+        period: 69ms
+        segments:
+          speeding_uporque:
+            name: speeding_uporque
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          speeding_up_speed:
+            name: speeding_up_speed
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          wshresh:
+            name: wshresh
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          launch_ctrl_slip_ratio:
+            name: launch_ctrl_slip_ratio
+            slice:
+              start: 48
+              length: 9
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          using_launch_ctrl:
+            name: using_launch_ctrl
+            slice:
+              start: 57
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUControlsParams:
+        id: 212
+        name: VCUControlsParams
+        period: 200ms
+        segments:
+          using_regen:
+            name: using_regen
+            slice:
+              start: 0
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          using_voltage_limiting:
+            name: using_voltage_limiting
+            slice:
+              start: 1
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          usingemp_limiting:
+            name: usingemp_limiting
+            slice:
+              start: 2
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          regen_bias:
+            name: regen_bias
+            slice:
+              start: 3
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          limp_factor:
+            name: limp_factor
+            slice:
+              start: 11
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          temp_lim_min_gain:
+            name: temp_lim_min_gain
+            slice:
+              start: 19
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          temp_limhreshemp:
+            name: temp_limhreshemp
+            slice:
+              start: 27
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          volt_lim_min_gain:
+            name: volt_lim_min_gain
+            slice:
+              start: 35
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          volt_lim_min_voltage:
+            name: volt_lim_min_voltage
+            slice:
+              start: 43
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          active_aero_enabled:
+            name: active_aero_enabled
+            slice:
+              start: 59
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          torqueemp_limited:
+            name: torqueemp_limited
+            slice:
+              start: 60
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUControlsParamsLC:
+        id: 214
+        name: VCUControlsParamsLC
+        period: 200ms
+        segments:
+          speeding_uporque:
+            name: speeding_uporque
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          speeding_up_speed:
+            name: speeding_up_speed
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          wshresh:
+            name: wshresh
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          launch_ctrl_slip_ratio:
+            name: launch_ctrl_slip_ratio
+            slice:
+              start: 48
+              length: 8
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          using_launch_ctrl:
+            name: using_launch_ctrl
+            slice:
+              start: 56
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          lc_state:
+            name: lc_state
+            slice:
+              start: 57
+              length: 3
+            type:
+              type: enum
+              endianness: big
+            unit: ''
+            enumerations:
+              BEFORE:
+                name: BEFORE
+                value: 0
+              SPEEDING_UP:
+                name: SPEEDING_UP
+                value: 1
+              SPEED_CONTROLLER:
+                name: SPEED_CONTROLLER
+                value: 2
+              ZEROORQUE:
+                name: ZEROORQUE
+                value: 3
+              DONE:
+                name: DONE
+                value: 4
+      ButtonRequest:
+        id: 216
+        name: ButtonRequest
+        period: 73ms
+        segments:
+          RTD:
+            name: RTD
+            slice:
+              start: 0
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          DriverReset:
+            name: DriverReset
+            slice:
+              start: 1
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          A:
+            name: A
+            slice:
+              start: 2
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          B:
+            name: B
+            slice:
+              start: 3
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      ADC_Data1:
+        id: 217
+        name: ADC_Data1
+        period: 10ms
+        segments:
+          shockpot:
+            name: shockpot
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          load_cell:
+            name: load_cell
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          ext_adc_ch2:
+            name: ext_adc_ch2
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          ext_adc_ch3:
+            name: ext_adc_ch3
+            slice:
+              start: 48
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+      ADC_Data2:
+        id: 219
+        name: ADC_Data2
+        period: 10ms
+        segments:
+          ext_adc_ch4:
+            name: ext_adc_ch4
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          ext_adc_ch5:
+            name: ext_adc_ch5
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          ext_adc_ch6:
+            name: ext_adc_ch6
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          ext_adc_ch7:
+            name: ext_adc_ch7
+            slice:
+              start: 48
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+      ADC_Data3:
+        id: 221
+        name: ADC_Data3
+        period: 10ms
+        segments:
+          int_adc_ch2:
+            name: int_adc_ch2
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          int_adc_ch3:
+            name: int_adc_ch3
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          int_adc_ch4:
+            name: int_adc_ch4
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          int_adc_ch5:
+            name: int_adc_ch5
+            slice:
+              start: 48
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlKpTimes1000:
+        id: 547
+        name: VCUSpeedCntrlKpTimes1000
+        period: 200ms
+        segments:
+          kpimes_1000:
+            name: kpimes_1000
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlKiTimes1000:
+        id: 549
+        name: VCUSpeedCntrlKiTimes1000
+        period: 200ms
+        segments:
+          kiimes_1000:
+            name: kiimes_1000
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlKdTimes1000:
+        id: 551
+        name: VCUSpeedCntrlKdTimes1000
+        period: 200ms
+        segments:
+          kdimes_1000:
+            name: kdimes_1000
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlIWindupMax:
+        id: 553
+        name: VCUSpeedCntrlIWindupMax
+        period: 200ms
+        segments:
+          i_windup_max:
+            name: i_windup_max
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlIWindupMin:
+        id: 555
+        name: VCUSpeedCntrlIWindupMin
+        period: 200ms
+        segments:
+          i_windup_min:
+            name: i_windup_min
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlMinOutputValue:
+        id: 557
+        name: VCUSpeedCntrlMinOutputValue
+        period: 200ms
+        segments:
+          min_output_value:
+            name: min_output_value
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlMaxOutputValue:
+        id: 559
+        name: VCUSpeedCntrlMaxOutputValue
+        period: 200ms
+        segments:
+          max_output_value:
+            name: max_output_value
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlMinInputValue:
+        id: 561
+        name: VCUSpeedCntrlMinInputValue
+        period: 200ms
+        segments:
+          min_input_value:
+            name: min_input_value
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlMaxInputValue:
+        id: 563
+        name: VCUSpeedCntrlMaxInputValue
+        period: 200ms
+        segments:
+          max_input_value:
+            name: max_input_value
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlErrorUpdateTimeout:
+        id: 565
+        name: VCUSpeedCntrlErrorUpdateTimeout
+        period: 200ms
+        segments:
+          error_updateimeout:
+            name: error_updateimeout
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlDt:
+        id: 567
+        name: VCUSpeedCntrlDt
+        period: 200ms
+        segments:
+          dt:
+            name: dt
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlEnabled:
+        id: 569
+        name: VCUSpeedCntrlEnabled
+        period: 200ms
+        segments:
+          enabled:
+            name: enabled
+            slice:
+              start: 0
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlOutOfInputRangeThrottled:
+        id: 571
+        name: VCUSpeedCntrlOutOfInputRangeThrottled
+        period: 200ms
+        segments:
+          out_of_input_rangehrottled:
+            name: out_of_input_rangehrottled
+            slice:
+              start: 0
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlOutOfOutputRangeThrottled:
+        id: 573
+        name: VCUSpeedCntrlOutOfOutputRangeThrottled
+        period: 200ms
+        segments:
+          out_of_output_rangehrottled:
+            name: out_of_output_rangehrottled
+            slice:
+              start: 0
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlErrorUpdateTimedOut:
+        id: 575
+        name: VCUSpeedCntrlErrorUpdateTimedOut
+        period: 200ms
+        segments:
+          error_updateimed_out:
+            name: error_updateimed_out
+            slice:
+              start: 0
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlRPMSetpoint:
+        id: 577
+        name: VCUSpeedCntrlRPMSetpoint
+        period: 200ms
+        segments:
+          rpm_setpoint:
+            name: rpm_setpoint
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlCommandedTorque:
+        id: 579
+        name: VCUSpeedCntrlCommandedTorque
+        period: 200ms
+        segments:
+          commandedorque:
+            name: commandedorque
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlRPMError:
+        id: 581
+        name: VCUSpeedCntrlRPMError
+        period: 200ms
+        segments:
+          rpm_error:
+            name: rpm_error
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlLastRPMError:
+        id: 583
+        name: VCUSpeedCntrlLastRPMError
+        period: 200ms
+        segments:
+          last_rpm_error:
+            name: last_rpm_error
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlDerivRPMError:
+        id: 585
+        name: VCUSpeedCntrlDerivRPMError
+        period: 200ms
+        segments:
+          deriv_rpm_error:
+            name: deriv_rpm_error
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlRPMErrorAccumulated:
+        id: 587
+        name: VCUSpeedCntrlRPMErrorAccumulated
+        period: 200ms
+        segments:
+          rpm_error_accumulated:
+            name: rpm_error_accumulated
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      VCUSpeedCntrlLastErrorUpdateTimestamp:
+        id: 589
+        name: VCUSpeedCntrlLastErrorUpdateTimestamp
+        period: 200ms
+        segments:
+          last_error_updateimestamp:
+            name: last_error_updateimestamp
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: uint32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      DashSpeedCntrlKpTimes1000:
+        id: 548
+        name: DashSpeedCntrlKpTimes1000
+        period: 200ms
+        segments:
+          kpimes_1000:
+            name: kpimes_1000
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      DashSpeedCntrlKiTimes1000:
+        id: 550
+        name: DashSpeedCntrlKiTimes1000
+        period: 200ms
+        segments:
+          kiimes_1000:
+            name: kiimes_1000
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      DashSpeedCntrlRPMSetpoint:
+        id: 578
+        name: DashSpeedCntrlRPMSetpoint
+        period: 200ms
+        segments:
+          rpm_setpoint:
+            name: rpm_setpoint
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: ''
+            enumerations: {}
+      MCCommand:
+        id: 192
+        name: MCCommand
+        period: 9ms
+        segments:
+          torque:
+            name: torque
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dNm
+            enumerations: {}
+          angular_vel:
+            name: angular_vel
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: RPM
+            enumerations: {}
+          direction_is_counterclockwise:
+            name: direction_is_counterclockwise
+            slice:
+              start: 39
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          inverter_enabled:
+            name: inverter_enabled
+            slice:
+              start: 47
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          discharge_enabled:
+            name: discharge_enabled
+            slice:
+              start: 46
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          speed_mode:
+            name: speed_mode
+            slice:
+              start: 45
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          torque_limit:
+            name: torque_limit
+            slice:
+              start: 48
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dNm
+            enumerations: {}
+      MCParameterRequest:
+        id: 193
+        name: MCParameterRequest
+        period: null
+        segments:
+          address:
+            name: address
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dNm
+            enumerations: {}
+          write:
+            name: write
+            slice:
+              start: 23
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: RPM
+            enumerations: {}
+          data:
+            name: data
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: ''
+            enumerations: {}
+      MCVoltage:
+        id: 167
+        name: MCVoltage
+        period: 1cs
+        segments:
+          bus:
+            name: bus
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dV
+            enumerations: {}
+          out:
+            name: out
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dV
+            enumerations: {}
+          VAB_Vd:
+            name: VAB_Vd
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dV
+            enumerations: {}
+          VBC_Vq:
+            name: VBC_Vq
+            slice:
+              start: 48
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dV
+            enumerations: {}
+      MCMotorPositionInfo:
+        id: 165
+        name: MCMotorPositionInfo
+        period: 0.01s
+        segments:
+          motor_angle:
+            name: motor_angle
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: decideg
+            enumerations: {}
+          motor_speed:
+            name: motor_speed
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: RPM
+            enumerations: {}
+          electrical_output_freq:
+            name: electrical_output_freq
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dHz
+            enumerations: {}
+          delta_resolved_filter:
+            name: delta_resolved_filter
+            slice:
+              start: 48
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: decideg
+            enumerations: {}
+      MCFluxInfo:
+        id: 168
+        name: MCFluxInfo
+        period: 0.01s
+        segments:
+          flux_command:
+            name: flux_command
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: mWb
+            enumerations: {}
+          flux_feedback:
+            name: flux_feedback
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: mWb
+            enumerations: {}
+          Iq_feedback:
+            name: Iq_feedback
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dA
+            enumerations: {}
+          Id_feedback:
+            name: Id_feedback
+            slice:
+              start: 48
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dA
+            enumerations: {}
+      MCFaultCodes:
+        id: 171
+        name: MCFaultCodes
+        period: null
+        segments:
+          post_hw_gate_desaturation_fault:
+            name: post_hw_gate_desaturation_fault
+            slice:
+              start: 0
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          hw_over_current_fualt:
+            name: hw_over_current_fualt
+            slice:
+              start: 1
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          accel_shorted:
+            name: accel_shorted
+            slice:
+              start: 2
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          accel_open:
+            name: accel_open
+            slice:
+              start: 3
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          current_sensor_lo:
+            name: current_sensor_lo
+            slice:
+              start: 4
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          current_sensor_hi:
+            name: current_sensor_hi
+            slice:
+              start: 5
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          moduleemp_lo:
+            name: moduleemp_lo
+            slice:
+              start: 6
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          moduleemp_hi:
+            name: moduleemp_hi
+            slice:
+              start: 7
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          control_pcbemp_lo:
+            name: control_pcbemp_lo
+            slice:
+              start: 8
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          control_pcbemp_hi:
+            name: control_pcbemp_hi
+            slice:
+              start: 9
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          gate_drive_pcbemp_lo:
+            name: gate_drive_pcbemp_lo
+            slice:
+              start: 10
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          gate_drive_pcbemp_hi:
+            name: gate_drive_pcbemp_hi
+            slice:
+              start: 11
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          sense_5v_lo:
+            name: sense_5v_lo
+            slice:
+              start: 12
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          sense_5v_hi:
+            name: sense_5v_hi
+            slice:
+              start: 13
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          sense_12v_lo:
+            name: sense_12v_lo
+            slice:
+              start: 14
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          sense_12v_hi:
+            name: sense_12v_hi
+            slice:
+              start: 15
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          sense_2_5v_lo:
+            name: sense_2_5v_lo
+            slice:
+              start: 16
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          sense_2_5v_hi:
+            name: sense_2_5v_hi
+            slice:
+              start: 17
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          sense_1_5v_lo:
+            name: sense_1_5v_lo
+            slice:
+              start: 18
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          sense_1_5v_hi:
+            name: sense_1_5v_hi
+            slice:
+              start: 19
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          dc_bus_voltage_hi:
+            name: dc_bus_voltage_hi
+            slice:
+              start: 20
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          dc_bus_voltage_lo:
+            name: dc_bus_voltage_lo
+            slice:
+              start: 21
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          pre_chargeimeout:
+            name: pre_chargeimeout
+            slice:
+              start: 22
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          pre_charge_failure:
+            name: pre_charge_failure
+            slice:
+              start: 23
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          eeprom_checksum_invalid:
+            name: eeprom_checksum_invalid
+            slice:
+              start: 24
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          eeprom_checksum_data_out_of_range:
+            name: eeprom_checksum_data_out_of_range
+            slice:
+              start: 25
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          eeprom_checksum_update_required:
+            name: eeprom_checksum_update_required
+            slice:
+              start: 26
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          post_brake_shorted:
+            name: post_brake_shorted
+            slice:
+              start: 30
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          post_brake_open:
+            name: post_brake_open
+            slice:
+              start: 31
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          motor_over_speed_fault:
+            name: motor_over_speed_fault
+            slice:
+              start: 32
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          over_current_fault:
+            name: over_current_fault
+            slice:
+              start: 33
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          over_voltage_fault:
+            name: over_voltage_fault
+            slice:
+              start: 34
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          inverter_overemp_fault:
+            name: inverter_overemp_fault
+            slice:
+              start: 35
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          accel_input_shorted_fault:
+            name: accel_input_shorted_fault
+            slice:
+              start: 36
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          accel_input_open_fault:
+            name: accel_input_open_fault
+            slice:
+              start: 37
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          direction_command_fault:
+            name: direction_command_fault
+            slice:
+              start: 38
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          inverter_respimeout_fault:
+            name: inverter_respimeout_fault
+            slice:
+              start: 39
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          run_hw_gate_desaturation_fault:
+            name: run_hw_gate_desaturation_fault
+            slice:
+              start: 40
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          run_hw_over_current_fualt:
+            name: run_hw_over_current_fualt
+            slice:
+              start: 41
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          under_voltage_fault:
+            name: under_voltage_fault
+            slice:
+              start: 42
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          can_command_msg_lost_fault:
+            name: can_command_msg_lost_fault
+            slice:
+              start: 43
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          motor_overemp_fault:
+            name: motor_overemp_fault
+            slice:
+              start: 44
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          run_brake_shorted:
+            name: run_brake_shorted
+            slice:
+              start: 48
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          run_brake_open:
+            name: run_brake_open
+            slice:
+              start: 49
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          module_A_overemp_fault:
+            name: module_A_overemp_fault
+            slice:
+              start: 50
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          module_B_overemp_fault:
+            name: module_B_overemp_fault
+            slice:
+              start: 51
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          module_C_overemp_fault:
+            name: module_C_overemp_fault
+            slice:
+              start: 52
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          pcb_overemp_fault:
+            name: pcb_overemp_fault
+            slice:
+              start: 53
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          gate_drive_board_1_overemp:
+            name: gate_drive_board_1_overemp
+            slice:
+              start: 54
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          gate_drive_board_2_overemp:
+            name: gate_drive_board_2_overemp
+            slice:
+              start: 55
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          gate_drive_board_3_overemp:
+            name: gate_drive_board_3_overemp
+            slice:
+              start: 56
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          current_sensor_fault:
+            name: current_sensor_fault
+            slice:
+              start: 57
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          resolver_not_connected:
+            name: resolver_not_connected
+            slice:
+              start: 62
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+          inverter_discharge_active:
+            name: inverter_discharge_active
+            slice:
+              start: 63
+              length: 1
+            type:
+              type: bool
+              endianness: big
+            unit: ''
+            enumerations: {}
+      MCTorqueTimerInfo:
+        id: 172
+        name: MCTorqueTimerInfo
+        period: 0.01s
+        segments:
+          commandedorque:
+            name: commandedorque
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dNm
+            enumerations: {}
+          torque_feedback:
+            name: torque_feedback
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dNm
+            enumerations: {}
+          power_onimer:
+            name: power_onimer
+            slice:
+              start: 32
+              length: 32
+            type:
+              type: uint32
+              endianness: big
+            unit: tick
+            enumerations: {}
+      MCModulationIndxFluxWeakeningInfo:
+        id: 173
+        name: MCModulationIndxFluxWeakeningInfo
+        period: 0.01s
+        segments:
+          modulation_index:
+            name: modulation_index
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          flux_weakening_output:
+            name: flux_weakening_output
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dA
+            enumerations: {}
+          Id_command:
+            name: Id_command
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dA
+            enumerations: {}
+          Iq_command:
+            name: Iq_command
+            slice:
+              start: 48
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: dA
+            enumerations: {}
+      CurrentSensor_Config:
+        id: 1041
+        name: CurrentSensor_Config
+        period: null
+        segments:
+          muxbyte:
+            name: muxbyte
+            slice:
+              start: 0
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          db1:
+            name: db1
+            slice:
+              start: 8
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          db2:
+            name: db2
+            slice:
+              start: 16
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          db3:
+            name: db3
+            slice:
+              start: 24
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          db4:
+            name: db4
+            slice:
+              start: 32
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          db5:
+            name: db5
+            slice:
+              start: 40
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          db6:
+            name: db6
+            slice:
+              start: 48
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          db7:
+            name: db7
+            slice:
+              start: 56
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+      MCTemperature:
+        id: 160
+        name: MCTemperature
+        period: null
+        segments:
+          module_aemp:
+            name: module_aemp
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: decidegC
+            enumerations: {}
+          module_bemp:
+            name: module_bemp
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: decidegC
+            enumerations: {}
+          module_cemp:
+            name: module_cemp
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: decidegC
+            enumerations: {}
+          gate_driveremp:
+            name: gate_driveremp
+            slice:
+              start: 48
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: decidegC
+            enumerations: {}
+      SBG_EKF_Velocity_ACC:
+        id: 312
+        name: SBG_EKF_Velocity_ACC
+        period: null
+        segments:
+          north:
+            name: north
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: cm / s
+            enumerations: {}
+          east:
+            name: east
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: cm / s
+            enumerations: {}
+          down:
+            name: down
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: cm / s
+            enumerations: {}
+      SBG_EKF_Velocity:
+        id: 311
+        name: SBG_EKF_Velocity
+        period: null
+        segments:
+          north:
+            name: north
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: cm / s
+            enumerations: {}
+          east:
+            name: east
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: cm / s
+            enumerations: {}
+          down:
+            name: down
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: cm / s
+            enumerations: {}
+      SBG_EKF_Position_ACC:
+        id: 310
+        name: SBG_EKF_Position_ACC
+        period: null
+        segments:
+          latitude:
+            name: latitude
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: cm
+            enumerations: {}
+          longitude:
+            name: longitude
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: cm
+            enumerations: {}
+          altitude:
+            name: altitude
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: cm
+            enumerations: {}
+      SBG_EKF_Position:
+        id: 308
+        name: SBG_EKF_Position
+        period: null
+        segments:
+          latitude:
+            name: latitude
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: 1e-7 deg
+            enumerations: {}
+          longitude:
+            name: longitude
+            slice:
+              start: 32
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: 1e-7 deg
+            enumerations: {}
+      SBG_EKF_Altitude:
+        id: 309
+        name: SBG_EKF_Altitude
+        period: null
+        segments:
+          altitude:
+            name: altitude
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: int32
+              endianness: big
+            unit: mm
+            enumerations: {}
+          undulation:
+            name: undulation
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: 5 mm
+            enumerations: {}
+      SBG_EKF_Orientation_ACC:
+        id: 307
+        name: SBG_EKF_Orientation_ACC
+        period: null
+        segments:
+          pitch:
+            name: pitch
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: 0.1 mrad
+            enumerations: {}
+          roll:
+            name: roll
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: 0.1 mrad
+            enumerations: {}
+          yaw:
+            name: yaw
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: 0.1 mrad
             enumerations: {}
       SBG_EKF_Euler:
         id: 306
@@ -311,7 +3301,9 @@ buses:
             slice:
               start: 0
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: 0.1 mrad
             enumerations: {}
           pitch:
@@ -319,7 +3311,9 @@ buses:
             slice:
               start: 16
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: 0.1 mrad
             enumerations: {}
           yaw:
@@ -327,7 +3321,9 @@ buses:
             slice:
               start: 32
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: 0.1 mrad
             enumerations: {}
       SBG_EKF_Quaternion:
@@ -340,7 +3336,9 @@ buses:
             slice:
               start: 0
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: 3.0517578125e-05
             enumerations: {}
           q1:
@@ -348,7 +3346,9 @@ buses:
             slice:
               start: 16
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: 3.0517578125e-05
             enumerations: {}
           q2:
@@ -356,7 +3356,9 @@ buses:
             slice:
               start: 32
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: 3.0517578125e-05
             enumerations: {}
           q3:
@@ -364,8 +3366,80 @@ buses:
             slice:
               start: 48
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: 3.0517578125e-05
+            enumerations: {}
+      SBG_IMU_DeltaAngle:
+        id: 292
+        name: SBG_IMU_DeltaAngle
+        period: null
+        segments:
+          x:
+            name: x
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: mrad / s
+            enumerations: {}
+          y:
+            name: y
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: mrad / s
+            enumerations: {}
+          z:
+            name: z
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: mrad / s
+            enumerations: {}
+      SBG_IMU_DeltaVelocity:
+        id: 291
+        name: SBG_IMU_DeltaVelocity
+        period: null
+        segments:
+          x:
+            name: x
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: cm / (s ** 2)
+            enumerations: {}
+          y:
+            name: y
+            slice:
+              start: 16
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: cm / (s ** 2)
+            enumerations: {}
+          z:
+            name: z
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: cm / (s ** 2)
             enumerations: {}
       SBG_IMU_Gyroscope:
         id: 290
@@ -377,7 +3451,9 @@ buses:
             slice:
               start: 0
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: mrad / s
             enumerations: {}
           y:
@@ -385,7 +3461,9 @@ buses:
             slice:
               start: 16
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: mrad / s
             enumerations: {}
           z:
@@ -393,7 +3471,9 @@ buses:
             slice:
               start: 32
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: mrad / s
             enumerations: {}
       SBG_IMU_Accelerometer:
@@ -406,7 +3486,9 @@ buses:
             slice:
               start: 0
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: cm / (s ** 2)
             enumerations: {}
           y:
@@ -414,7 +3496,9 @@ buses:
             slice:
               start: 16
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: cm / (s ** 2)
             enumerations: {}
           z:
@@ -422,25 +3506,89 @@ buses:
             slice:
               start: 32
               length: 16
-            type: <i2
+            type:
+              type: int16
+              endianness: big
             unit: cm / (s ** 2)
             enumerations: {}
-boards:
-  can_node:
-    name: can_node
-    architecture: lpc11cx4
-    location: null
-    publish: {}
-    subscribe: {}
-  vcu:
-    name: vcu
-    architecture: stm32f205
-    location: null
-    publish: {}
-    subscribe: {}
-  dash:
-    name: dash
-    architecture: lpc11cx4
-    location: null
-    publish: {}
-    subscribe: {}
+      SBG_LOG_UTC:
+        id: 272
+        name: SBG_LOG_UTC
+        period: null
+        segments:
+          timestamp:
+            name: timestamp
+            slice:
+              start: 0
+              length: 32
+            type:
+              type: uint32
+              endianness: big
+            unit: ms
+            enumerations: {}
+          timeofweek:
+            name: timeofweek
+            slice:
+              start: 32
+              length: 32
+            type:
+              type: uint32
+              endianness: big
+            unit: ms
+            enumerations: {}
+      VCUControlsMonitoring:
+        id: 1536
+        name: VCUControlsMonitoring
+        period: 10 ms
+        segments:
+          raworque:
+            name: raworque
+            slice:
+              start: 0
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: ''
+            enumerations: {}
+          vl_gain:
+            name: vl_gain
+            slice:
+              start: 16
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          tl_gain:
+            name: tl_gain
+            slice:
+              start: 24
+              length: 8
+            type:
+              type: uint8
+              endianness: big
+            unit: ''
+            enumerations: {}
+          filteredemp:
+            name: filteredemp
+            slice:
+              start: 32
+              length: 16
+            type:
+              type: uint16
+              endianness: big
+            unit: centidegC
+            enumerations: {}
+          voltage_used:
+            name: voltage_used
+            slice:
+              start: 48
+              length: 16
+            type:
+              type: int16
+              endianness: big
+            unit: cV
+            enumerations: {}
+boards: {}
