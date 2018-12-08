@@ -63,6 +63,9 @@ class Type:
     def isinteger(self):
         return self.type.startswith('int') or self.type.startswith('uint')
 
+    def isenum(self):
+        return self.type == 'enum'
+
     def issigned(self):
         if self.type.startswith('int'):
             return True
