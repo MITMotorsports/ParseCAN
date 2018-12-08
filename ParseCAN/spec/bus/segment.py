@@ -72,6 +72,12 @@ class Type:
 
         return None
 
+    def ctype(self):
+        if 'int' in self.type:
+            return self.type + '_t'
+        
+        return self.type
+
     def size(self):
         '''
         Size, in bits, of this type.
