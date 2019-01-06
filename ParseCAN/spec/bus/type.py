@@ -1,32 +1,8 @@
-from dataclasses import dataclass, field, InitVar
+from dataclasses import dataclass, field
+from typing import NamedTuple
 from ... import plural
 
-@dataclass
-class Enumeration:
-    name: str
-    value: int
-    max_value: InitVar[int] = field(repr=False, compare=False, hash=False, default=2 ** 64)
-
-    def __post_init__(self, max_value):
-        self.max_value = max_value
-        self.value = self.value
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, val):
-        self._value = val
-        self.check()
-
-    def check(self):
-        if self.value < 0 or self.value > self.max_value:
-            raise ValueError(f'value out of range: {self.value}')
-
-    def __contains__(self, data):
-        return self.value == data
-
+Enumeration = NamedTuple('Enumeration', [('name', str), ('value', int)])
 
 
 def _enumeration_pre_add(self, item):
@@ -122,13 +98,13 @@ class Type:
         endianness = Endianness.from_str(endianness)
         return cls(type, endianness)
 
-    def isinteger(self):
+    def isinteger(self) -> bool:
         return self.type.startswith('int') or self.type.startswith('uint')
 
-    def isenum(self):
-        return self.type == 'enum'
+    def isenum(self) -> bool:
+        return bool(self.enumerations)
 
-    def issigned(self):
+    def issigned(self) -> bool:
         if self.type.startswith('int'):
             return True
 
@@ -155,7 +131,7 @@ class Type:
 
         return np_dtypes.get(self.c_type, None)
 
-    def size(self):
+    def size(self) -> int:
         '''
         Size, in bits, of this type.
         '''

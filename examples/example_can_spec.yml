@@ -6,7 +6,7 @@ units:
 architectures:
   - lpc11cx4
   - stm32f205
-boards:
+board:
   can_node:
     architecture: lpc11cx4
   vcu:
@@ -24,7 +24,8 @@ protocol:
     definition:
       bus:
         version:
-          type: - 2.0B  # TODO: Decide whether to use same syntax as atom enum.
+          type:
+            - 2.0B  # TODO: Decide whether to use same syntax as atom enum.
           required: true
         baudrate:
           type: int16

@@ -5,9 +5,7 @@ from ...helper import Slice
 from .type import Type
 
 
-# TODO: Specify a forbidden region (claiomed by multiplex).
-
-@dataclass
+@dataclass(frozen=True)
 class Atom:
     name: str
     slice: Slice

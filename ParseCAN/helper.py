@@ -4,7 +4,9 @@ from typing import Union, Tuple
 
 @dataclass
 class Slice:
-    start: Union[int, type(None)]
+    _START_T = Union[int, type(None)]  # use the field to get the type for fn args
+
+    start: _START_T
     length: int
 
     @property

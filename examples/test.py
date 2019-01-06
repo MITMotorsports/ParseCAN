@@ -7,7 +7,7 @@ import ParseCAN as pcn
 from ParseCAN.spec import *
 from collections import OrderedDict
 
-car = pcn.spec.Car.from_yaml(open('examples/my18_can_spec.yml', 'r'))
+car = pcn.spec.System.from_yaml(open('examples/example_can_spec.yml', 'r'))
 print(car)
 print('OK')
 
@@ -20,7 +20,7 @@ def compact_dict(items, dict_factory=OrderedDict):
     for k, v in items:
         if isinstance(v, Slice):
             v = str(v)
-        if isinstance(v, Segment):
+        if isinstance(v, Atom):
             print('seg', v)
             unit = ' | '.join(v.unit)
             pipe = [str(v.slice), str(v.type), unit]
