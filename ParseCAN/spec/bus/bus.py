@@ -2,24 +2,19 @@ from dataclasses import dataclass, field
 from typing import Sequence, Union
 
 from ... import spec, plural
-from .frame import Frame, SingleFrame
+from .frame import Frame, FrameCollection, FrameUnique
 
 
 def _frame_constr(key, frame):
     if isinstance(frame, dict):
         try:
-            return SingleFrame(name=key, **frame)
+            return Frame(name=key, **frame)
         except Exception as e:
             e.args = ('in frame {}: {}'.format(key, e),)
 
             raise
 
     raise ValueError(f'malformed frame representation {key}: {frame}')
-
-
-FrameUnique = plural.Unique[Frame].make('FrameUnique',
-                                        ['name', 'id'],
-                                        main='name')
 
 
 @dataclass

@@ -13,214 +13,246 @@ boards:
     architecture: stm32f205
   dash:
     architecture: lpc11cx4
-buses:
-  can0:
-    baudrate: 500000
-    extended: false
-    frames:
-    # frames:
-    #   TestEnum:
-    #     id: 0x069
-    #     multiplex:
-    #       slice: 0 + 1
-    #       frames:
-    #         first:
-    #           id: 0
-    #           period: 10ms
-    #           segments:
-    #             asd:
-    #               slice: 1 + 8
-    #               enumerations:
-    #                 - one
-    #                 - two
-    #                 - three
-    #                 - four
-    #                 - five
-      TestEnum:
-        id: 0x069
-        segments:
-          asd:
-            slice: 0 + 8
-            # slice: 0 + 2
-            enumerations:
-              - one
-              - two
-              - three
-              - four
-              - five
-      CellTemperatureRange:
-        id: 0x016
-        period: 101ms
-        segments:
-          min: 0 + 10 | >i2 | decidegC
-          argmin:
-            slice: 10 + 8
-            type: '>u1'
-          max0:
-            slice: 18 + 10
-            type: '>i2'
-            unit: decidegC
-          argmax0:
-            slice: 28 + 8
-            type: '>u1'
-          max1:
-            slice: 36 + 10
-            type: '>i2'
-            unit: decidegC
-          argmax1:
-            slice: 46 + 8
-            type: '>u1'
-          max2:
-            slice: 54 + 10
-            type: '>i2'
-            unit: decidegC
-      CellTemperatureVariance:
-        id: 0x0F0
-        period: 103ms
-        segments:
-          mean:
-            slice: 0 + 10
-            type: '>i2'
-            unit: decidegC
-          variance:
-            slice: 10 + 16
-            type: '>u2'
-            unit: decidegC ** 2
-      CellVoltageRange:
-        id: 0x017
-        period: 31ms
-        segments:
-          min:
-            slice: 0 + 14
-            type: '>u2'
-            unit: mV
-          max:
-            slice: 14 + 14
-            type: '>u2'
-            unit: mV
-          sum:
-            slice: 28 + 32
-            type: '>u4'
-            unit: mV
-      BMSHeartbeat:
-        id: 0x0DF
-        period: 103ms
-        segments:
-          error_pec:
-            slice: 0 + 1
-            type: 'bool'
-          error_cvst:
-            slice: 1 + 1
-            type: 'bool'
-          error_owt:
-            slice: 2 + 1
-            type: 'bool'
-          error_L_contactor_error:
-            slice: 3 + 1
-            type: 'bool'
-          error_H_contactor_error:
-            slice: 4 + 1
-            type: 'bool'
-          error_L_contactor_weld:
-            slice: 5 + 1
-            type: 'bool'
-          error_H_contactor_weld:
-            slice: 6 + 1
-            type: 'bool'
-          error_cell_under_voltage:
-            slice: 7 + 1
-            type: 'bool'
-          error_cell_over_voltage:
-            slice: 8 + 1
-            type: 'bool'
-          error_cell_underemp:
-            slice: 9 + 1
-            type: 'bool'
-          error_cell_overemp:
-            slice: 10 + 1
-            type: 'bool'
-          error_control_flow:
-            slice: 11 + 1
-            type: 'bool'
-          error_force_over_can:
-            slice: 12 + 1
-            type: 'bool'
-          L_contactor_closed:
-            slice: 13 + 1
-            type: 'bool'
-          H_contactor_closed:
-            slice: 14 + 1
-            type: 'bool'
-          L_contactor_welded:
-            slice: 15 + 1
-            type: 'bool'
-          H_contactor_welded:
-            slice: 16 + 1
-            type: 'bool'
-          soc:
-            slice: 17 + 8
-            type: '>u1'
-      SBG_EKF_Euler:
-        id: 306
-        segments:
-          roll:
-            slice: 0 + 16
-            type: '<i2'
-            unit: 0.1 mrad
-          pitch:
-            slice: 16 + 16
-            type: '<i2'
-            unit: 0.1 mrad
-          yaw:
-            slice: 32 + 16
-            type: '<i2'
-            unit: 0.1 mrad
-      SBG_EKF_Quaternion:
-        id: 305
-        segments:
-          q0:
-            slice: 0 + 16
-            type: '<i2'
-            unit: 3.0517578125e-5
-          q1:
-            slice: 16 + 16
-            type: '<i2'
-            unit: 3.0517578125e-5
-          q2:
-            slice: 32 + 16
-            type: '<i2'
-            unit: 3.0517578125e-5
-          q3:
-            slice: 48 + 16
-            type: '<i2'
-            unit: 3.0517578125e-5
-      SBG_IMU_Gyroscope:
-        id: 290
-        segments:
-          x:
-            slice: 0 + 16
-            type: '<i2'
-            unit: mrad / s
-          y:
-            slice: 16 + 16
-            type: '<i2'
-            unit: mrad / s
-          z:
-            slice: 32 + 16
-            type: '<i2'
-            unit: mrad / s
-      SBG_IMU_Accelerometer:
-        id: 289
-        segments:
-          x:
-            slice: 0 + 16
-            type: '<i2'
-            unit: cm / (s ** 2)
-          y:
-            slice: 16 + 16
-            type: '<i2'
-            unit: cm / (s ** 2)
-          z:
-            slice: 32 + 16
-            type: '<i2'
-            unit: cm / (s ** 2)
+protocol:
+  uart:
+    definition:
+      p2p:
+        baudrate:
+          type: int16
+          required: true
+  can:
+    definition:
+      bus:
+        version:
+          type: - 2.0B  # TODO: Decide whether to use same syntax as atom enum.
+          required: true
+        baudrate:
+          type: int16
+          required: true
+        extended:
+          size: 1 bit
+          type: bool
+          required: true
+        frame:  # defines where to get the key from
+          key: fields.id
+          frame:
+            key: fields.data
+      fields:
+        id:
+          size: (29 if bus.extended else 11) bits
+        dlc:
+          size: 1 byte
+          infer: true
+        data:
+          size: (dlc) bytes
+    bus:
+      master:
+        version: 2.0B
+        baudrate: 500000
+        extended: false
+        frame:
+          TestEnum:
+            key: 0x069  # superset feature to have multiple ids mapping to same frame
+            atom:
+              asd:
+                slice: 0 + 8
+                # slice: 0 + 2
+                type:
+                  type: int8  # if one needs to be explicit for code gen
+                  enum:
+                    one: 0
+                    two: 1
+                    three: 2
+                    four: 3
+                    five: 4
+          CellTemperatureRange:
+            key: 0x016
+            period: 101ms
+            atom:
+              min: 0 + 10 | >i2 | decidegC
+              argmin:
+                slice: 10 + 8
+                type: '>u1'
+              max0:
+                slice: 18 + 10
+                type: '>i2'
+                unit: decidegC
+              argmax0:
+                slice: 28 + 8
+                type: '>u1'
+              max1:
+                slice: 36 + 10
+                type: '>i2'
+                unit: decidegC
+              argmax1:
+                slice: 46 + 8
+                type: '>u1'
+              max2:
+                slice: 54 + 10
+                type: '>i2'
+                unit: decidegC
+          CellTemperatureVariance:
+            key: 0x0F0
+            period: 103ms
+            atom:
+              mean:
+                slice: 0 + 10
+                type: '>i2'
+                unit: decidegC
+              variance:
+                slice: 10 + 16
+                type: '>u2'
+                unit: decidegC ** 2
+          CellVoltageRange:
+            key: 0x017
+            period: 31ms
+            slice: 32 + 32
+            frame:
+              summary:
+                key: 0
+                atom:
+                  min:
+                    slice: 0 + 14
+                    type: '>u2'
+                    unit: mV
+                  max:
+                    slice: 14 + 14
+                    type: '>u2'
+                    unit: mV
+                  sum:
+                    slice: 28 + 32
+                    type: '>u4'
+                    unit: mV
+              stats:
+                key: 1
+                atom:
+                  mean:
+                    slice: 0 + 14
+                    type: '>u2'
+                    unit: mV
+                  stddev:
+                    slice: 14 + 14
+                    type: '>u2'
+                    unit: mV
+          BMSHeartbeat:
+            key: 0x0DF
+            period: 103ms
+            atom:
+              error_pec:
+                slice: 0 + 1
+                type: 'bool'
+              error_cvst:
+                slice: 1 + 1
+                type: 'bool'
+              error_owt:
+                slice: 2 + 1
+                type: 'bool'
+              error_L_contactor_error:
+                slice: 3 + 1
+                type: 'bool'
+              error_H_contactor_error:
+                slice: 4 + 1
+                type: 'bool'
+              error_L_contactor_weld:
+                slice: 5 + 1
+                type: 'bool'
+              error_H_contactor_weld:
+                slice: 6 + 1
+                type: 'bool'
+              error_cell_under_voltage:
+                slice: 7 + 1
+                type: 'bool'
+              error_cell_over_voltage:
+                slice: 8 + 1
+                type: 'bool'
+              error_cell_underemp:
+                slice: 9 + 1
+                type: 'bool'
+              error_cell_overemp:
+                slice: 10 + 1
+                type: 'bool'
+              error_control_flow:
+                slice: 11 + 1
+                type: 'bool'
+              error_force_over_can:
+                slice: 12 + 1
+                type: 'bool'
+              L_contactor_closed:
+                slice: 13 + 1
+                type: 'bool'
+              H_contactor_closed:
+                slice: 14 + 1
+                type: 'bool'
+              L_contactor_welded:
+                slice: 15 + 1
+                type: 'bool'
+              H_contactor_welded:
+                slice: 16 + 1
+                type: 'bool'
+              soc:
+                slice: 17 + 8
+                type: '>u1'
+          SBG_EKF_Euler:
+            key: 306
+            atom:
+              roll:
+                slice: 0 + 16
+                type: '<i2'
+                unit: 0.1 mrad
+              pitch:
+                slice: 16 + 16
+                type: '<i2'
+                unit: 0.1 mrad
+              yaw:
+                slice: 32 + 16
+                type: '<i2'
+                unit: 0.1 mrad
+          SBG_EKF_Quaternion:
+            key: 305
+            atom:
+              q0:
+                slice: 0 + 16
+                type: '<i2'
+                unit: 3.0517578125e-5
+              q1:
+                slice: 16 + 16
+                type: '<i2'
+                unit: 3.0517578125e-5
+              q2:
+                slice: 32 + 16
+                type: '<i2'
+                unit: 3.0517578125e-5
+              q3:
+                slice: 48 + 16
+                type: '<i2'
+                unit: 3.0517578125e-5
+          SBG_IMU_Gyroscope:
+            key: 290
+            atom:
+              x:
+                slice: 0 + 16
+                type: '<i2'
+                unit: mrad / s
+              y:
+                slice: 16 + 16
+                type: '<i2'
+                unit: mrad / s
+              z:
+                slice: 32 + 16
+                type: '<i2'
+                unit: mrad / s
+          SBG_IMU_Accelerometer:
+            key: 289
+            atom:
+              x:
+                slice: 0 + 16
+                type: '<i2'
+                unit: cm / (s ** 2)
+              y:
+                slice: 16 + 16
+                type: '<i2'
+                unit: cm / (s ** 2)
+              z:
+                slice: 32 + 16
+                type: '<i2'
+                unit: cm / (s ** 2)

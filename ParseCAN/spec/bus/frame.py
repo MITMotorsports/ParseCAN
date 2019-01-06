@@ -1,42 +1,37 @@
 from dataclasses import dataclass, field
-from typing import Any, List
+from typing import Any, List, Union
 
 from ... import plural
 from ...helper import Slice
-from . import Segment
+from . import Atom
 
 
-@dataclass
-class Frame:
-    id: int
-
-
-def _segment_pre_add(self, item):
+def _atom_pre_add(self, item):
     intersections = self.intersections(item)
 
     if intersections:
         formatted = ', '.join(map(str, intersections))
-        raise ValueError(f'segment {item} intersects with {formatted}')
+        raise ValueError(f'atom {item} intersects with {formatted}')
 
 
-def _segment_constr(key, segment):
+def _atom_constr(key, atom):
     try:
-        if isinstance(segment, str):
-            return Segment.from_str(name=key, string=segment)
+        if isinstance(atom, str):
+            return Atom.from_str(name=key, string=atom)
 
-        return Segment(name=key, **segment)
+        return Atom(name=key, **atom)
     except Exception as e:
-        e.args = ('in segment {}: {}'.format(key, e),)
+        e.args = ('in atom {}: {}'.format(key, e),)
 
         raise
 
 
-SegmentUnique = plural.Unique[Segment].make('SegmentUnique', ['name'], main='name')
+AtomUnique = plural.Unique[Atom].make('AtomUnique', ['name'], main='name')
 
 
-def _segment_intersections(self: SegmentUnique, seg: Segment) -> List[Segment]:
+def _atom_intersections(self: AtomUnique, seg: Atom) -> List[Atom]:
     '''
-    a list of the segments in self with which `seg` intersects.
+    a list of the atoms in self with which `seg` intersects.
 
     An intersection is defined as an overlap between
     the start and stop of slices.
@@ -54,55 +49,59 @@ def _segment_intersections(self: SegmentUnique, seg: Segment) -> List[Segment]:
     return [x for x in self if seg is not x and (half(x, seg) or half(seg, x))]
 
 
-SegmentUnique.intersections = _segment_intersections
+AtomUnique.intersections = _atom_intersections
 
-_segment_ruleset = plural.RuleSet(dict(add=dict(pre=_segment_pre_add)))
-_segment_ruleset.apply(SegmentUnique)
+_atom_ruleset = plural.RuleSet(dict(add=dict(pre=_atom_pre_add)))
+_atom_ruleset.apply(AtomUnique)
+
+
+@dataclass
+class Frame:
+    name: str
+    key: int
+
+
+FrameUnique = plural.Unique[Frame].make('FrameUnique',
+                                        ['name', 'key'],
+                                        main='name')
 
 
 @dataclass
 class SingleFrame(Frame):
-    name: str
-    id: int
     period: Any = None
-    segments: SegmentUnique = field(default_factory=SegmentUnique)
+    atoms: AtomUnique = field(default_factory=AtomUnique)
 
-    segment_ruleset = _segment_ruleset
+    atom_ruleset = _atom_ruleset
 
     def __post_init__(self):
-        segments = self.segments
-        self.segments = SegmentUnique()
+        atoms = self.atoms
+        self.atoms = AtomUnique()
 
-        if isinstance(segments, dict):
-            segments = [_segment_constr(k, v) for k, v in segments.items()]
+        if isinstance(atoms, dict):
+            atoms = [_atom_constr(k, v) for k, v in atoms.items()]
 
-        self.segments.extend(segments)
+        self.atoms.extend(atoms)
 
     def unpack(self, frame, **kwargs):
-        return {seg.name: seg.unpack(frame, **kwargs) for seg in self.segments}
+        return {seg.name: seg.unpack(frame, **kwargs) for seg in self.atoms}
 
-
-SingleFrameUnique = plural.Unique[SingleFrame].make('SingleFrameUnique',
-                                                    ['name', 'id'],
-                                                    main='name')
+    def pack(self):
+        raise NotImplementedError()
 
 
 @dataclass
-class MultiplexedFrame(Frame):
-    name: str
-    id: int
-    slice: Slice  # TODO: maybe default to Slice(None, 0). interesting.
-    frames: SingleFrameUnique = field(default_factory=SingleFrameUnique)
+class FrameCollection(Frame):
+    slice: Slice
+    frames: FrameUnique = field(default_factory=FrameUnique)
 
     def __post_init__(self):
-        pass
+        frames = self.frames
+        self.frames = FrameUnique()
 
-    # def pack(self, by='name', **kwargs):
-    #     bitstring = 0
-    #     for segnm in kwargs:
-    #         seg = self.segments[by][segnm]
-    #         bitstring = data.evil_macros.INSERT(kwargs[segnm], bitstring,
-    #                                             seg.slice.start, seg.slice.length)
-    #
-    #     byteobj = bitstring.to_bytes(len(self), 'big')
-    #     return data.Frame(self.id, byteobj)
+        if isinstance(frames, dict):
+            atoms = [_atom_constr(k, v) for k, v in atoms.items()]
+
+        self.frames.extend(atoms)
+
+    def pack(self):
+        raise NotImplementedError()
