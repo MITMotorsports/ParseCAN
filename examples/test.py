@@ -10,7 +10,6 @@ from pprint import pprint
 
 system = pcn.spec.System.from_yaml(open('examples/example_can_spec.yml', 'r'))
 print(system)
-exit()
 
 oldD = pcn.plural.asdict(system, dict_factory=OrderedDict)
 
@@ -22,7 +21,6 @@ def compact_dict(items, dict_factory=OrderedDict):
         if isinstance(v, Slice):
             v = str(v)
         if isinstance(v, Atom):
-            print('seg', v)
             unit = ' | '.join(v.unit)
             pipe = [str(v.slice), str(v.type), unit]
             v = ' | '.join(pipe)
@@ -63,6 +61,4 @@ def dump(d, stream):
     return yaml.dump(d, stream, Dumper=SafeDumper, default_flow_style=False)
 
 
-# clean(d['buses'])
-# clean(d['boards'])
 dump(d, open('examples/dump.yml', 'w'))

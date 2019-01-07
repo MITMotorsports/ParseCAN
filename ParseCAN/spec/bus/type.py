@@ -1,9 +1,10 @@
 from dataclasses import dataclass, field
-from typing import NamedTuple
 from ... import plural
 
-Enumeration = NamedTuple('Enumeration', [('name', str), ('value', int)])
-
+@dataclass
+class Enumeration:
+    name: str
+    value: int
 
 def _enumeration_pre_add(self, item):
     if item.value not in self.type.range():
