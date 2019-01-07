@@ -6,12 +6,13 @@ from yaml import SafeDumper
 import ParseCAN as pcn
 from ParseCAN.spec import *
 from collections import OrderedDict
+from pprint import pprint
 
-car = pcn.spec.System.from_yaml(open('examples/example_can_spec.yml', 'r'))
-print(car)
-print('OK')
+system = pcn.spec.System.from_yaml(open('examples/example_can_spec.yml', 'r'))
+print(system)
+exit()
 
-oldD = pcn.plural.asdict(car, dict_factory=OrderedDict)
+oldD = pcn.plural.asdict(system, dict_factory=OrderedDict)
 
 
 def compact_dict(items, dict_factory=OrderedDict):
@@ -31,7 +32,7 @@ def compact_dict(items, dict_factory=OrderedDict):
     return ret
 
 
-d = pcn.plural.asdict(car, dict_factory=compact_dict)
+d = pcn.plural.asdict(system, dict_factory=compact_dict)
 
 
 def clean(d):

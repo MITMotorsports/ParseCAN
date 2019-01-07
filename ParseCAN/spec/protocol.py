@@ -17,16 +17,16 @@ def _bus_constr(key, bus):
 BusUnique = plural.Unique[Bus].make('BusUnique', ['name'], main='name')
 Definition = Any
 
-
+@dataclass
 class Protocol:
     name: str
     definition: Definition  # TODO: Implement this to specialize `Bus`.
-    buses: BusUnique = field(default_factory=BusUnique)
+    bus: BusUnique = field(default_factory=BusUnique)
 
     def __post_init__(self):
-        buses = self.buses
-        self.buses = BusUnique()
-        if isinstance(buses, dict):
-            buses = [_bus_constr(k, v) for k, v in buses.items()]
-        self.buses.extend(buses)
+        bus = self.bus
+        self.bus = BusUnique()
+        if isinstance(bus, dict):
+            bus = [_bus_constr(k, v) for k, v in bus.items()]
+        self.bus.extend(bus)
 

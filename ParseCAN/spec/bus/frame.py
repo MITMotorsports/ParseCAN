@@ -31,7 +31,7 @@ AtomUnique = plural.Unique[Atom].make('AtomUnique', ['name'], main='name')
 
 def _atom_intersections(self: AtomUnique, seg: Atom) -> List[Atom]:
     '''
-    a list of the atoms in self with which `seg` intersects.
+    a list of the atom in self with which `seg` intersects.
 
     An intersection is defined as an overlap between
     the start and stop of slices.
@@ -66,24 +66,42 @@ FrameUnique = plural.Unique[Frame].make('FrameUnique',
                                         main='name')
 
 
+def _frame_constr(key, frame):
+    if isinstance(frame, dict):
+        try:
+            if 'atom' in frame:
+                return SingleFrame(name=key, **frame)
+
+            if 'frame' in frame:
+                return FrameCollection(name=key, **frame)
+
+            raise ValueError('invalid frame definition has neither `atom` nor `frame` field')
+        except Exception as e:
+            e.args = ('in frame {}: {}'.format(key, e),)
+
+            raise
+
+    raise ValueError(f'malformed frame representation {key}: {frame}')
+
+
 @dataclass
 class SingleFrame(Frame):
     period: Any = None
-    atoms: AtomUnique = field(default_factory=AtomUnique)
+    atom: AtomUnique = field(default_factory=AtomUnique)
 
     atom_ruleset = _atom_ruleset
 
     def __post_init__(self):
-        atoms = self.atoms
-        self.atoms = AtomUnique()
+        atom = self.atom
+        self.atom = AtomUnique()
 
-        if isinstance(atoms, dict):
-            atoms = [_atom_constr(k, v) for k, v in atoms.items()]
+        if isinstance(atom, dict):
+            atom = [_atom_constr(k, v) for k, v in atom.items()]
 
-        self.atoms.extend(atoms)
+        self.atom.extend(atom)
 
     def unpack(self, frame, **kwargs):
-        return {seg.name: seg.unpack(frame, **kwargs) for seg in self.atoms}
+        return {seg.name: seg.unpack(frame, **kwargs) for seg in self.atom}
 
     def pack(self):
         raise NotImplementedError()
@@ -92,16 +110,16 @@ class SingleFrame(Frame):
 @dataclass
 class FrameCollection(Frame):
     slice: Slice
-    frames: FrameUnique = field(default_factory=FrameUnique)
+    frame: FrameUnique = field(default_factory=FrameUnique)
 
     def __post_init__(self):
-        frames = self.frames
-        self.frames = FrameUnique()
+        frame = self.frame
+        self.frame = FrameUnique()
 
-        if isinstance(frames, dict):
-            atoms = [_atom_constr(k, v) for k, v in atoms.items()]
+        if isinstance(frame, dict):
+            frame = [_frame_constr(k, v) for k, v in frame.items()]
 
-        self.frames.extend(atoms)
+        self.frame.extend(frame)
 
     def pack(self):
         raise NotImplementedError()

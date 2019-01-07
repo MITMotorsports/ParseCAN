@@ -14,12 +14,6 @@ board:
   dash:
     architecture: lpc11cx4
 protocol:
-  uart:
-    definition:
-      p2p:
-        baudrate:
-          type: int16
-          required: true
   can:
     definition:
       bus:
@@ -31,21 +25,21 @@ protocol:
           type: int16
           required: true
         extended:
-          size: 1 bit
-          type: bool
+          type: bool little
           required: true
         frame:  # defines where to get the key from
           key: fields.id
           frame:
             key: fields.data
-      fields:
+      frame:
         id:
-          size: (29 if bus.extended else 11) bits
+          size: (29 if bus.extended else 11) B
         dlc:
-          size: 1 byte
+          size: 1 B
           infer: true
         data:
-          size: (dlc) bytes
+          size: (dlc) B
+          quantum: 1 B
     bus:
       master:
         version: 2.0B
@@ -60,6 +54,7 @@ protocol:
                 # slice: 0 + 2
                 type:
                   type: int8  # if one needs to be explicit for code gen
+                  endianess: big
                   enum:
                     one: 0
                     two: 1
@@ -70,27 +65,27 @@ protocol:
             key: 0x016
             period: 101ms
             atom:
-              min: 0 + 10 | >i2 | decidegC
+              min: 0 + 10 | int16 big | decidegC
               argmin:
                 slice: 10 + 8
-                type: '>u1'
+                type: uint8 big
               max0:
                 slice: 18 + 10
-                type: '>i2'
+                type: int16 big
                 unit: decidegC
               argmax0:
                 slice: 28 + 8
-                type: '>u1'
+                type: uint8 big
               max1:
                 slice: 36 + 10
-                type: '>i2'
+                type: int16 big
                 unit: decidegC
               argmax1:
                 slice: 46 + 8
-                type: '>u1'
+                type: uint8 big
               max2:
                 slice: 54 + 10
-                type: '>i2'
+                type: int16 big
                 unit: decidegC
           CellTemperatureVariance:
             key: 0x0F0
@@ -98,15 +93,14 @@ protocol:
             atom:
               mean:
                 slice: 0 + 10
-                type: '>i2'
+                type: int16 big
                 unit: decidegC
               variance:
                 slice: 10 + 16
-                type: '>u2'
+                type: uint16 big
                 unit: decidegC ** 2
           CellVoltageRange:
             key: 0x017
-            period: 31ms
             slice: 32 + 32
             frame:
               summary:
@@ -114,26 +108,26 @@ protocol:
                 atom:
                   min:
                     slice: 0 + 14
-                    type: '>u2'
+                    type: uint16 big
                     unit: mV
                   max:
                     slice: 14 + 14
-                    type: '>u2'
+                    type: uint16 big
                     unit: mV
                   sum:
                     slice: 28 + 32
-                    type: '>u4'
+                    type: uint32 big
                     unit: mV
               stats:
                 key: 1
                 atom:
                   mean:
                     slice: 0 + 14
-                    type: '>u2'
+                    type: uint16 big
                     unit: mV
                   stddev:
                     slice: 14 + 14
-                    type: '>u2'
+                    type: uint16 big
                     unit: mV
           BMSHeartbeat:
             key: 0x0DF
@@ -141,119 +135,119 @@ protocol:
             atom:
               error_pec:
                 slice: 0 + 1
-                type: 'bool'
+                type: bool little
               error_cvst:
                 slice: 1 + 1
-                type: 'bool'
+                type: bool little
               error_owt:
                 slice: 2 + 1
-                type: 'bool'
+                type: bool little
               error_L_contactor_error:
                 slice: 3 + 1
-                type: 'bool'
+                type: bool little
               error_H_contactor_error:
                 slice: 4 + 1
-                type: 'bool'
+                type: bool little
               error_L_contactor_weld:
                 slice: 5 + 1
-                type: 'bool'
+                type: bool little
               error_H_contactor_weld:
                 slice: 6 + 1
-                type: 'bool'
+                type: bool little
               error_cell_under_voltage:
                 slice: 7 + 1
-                type: 'bool'
+                type: bool little
               error_cell_over_voltage:
                 slice: 8 + 1
-                type: 'bool'
+                type: bool little
               error_cell_underemp:
                 slice: 9 + 1
-                type: 'bool'
+                type: bool little
               error_cell_overemp:
                 slice: 10 + 1
-                type: 'bool'
+                type: bool little
               error_control_flow:
                 slice: 11 + 1
-                type: 'bool'
+                type: bool little
               error_force_over_can:
                 slice: 12 + 1
-                type: 'bool'
+                type: bool little
               L_contactor_closed:
                 slice: 13 + 1
-                type: 'bool'
+                type: bool little
               H_contactor_closed:
                 slice: 14 + 1
-                type: 'bool'
+                type: bool little
               L_contactor_welded:
                 slice: 15 + 1
-                type: 'bool'
+                type: bool little
               H_contactor_welded:
                 slice: 16 + 1
-                type: 'bool'
+                type: bool little
               soc:
                 slice: 17 + 8
-                type: '>u1'
+                type: uint8 big
           SBG_EKF_Euler:
             key: 306
             atom:
               roll:
                 slice: 0 + 16
-                type: '<i2'
+                type: int16 little
                 unit: 0.1 mrad
               pitch:
                 slice: 16 + 16
-                type: '<i2'
+                type: int16 little
                 unit: 0.1 mrad
               yaw:
                 slice: 32 + 16
-                type: '<i2'
+                type: int16 little
                 unit: 0.1 mrad
           SBG_EKF_Quaternion:
             key: 305
             atom:
               q0:
                 slice: 0 + 16
-                type: '<i2'
+                type: int16 little
                 unit: 3.0517578125e-5
               q1:
                 slice: 16 + 16
-                type: '<i2'
+                type: int16 little
                 unit: 3.0517578125e-5
               q2:
                 slice: 32 + 16
-                type: '<i2'
+                type: int16 little
                 unit: 3.0517578125e-5
               q3:
                 slice: 48 + 16
-                type: '<i2'
+                type: int16 little
                 unit: 3.0517578125e-5
           SBG_IMU_Gyroscope:
             key: 290
             atom:
               x:
                 slice: 0 + 16
-                type: '<i2'
+                type: int16 little
                 unit: mrad / s
               y:
                 slice: 16 + 16
-                type: '<i2'
+                type: int16 little
                 unit: mrad / s
               z:
                 slice: 32 + 16
-                type: '<i2'
+                type: int16 little
                 unit: mrad / s
           SBG_IMU_Accelerometer:
             key: 289
             atom:
               x:
                 slice: 0 + 16
-                type: '<i2'
+                type: int16 little
                 unit: cm / (s ** 2)
               y:
                 slice: 16 + 16
-                type: '<i2'
+                type: int16 little
                 unit: cm / (s ** 2)
               z:
                 slice: 32 + 16
-                type: '<i2'
+                type: int16 little
                 unit: cm / (s ** 2)

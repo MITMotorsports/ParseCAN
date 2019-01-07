@@ -1,37 +1,26 @@
 from dataclasses import dataclass, field
-from typing import Sequence, Union
+from typing import Sequence, Union, Mapping
 
 from ... import spec, plural
-from .frame import Frame, FrameCollection, FrameUnique
-
-
-def _frame_constr(key, frame):
-    if isinstance(frame, dict):
-        try:
-            return Frame(name=key, **frame)
-        except Exception as e:
-            e.args = ('in frame {}: {}'.format(key, e),)
-
-            raise
-
-    raise ValueError(f'malformed frame representation {key}: {frame}')
+from .frame import SingleFrame, FrameCollection, FrameUnique, _frame_constr
 
 
 @dataclass
 class Bus:
     name: str
     baudrate: int
+    version: str = '2.0B'
     extended: bool = False
-    frames: FrameUnique = field(default_factory=FrameUnique)
+    frame: FrameUnique = field(default_factory=FrameUnique)
 
     def __post_init__(self):
-        frames = self.frames
-        self.frames = FrameUnique()
+        frame = self.frame
+        self.frame = FrameUnique()
 
-        if isinstance(frames, dict):
-            frames = [_frame_constr(k, v) for k, v in frames.items()]
+        if isinstance(frame, dict):
+            frame = [_frame_constr(k, v) for k, v in frame.items()]
 
-        self.frames.extend(frames)
+        self.frame.extend(frame)
 
 
 class BusFiltered(Bus):
@@ -48,9 +37,9 @@ class BusFiltered(Bus):
         for interest in interests:
             try:
                 if isinstance(interest, int):
-                    self.bus.frames.id[interest]
+                    self.bus.frame.id[interest]
                 elif isinstance(interest, str):
-                    self.bus.frames.name[interest]
+                    self.bus.frame.name[interest]
                 else:
                     raise ValueError(f'in bus {self.bus}: '
                                      f'in interest {interest}: '
@@ -67,8 +56,8 @@ class BusFiltered(Bus):
         return msg.name in self.interests or msg.id in self.interests
 
     @property
-    def frames(self):
-        return filter(self.interested, self.bus.frames)
+    def frame(self):
+        return filter(self.interested, self.bus.frame)
 
     def __getattr__(self, attr):
         return getattr(self.bus, attr)

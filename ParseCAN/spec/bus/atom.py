@@ -5,7 +5,7 @@ from ...helper import Slice
 from .type import Type
 
 
-@dataclass(frozen=True)
+@dataclass
 class Atom:
     name: str
     slice: Slice
@@ -15,8 +15,12 @@ class Atom:
     def __post_init__(self):
         self.slice = Slice.from_general(self.slice)
 
-        if not isinstance(self.type, Type):
+        # TODO: Get a multiple dispatch here too.
+        if isinstance(self.type, str):
             self.type = Type.from_str(self.type)
+
+        if isinstance(self.type, dict):
+            self.type = Type.from_dict(self.type)
 
     @classmethod
     def from_str(cls, name, string, **kwargs):

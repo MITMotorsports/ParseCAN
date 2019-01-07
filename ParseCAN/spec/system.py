@@ -26,6 +26,14 @@ def _board_pre_add(self, board, metadata):
 _board_ruleset = plural.RuleSet(dict(add=dict(pre=_board_pre_add)))
 
 
+def _protocol_constr(key, protocol):
+    try:
+        return Protocol(name=key, **protocol)
+    except Exception as e:
+        e.args = ('in protocol {}: {}'.format(key, e),)
+
+        raise
+
 ProtocolUnique = plural.Unique[Protocol].make('ProtocolUnique', ['name'], main='name')
 
 
@@ -43,8 +51,15 @@ class System:
         _board_ruleset.apply(self.board, metadata=self)
 
         if isinstance(board, dict):
-            board = (_board_constr(key, board) for key, board in self.board.items())
+            board = [_board_constr(key, board[key]) for key in board]
         self.board.extend(board)
+
+        protocol = self.protocol
+        self.protocol = ProtocolUnique()
+        if isinstance(protocol, dict):
+            protocol = [_protocol_constr(key, protocol[key]) for key in protocol]
+
+        self.protocol.extend(protocol)
 
     @classmethod
     def from_yaml(cls, stream):
