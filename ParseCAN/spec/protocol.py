@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from .. import plural
-from .bus import Bus, BusFiltered
+from .bus import Bus
 
 
 def _bus_constr(key, bus):

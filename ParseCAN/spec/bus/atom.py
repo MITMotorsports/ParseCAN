@@ -22,6 +22,9 @@ class Atom:
         if isinstance(self.type, dict):
             self.type = Type.from_dict(self.type)
 
+        if self.slice.length > self.type.size():
+            raise ValueError('slice allocated is bigger than type expressed')
+
     @classmethod
     def from_str(cls, name, string, **kwargs):
         '''
