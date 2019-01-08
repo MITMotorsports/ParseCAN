@@ -1,17 +1,25 @@
 from dataclasses import dataclass, field
 from typing import Any, List, Union
+from intervaltree import IntervalTree  # TODO: Replace it with a simpler local implementation.
 
 from ... import plural
 from ...helper import Slice
 from . import Atom
 
 
-def _atom_pre_add(self, item):
-    intersections = self.intersections(item)
+AtomUnique = plural.Unique[Atom].make('AtomUnique', ['name'], main='name')
 
-    if intersections:
-        formatted = ', '.join(map(str, intersections))
+
+def _atom_pre_add(self: AtomUnique, item: Atom):
+    overlaps = self.intervaltree[item.slice.start : item.slice.start + item.slice.length]
+
+    if overlaps:
+        formatted = ', '.join(map(str, overlaps))
         raise ValueError(f'{item} intersects with {formatted}')
+
+
+def _atom_post_add(self: AtomUnique, item: Atom):
+    self.intervaltree[item.slice.start : item.slice.start + item.slice.length] = item
 
 
 def _atom_constr(key, atom):
@@ -26,32 +34,8 @@ def _atom_constr(key, atom):
         raise
 
 
-AtomUnique = plural.Unique[Atom].make('AtomUnique', ['name'], main='name')
-
-
-def _atom_intersections(self: AtomUnique, atom: Atom) -> List[Atom]:
-    '''
-    a list of the atom in self with which `atom` intersects.
-
-    An intersection is defined as an overlap between
-    the start and stop of slices.
-    '''
-    def half(a, b):
-        'True if `b` overlaps in `a`\'s range'
-        a = a.slice
-        b = b.slice
-
-        head = a.start <= b.start <= a.stop
-        tail = a.start <= b.stop <= a.stop
-        return head or tail
-
-    # half isn't commutative so let's apply it twice instead of defining full
-    return [x for x in self if atom is not x and (half(x, atom) or half(atom, x))]
-
-
-AtomUnique.intersections = _atom_intersections
-
-_atom_ruleset = plural.RuleSet(dict(add=dict(pre=_atom_pre_add)))
+_atom_ruleset = plural.RuleSet(dict(add=dict(pre=_atom_pre_add,
+                                             post=_atom_post_add)))
 _atom_ruleset.apply(AtomUnique)
 
 
@@ -93,7 +77,8 @@ class SingleFrame(Frame):
 
     def __post_init__(self):
         atom = self.atom
-        self.atom = AtomUnique()
+        self.atom = AtomUnique()  # TODO: Add a modifier to the constructor using fields?
+        self.atom.intervaltree = IntervalTree()
 
         if isinstance(atom, dict):
             atom = [_atom_constr(k, v) for k, v in atom.items()]
