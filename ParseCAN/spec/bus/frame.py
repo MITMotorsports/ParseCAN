@@ -73,7 +73,7 @@ def _frame_constr(key, frame):
                 return SingleFrame(name=key, **frame)
 
             if 'frame' in frame:
-                return FrameCollection(name=key, **frame)
+                return MultiplexedFrame(name=key, **frame)
 
             raise ValueError('invalid frame definition has neither `atom` nor `frame` field')
         except Exception as e:
@@ -108,7 +108,7 @@ class SingleFrame(Frame):
 
 
 @dataclass
-class FrameCollection(Frame):
+class MultiplexedFrame(Frame):
     slice: Slice
     frame: FrameUnique = field(default_factory=FrameUnique)
 

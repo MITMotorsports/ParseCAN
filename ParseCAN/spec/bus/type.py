@@ -134,15 +134,14 @@ class Type:
 
     def dtype(self):  # -> np.dtype:
         raise NotImplementedError('not updated yet')
+        # if self.enumerations:
+        #     '''
+        #     Return a unicode string with length equal to the maximum possible
+        #     length of any of the contained value names.
+        #     '''
+        #     return 'U' + str(max(len(val.name) for val in self.enumerations))
 
-        if self.enumerations:
-            '''
-            Return a unicode string with length equal to the maximum possible
-            length of any of the contained value names.
-            '''
-            return 'U' + str(max(len(val.name) for val in self.enumerations))
-
-        return np_dtypes.get(self.c_type, None)
+        # return np_dtypes.get(self.c_type, None)
 
     def size(self) -> int:
         '''
