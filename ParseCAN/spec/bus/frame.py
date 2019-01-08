@@ -1,10 +1,14 @@
 from dataclasses import dataclass, field
 from typing import Any, List, Union
-from intervaltree import IntervalTree  # TODO: Replace it with a simpler local implementation.
+from intervaltree import Interval, IntervalTree  # TODO: Replace it with a simpler local implementation.
 
 from ... import plural
 from ...helper import Slice
 from . import Atom
+
+
+def interval_from_atom(atom: Atom) -> Interval:
+    return Interval(atom.slice.start, atom.slice.start + atom.slice.length, atom)
 
 
 AtomUnique = plural.Unique[Atom].make('AtomUnique', ['name'], main='name')
@@ -19,7 +23,11 @@ def _atom_pre_add(self: AtomUnique, item: Atom):
 
 
 def _atom_post_add(self: AtomUnique, item: Atom):
-    self.intervaltree[item.slice.start : item.slice.start + item.slice.length] = item
+    self.intervaltree.add(interval_from_atom(item))
+
+
+def _atom_post_remove(self: AtomUnique, item: Atom):
+    self.intervaltree.remove(interval_from_atom(item))
 
 
 def _atom_constr(key, atom):
@@ -35,7 +43,8 @@ def _atom_constr(key, atom):
 
 
 _atom_ruleset = plural.RuleSet(dict(add=dict(pre=_atom_pre_add,
-                                             post=_atom_post_add)))
+                                             post=_atom_post_add),
+                                    remove=dict(post=_atom_post_remove)))
 _atom_ruleset.apply(AtomUnique)
 
 

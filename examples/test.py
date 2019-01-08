@@ -9,7 +9,7 @@ from collections import OrderedDict
 from pprint import pprint
 
 system = pcn.spec.System.from_yaml(open('examples/example_can_spec.yml', 'r'))
-# print(system)
+print(system)
 
 oldD = pcn.plural.asdict(system, dict_factory=OrderedDict)
 
