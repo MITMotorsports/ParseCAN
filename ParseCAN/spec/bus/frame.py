@@ -11,7 +11,7 @@ def _atom_pre_add(self, item):
 
     if intersections:
         formatted = ', '.join(map(str, intersections))
-        raise ValueError(f'atom {item} intersects with {formatted}')
+        raise ValueError(f'{item} intersects with {formatted}')
 
 
 def _atom_constr(key, atom):
@@ -29,9 +29,9 @@ def _atom_constr(key, atom):
 AtomUnique = plural.Unique[Atom].make('AtomUnique', ['name'], main='name')
 
 
-def _atom_intersections(self: AtomUnique, seg: Atom) -> List[Atom]:
+def _atom_intersections(self: AtomUnique, atom: Atom) -> List[Atom]:
     '''
-    a list of the atom in self with which `seg` intersects.
+    a list of the atom in self with which `atom` intersects.
 
     An intersection is defined as an overlap between
     the start and stop of slices.
@@ -46,7 +46,7 @@ def _atom_intersections(self: AtomUnique, seg: Atom) -> List[Atom]:
         return head or tail
 
     # half isn't commutative so let's apply it twice instead of defining full
-    return [x for x in self if seg is not x and (half(x, seg) or half(seg, x))]
+    return [x for x in self if atom is not x and (half(x, atom) or half(atom, x))]
 
 
 AtomUnique.intersections = _atom_intersections
@@ -101,7 +101,7 @@ class SingleFrame(Frame):
         self.atom.extend(atom)
 
     def unpack(self, frame, **kwargs):
-        return {seg.name: seg.unpack(frame, **kwargs) for seg in self.atom}
+        return {atom.name: atom.unpack(frame, **kwargs) for atom in self.atom}
 
     def pack(self):
         raise NotImplementedError()
