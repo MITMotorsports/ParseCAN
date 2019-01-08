@@ -8,14 +8,14 @@ from . import Atom
 
 
 def interval_from_atom(atom: Atom) -> Interval:
-    return Interval(atom.slice.start, atom.slice.start + atom.slice.length, atom)
+    return Interval(atom.slice.start, atom.slice.stop, atom)
 
 
 AtomUnique = plural.Unique[Atom].make('AtomUnique', ['name'], main='name')
 
 
 def _atom_pre_add(self: AtomUnique, item: Atom):
-    overlaps = self.intervaltree[item.slice.start : item.slice.start + item.slice.length]
+    overlaps = [x.data for x in self.intervaltree[item.slice.start : item.slice.stop + 1]]
 
     if overlaps:
         formatted = ', '.join(map(str, overlaps))
