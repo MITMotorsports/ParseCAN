@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from ... import plural
+from ... import plural, data
 
 @dataclass
 class Enumeration:
@@ -73,6 +73,18 @@ class Type:
         'uint64',
     }
 
+    casts = {
+        'bool': lambda x, **kw: bool(x),
+        'int8': data.evil_macros.cast_gen('b'),
+        'uint8': data.evil_macros.cast_gen('B'),
+        'int16': data.evil_macros.cast_gen('h'),
+        'uint16': data.evil_macros.cast_gen('H'),
+        'int32': data.evil_macros.cast_gen('i'),
+        'uint32': data.evil_macros.cast_gen('I'),
+        'int64': data.evil_macros.cast_gen('q'),
+        'uint64': data.evil_macros.cast_gen('Q'),
+    }
+
     def __post_init__(self):
         if self.type not in self.valid_types:
             raise ValueError(f'{self.type} is not a valid type')
@@ -143,10 +155,8 @@ class Type:
 
         # return np_dtypes.get(self.c_type, None)
 
-    def size(self) -> int:
-        '''
-        Size, in bits, of this type.
-        '''
+    def bits(self) -> int:
+        '''Size, in bits, of this type.'''
         if self.type == 'bool':
             return 1
 
@@ -157,7 +167,7 @@ class Type:
 
             return int(num)
 
-    __len__ = size
+    __len__ = bits
 
     def range(self):
         '''
@@ -168,7 +178,7 @@ class Type:
         '''
 
         start = 0
-        stop = 1 << self.size()  # no -1 since python range is [,)
+        stop = 2 ** self.bits()  # no -1 since python range is [,)
 
         if self.isinteger():
             if self.issigned():

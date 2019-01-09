@@ -1,8 +1,13 @@
 from dataclasses import dataclass, field
 
-from ... import data, parse
+from ... import parse
 from ...helper import Slice
 from .type import Type
+
+
+class Unit(str):
+    def pint(self):
+        return parse.ureg[self]
 
 
 @dataclass
@@ -10,7 +15,7 @@ class Atom:
     name: str
     slice: Slice
     type: Type
-    unit: str = ''
+    unit: Unit = field(default_factory=Unit)
 
     def __post_init__(self):
         self.slice = Slice.from_general(self.slice)
@@ -22,7 +27,7 @@ class Atom:
         if isinstance(self.type, dict):
             self.type = Type.from_dict(self.type)
 
-        if self.slice.length > self.type.size():
+        if self.slice.length > self.type.bits():
             raise ValueError('slice allocated is bigger than type expressed')
 
     @classmethod
@@ -33,26 +38,10 @@ class Atom:
         `LEN | RAWTYPE | TYPE | *SCALE | -OFFSET | log10 | exp2 | *UNIT`
         '''
         pipe = string.split('|')
-        slice, type, *unit = map(str.strip, pipe)
+        # TODO: change unit to *unit when you convert it to a list thing
+        slice, type, unit = map(str.strip, pipe)
 
         return cls(name=name, slice=slice, type=type, unit=unit, **kwargs)
 
-    @property
-    def pint_unit(self):
-        return parse.ureg[self.unit]
-
     def unpack(self, frame, **kwargs):
         raise NotImplementedError('not updated yet')
-
-
-casts = {
-    'bool': lambda x, **kw: bool(x),
-    'int8_t': data.evil_macros.cast_gen('b'),
-    'uint8_t': data.evil_macros.cast_gen('B'),
-    'int16_t': data.evil_macros.cast_gen('h'),
-    'uint16_t': data.evil_macros.cast_gen('H'),
-    'int32_t': data.evil_macros.cast_gen('i'),
-    'uint32_t': data.evil_macros.cast_gen('I'),
-    'int64_t': data.evil_macros.cast_gen('q'),
-    'uint64_t': data.evil_macros.cast_gen('Q'),
-}

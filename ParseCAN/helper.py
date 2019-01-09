@@ -29,10 +29,9 @@ class Slice:
     def __len__(self):
         return self.length
 
-    @property
-    def size(self):
+    def combinations(self):
         '= 2 ** length = the number of combinations this slice can represent'
-        return 1 << self.length
+        return 2 ** self.length
 
     @property
     def stop(self):
