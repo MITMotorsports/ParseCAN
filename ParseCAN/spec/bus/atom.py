@@ -4,11 +4,11 @@ from ... import parse
 from ...helper import Slice
 from .type import Type
 
-
-class Unit(str):
-    def pint(self):
-        return parse.ureg[self]
-
+# TODO: Figure out why this breaks dict generation.
+# class Unit(str):
+#     def pint(self):
+#         return parse.ureg[self]
+Unit = str
 
 @dataclass
 class Atom:
