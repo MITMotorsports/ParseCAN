@@ -5,6 +5,7 @@ import yaml
 from yaml import SafeDumper
 import ParseCAN as pcn
 from ParseCAN.spec import *
+from enum import Enum
 from collections import OrderedDict
 from pprint import pprint
 
@@ -54,7 +55,14 @@ def dict_representer(dumper, data):
     return dumper.represent_dict(data.items())
 
 
+def endianness_representer(dumper, data):
+    return dumper.represent_str(data.value)
+
+
+noalias_dumper = yaml.dumper.SafeDumper
+noalias_dumper.ignore_aliases = lambda self, data: True
 SafeDumper.add_representer(OrderedDict, dict_representer)
+SafeDumper.add_multi_representer(Endianness, endianness_representer)
 
 
 def dump(d, stream):

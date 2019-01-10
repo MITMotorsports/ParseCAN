@@ -206,15 +206,15 @@ def asdict(obj, *, dict_factory=dict):
 
 if __name__ == '__main__':
     @dataclass
-    class Enumeration:
+    class Enumerator:
         name: str
         value: int
 
-    ManyEnum = Unique[Enumeration].make('ManyEnum', ('name', 'value'), 'name')
+    ManyEnum = Unique[Enumerator].make('ManyEnum', ('name', 'value'), 'name')
 
-    a = Enumeration('w', 2)
-    b = Enumeration('1', 4)
-    c = Enumeration('q', 4)
+    a = Enumerator('w', 2)
+    b = Enumerator('1', 4)
+    c = Enumerator('q', 4)
 
     print(ManyEnum.attributes)
 

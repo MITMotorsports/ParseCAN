@@ -54,7 +54,7 @@ protocol:
                 # slice: 0 + 2
                 type:
                   type: int8  # if one needs to be explicit for code gen
-                  endianess: big
+                  endianness: big
                   enum:
                     one: 0
                     two: 1
@@ -103,36 +103,36 @@ protocol:
                 slice: 26 + 16
                 type: uint32 big
                 unit: decidegC ** 2
-          CellVoltageRange:
-            key: 0x017
-            slice: 60 + 4
-            frame:
-              summary:
-                key: 0
-                atom:
-                  min:
-                    slice: 0 + 14
-                    type: uint16 big
-                    unit: mV
-                  max:
-                    slice: 14 + 14
-                    type: uint16 big
-                    unit: mV
-                  sum:
-                    slice: 28 + 32
-                    type: uint32 big
-                    unit: mV
-              stats:
-                key: 1
-                atom:
-                  mean:
-                    slice: 0 + 14
-                    type: uint16 big
-                    unit: mV
-                  stddev:
-                    slice: 14 + 14
-                    type: uint16 big
-                    unit: mV
+          # CellVoltageRange:
+          #   key: 0x017
+          #   slice: 60 + 4
+          #   frame:
+          #     summary:
+          #       key: 0
+          #       atom:
+          #         min:
+          #           slice: 0 + 14
+          #           type: uint16 big
+          #           unit: mV
+          #         max:
+          #           slice: 14 + 14
+          #           type: uint16 big
+          #           unit: mV
+          #         sum:
+          #           slice: 28 + 32
+          #           type: uint32 big
+          #           unit: mV
+          #     stats:
+          #       key: 1
+          #       atom:
+          #         mean:
+          #           slice: 0 + 14
+          #           type: uint16 big
+          #           unit: mV
+          #         stddev:
+          #           slice: 14 + 14
+          #           type: uint16 big
+          #           unit: mV
           BMSHeartbeat:
             key: 0x0DF
             period: 103ms

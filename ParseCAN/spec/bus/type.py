@@ -1,67 +1,67 @@
 from dataclasses import dataclass, field
+from enum import Enum
+
 from ... import plural, data
 
+
 @dataclass
-class Enumeration:
+class Enumerator:
     name: str
     value: int
 
-def _enumeration_pre_add(self, item):
-    if item.value not in self.type.range():
-        raise ValueError(f'enumerations value too large for {self.type}')
+def _enumerator_pre_add(self, item):
+    # TODO: Change when support C++11 enum with type.
+    # if item.value not in self.type.range():
+    #     raise ValueError(f'enumerator\'s value too large for {self.type}')
+    pass
 
 
-def _enumeration_post_add(self, item):
+def _enumerator_post_add(self, item):
     if len(self) > len(self.type.range()):
-        raise ValueError(f'too many enumerations for {self.type}')
+        raise ValueError(f'too many enumerators for {self.type}')
 
 
-def _enumeration_constr(key, enumeration):
-    if isinstance(enumeration, int):
+def _enumerator_constr(key, enumerator):
+    if isinstance(enumerator, int):
         try:
-            return Enumeration(key, enumeration)
+            return Enumerator(key, enumerator)
         except Exception as e:
-            e.args = ('in enumeration {}: {}'.format(key, e),)
+            e.args = ('in enumerator {}: {}'.format(key, e),)
 
             raise
-    elif isinstance(enumeration, Enumeration):
-        return enumeration
+    elif isinstance(enumerator, Enumerator):
+        return enumerator
     else:
-        raise TypeError('enumeration given is not int or Enumeration')
+        raise TypeError('enumerator given is not int or Enumerator')
 
 
-EnumerationUnique = plural.Unique[Enumeration].make('EnumerationUnique',
+EnumeratorUnique = plural.Unique[Enumerator].make('EnumeratorUnique',
                                                     ['name', 'value'],
                                                     main='name')
 
-_enumeration_ruleset = plural.RuleSet(dict(add=dict(pre=_enumeration_pre_add,
-                                                    post=_enumeration_post_add)))
-_enumeration_ruleset.apply(EnumerationUnique)
+_enumerator_ruleset = plural.RuleSet(dict(add=dict(pre=_enumerator_pre_add,
+                                                    post=_enumerator_post_add)))
+_enumerator_ruleset.apply(EnumeratorUnique)
 
 
-class Endianness(str):
+class Endianness(Enum):
     BIG = 'big'
     LITTLE = 'little'
 
-    @classmethod
-    def from_str(cls, string: str):
-        if string.lower() == cls.BIG:
-            return cls.BIG
+    def isbig(self):
+        return self == self.BIG
 
-        if string.lower() == cls.LITTLE:
-            return cls.LITTLE
-
-        raise ValueError('endianness string must be either `big` or `little`')
+    def islittle(self):
+        return self == self.LITTLE
 
 
 @dataclass
 class Type:
     type: str
     endianness: Endianness
-    enumerations: EnumerationUnique = field(default_factory=EnumerationUnique)
+    enum: EnumeratorUnique = field(default_factory=EnumeratorUnique)
 
     valid_types = {
-        'enum',  # TODO: Consider if this is good
         'bool',
         'int8',
         'uint8',
@@ -86,22 +86,27 @@ class Type:
     }
 
     def __post_init__(self):
-        if self.type not in self.valid_types:
-            raise ValueError(f'{self.type} is not a valid type')
+        enum = self.enum
+        self.enum = EnumeratorUnique()
+        self.enum.type = self
 
-        enumerations = self.enumerations
-        self.enumerations = EnumerationUnique()
-        self.enumerations.type = self
-
-        if isinstance(enumerations, (list, tuple)):
-            # implicitly assign values to enumerations elements given as a list
-            enumerations = {key: idx for idx, key in enumerate(enumerations)}
+        if isinstance(enum, (list, tuple)):
+            # implicitly assign values to enumerators elements given as a list
+            enum = {key: idx for idx, key in enumerate(enum)}
             # make the dictionary and fall through to the list creation
 
-        if isinstance(enumerations, dict):
-            enumerations = [_enumeration_constr(k, v) for k, v in enumerations.items()]
+        if isinstance(enum, dict):
+            enum = [_enumerator_constr(k, v) for k, v in enum.items()]
 
-        self.enumerations.extend(enumerations)
+        self.enum.extend(enum)
+
+        if not self.enum:  # TODO: Change when support C++11 enum with type.
+            if self.type not in self.valid_types:
+                raise ValueError('given type is not a recognized typename')
+
+        if not isinstance(self.endianness, Endianness):
+            self.endianness = Endianness(self.endianness)
+
 
     @classmethod
     def from_str(cls, string: str):
@@ -110,24 +115,20 @@ class Type:
         except ValueError:
             raise ValueError(f'endianess missing from type string {string}')
 
-        endianness = Endianness.from_str(endianness)
+        endianness = Endianness(endianness)
         return cls(type, endianness)
 
     @classmethod
     def from_dict(cls, dictionary: dict):
-        type = dictionary.get('type', 'enum')
-        if 'endianess' in dictionary:
-            endianness = Endianness.from_str(dictionary['endianess'])
-        else:
+        if 'endianness' not in dictionary:
             raise ValueError('endianness must be explicit in dict form')
-        enumerations = dictionary.get('enum', None)
-        return cls(type, endianness, enumerations)
+        return cls(**dictionary)
 
     def isinteger(self) -> bool:
         return self.type.startswith('int') or self.type.startswith('uint')
 
     def isenum(self) -> bool:
-        return bool(self.enumerations)
+        return bool(self.enum)
 
     def issigned(self) -> bool:
         if self.type.startswith('int'):
@@ -146,12 +147,12 @@ class Type:
 
     def dtype(self):  # -> np.dtype:
         raise NotImplementedError('not updated yet')
-        # if self.enumerations:
+        # if self.isenum():
         #     '''
         #     Return a unicode string with length equal to the maximum possible
         #     length of any of the contained value names.
         #     '''
-        #     return 'U' + str(max(len(val.name) for val in self.enumerations))
+        #     return 'U' + str(max(len(val.name) for val in self.enum))
 
         # return np_dtypes.get(self.c_type, None)
 
