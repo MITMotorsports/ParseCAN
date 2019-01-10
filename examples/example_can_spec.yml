@@ -92,16 +92,20 @@ protocol:
             period: 103ms
             atom:
               mean:
-                slice: 0 + 10
+                slice: 0 + 9
                 type: int16 big
                 unit: decidegC
+              zz:
+                slice: 9 + 17
+                type: uint32 big
+                unit: decidegC ** 2
               variance:
-                slice: 10 + 16
-                type: uint16 big
+                slice: 26 + 16
+                type: uint32 big
                 unit: decidegC ** 2
           CellVoltageRange:
             key: 0x017
-            slice: 32 + 32
+            slice: 60 + 4
             frame:
               summary:
                 key: 0

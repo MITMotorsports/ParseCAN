@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, List, Union
+from typing import Any, List
 from intervaltree import Interval, IntervalTree  # TODO: Replace it with a simpler local implementation.
 
 from ... import plural
@@ -7,27 +7,34 @@ from ...helper import Slice
 from . import Atom
 
 
-def interval_from_atom(atom: Atom) -> Interval:
-    return Interval(atom.slice.start, atom.slice.stop, atom)
+def interval_from_sliceable(item) -> Interval:
+    return Interval(item.slice.start, item.slice.stop, item)
 
 
-AtomUnique = plural.Unique[Atom].make('AtomUnique', ['name'], main='name')
+class AtomUnique(plural.Unique[Atom].make('AtomUnique', ['name'], main='name')):
+    intervaltree: IntervalTree
 
+    def __init__(self, *args, intervaltree: IntervalTree=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if intervaltree is None:
+            self.intervaltree = IntervalTree()
+        else:
+            self.intervaltree = intervaltree
 
 def _atom_pre_add(self: AtomUnique, item: Atom):
-    overlaps = [x.data for x in self.intervaltree[item.slice.start : item.slice.stop + 1]]
+    overlaps = [x.data for x in self.intervaltree[item.slice.start : item.slice.stop]]
 
     if overlaps:
         formatted = ', '.join(map(str, overlaps))
-        raise ValueError(f'{item} intersects with {formatted}')
+        raise ValueError(f'{item} overlaps with {formatted}')
 
 
 def _atom_post_add(self: AtomUnique, item: Atom):
-    self.intervaltree.add(interval_from_atom(item))
+    self.intervaltree.add(interval_from_sliceable(item))
 
 
 def _atom_post_remove(self: AtomUnique, item: Atom):
-    self.intervaltree.remove(interval_from_atom(item))
+    self.intervaltree.remove(interval_from_sliceable(item))
 
 
 def _atom_constr(key, atom):
@@ -48,15 +55,13 @@ _atom_ruleset = plural.RuleSet(dict(add=dict(pre=_atom_pre_add,
 _atom_ruleset.apply(AtomUnique)
 
 
-@dataclass
+@dataclass(init=False)
 class Frame:
     name: str
     key: int
 
 
-FrameUnique = plural.Unique[Frame].make('FrameUnique',
-                                        ['name', 'key'],
-                                        main='name')
+FrameUnique = plural.Unique[Frame].make('FrameUnique', ['name', 'key'], main='name')
 
 
 def _frame_constr(key, frame):
@@ -82,12 +87,9 @@ class SingleFrame(Frame):
     period: Any = None
     atom: AtomUnique = field(default_factory=AtomUnique)
 
-    atom_ruleset = _atom_ruleset
-
     def __post_init__(self):
         atom = self.atom
         self.atom = AtomUnique()  # TODO: Add a modifier to the constructor using fields?
-        self.atom.intervaltree = IntervalTree()
 
         if isinstance(atom, dict):
             atom = [_atom_constr(k, v) for k, v in atom.items()]
@@ -101,14 +103,62 @@ class SingleFrame(Frame):
         raise NotImplementedError()
 
 
+def _check_interval(item: Frame, interval: Interval):
+    if isinstance(item, SingleFrame):
+        for x in item.atom.intervaltree[interval.begin : interval.end]:
+            yield x.data
+    elif isinstance(item, MultiplexedFrame):
+        sliceoverlap = interval.overlaps(item.slice.begin, item.slice.end)
+        if sliceoverlap:
+            yield sliceoverlap
+
+        for frame in item.frame:
+            yield from _check_interval(frame, interval)
+
+
+def _mux_frame_pre_add(self: FrameUnique, item: Frame, metadata):
+    overlaps = list(_check_interval(item, interval_from_sliceable(metadata)))
+
+    if overlaps:
+        formatted = ', '.join(map(str, overlaps))
+        raise ValueError(f'{metadata} overlaps with {formatted}')
+
+
+def _edit_interval(item: Frame, interval: Interval, add: bool):
+    if isinstance(item, SingleFrame):
+        if add:  # multiple dispatch >> OOP
+            item.atom.intervaltree.add(interval)
+        else:
+            item.atom.intervaltree.remove(interval)
+    elif isinstance(item, MultiplexedFrame):
+        for frame in item.frame:
+            _edit_interval(frame, interval, add)
+
+
+def _mux_frame_post_add(self: FrameUnique, item: Frame, metadata):
+    _edit_interval(item, interval_from_sliceable(metadata), True)
+
+
+def _mux_frame_post_remove(self: FrameUnique, item: Frame, metadata):
+    _edit_interval(item, interval_from_sliceable(metadata), False)
+
+
+_mux_frame_ruleset = plural.RuleSet(dict(add=dict(pre=_mux_frame_pre_add,
+                                                  post=_mux_frame_post_add),
+                                         remove=dict(post=_mux_frame_post_remove)))
+
+
 @dataclass
 class MultiplexedFrame(Frame):
     slice: Slice
     frame: FrameUnique = field(default_factory=FrameUnique)
 
     def __post_init__(self):
+        self.slice = Slice.from_general(self.slice)
+
         frame = self.frame
         self.frame = FrameUnique()
+        _mux_frame_ruleset.apply(self.frame, metadata=self)
 
         if isinstance(frame, dict):
             frame = [_frame_constr(k, v) for k, v in frame.items()]

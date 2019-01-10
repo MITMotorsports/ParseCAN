@@ -6,8 +6,8 @@ from typing import Union, NamedTuple
 class Slice:
     _START_T = Union[int, type(None)]  # TODO: use the field to get the type for fn args
 
-    start: _START_T
     length: int
+    start: _START_T = None
 
     def __init__(self, *, start: int=None, length: int=None, stop: int=None):
         self.start = start
