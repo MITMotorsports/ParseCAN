@@ -127,6 +127,9 @@ class Type:
     def isinteger(self) -> bool:
         return self.type.startswith('int') or self.type.startswith('uint')
 
+    def isbool(self) -> bool:
+        return self.type == 'bool'
+
     def isenum(self) -> bool:
         return bool(self.enum)
 
