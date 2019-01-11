@@ -5,25 +5,25 @@ from typing import List, Set
 
 from .. import plural
 from .protocol import Protocol
-from .board import Board
+from .computer import Computer
 
-def _board_constr(key, board):
+def _computer_constr(key, computer):
     try:
-        return Board(name=key, **board)
+        return Computer(name=key, **computer)
     except Exception as e:
-        e.args = ('in board {}: {}'.format(key, e),)
+        e.args = ('in computer {}: {}'.format(key, e),)
 
         raise
 
-BoardUnique = plural.Unique[Board].make('BoardUnique', ['name'], main='name')
+ComputerUnique = plural.Unique[Computer].make('ComputerUnique', ['name'], main='name')
 
-def _board_pre_add(self, board, metadata):
-    if board.architecture:
-        if board.architecture not in metadata.architectures:
-            raise ValueError(f'in board {board.name}: '
-                             f'unknown architecture: {board.architecture}')
+def _computer_pre_add(self, computer, metadata):
+    if computer.architecture:
+        if computer.architecture not in metadata.architectures:
+            raise ValueError(f'in computer {computer.name}: '
+                             f'unknown architecture: {computer.architecture}')
 
-_board_ruleset = plural.RuleSet(dict(add=dict(pre=_board_pre_add)))
+_computer_ruleset = plural.RuleSet(dict(add=dict(pre=_computer_pre_add)))
 
 
 def _protocol_constr(key, protocol):
@@ -42,17 +42,17 @@ class System:
     name: str
     architectures: Set[str]
     units: Set[str]
-    board: BoardUnique = field(default_factory=BoardUnique)
+    computer: ComputerUnique = field(default_factory=ComputerUnique)
     protocol: ProtocolUnique = field(default_factory=ProtocolUnique)
 
     def __post_init__(self):
-        board = self.board
-        self.board = BoardUnique()
-        _board_ruleset.apply(self.board, metadata=self)
+        computer = self.computer
+        self.computer = ComputerUnique()
+        _computer_ruleset.apply(self.computer, metadata=self)
 
-        if isinstance(board, dict):
-            board = [_board_constr(key, board[key]) for key in board]
-        self.board.extend(board)
+        if isinstance(computer, dict):
+            computer = [_computer_constr(key, computer[key]) for key in computer]
+        self.computer.extend(computer)
 
         protocol = self.protocol
         self.protocol = ProtocolUnique()
@@ -64,5 +64,4 @@ class System:
     @classmethod
     def from_yaml(cls, stream):
         spec = yaml.safe_load(stream)
-        del spec['board']
         return cls(**spec)

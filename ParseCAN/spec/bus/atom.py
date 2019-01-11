@@ -19,6 +19,8 @@ class Atom:
 
     def __post_init__(self):
         self.slice = Slice.from_general(self.slice)
+        if self.slice.start < 0 or self.slice.stop > 64:
+            raise ValueError(f'{self.slice} out of bounds')
 
         # TODO: Get a multiple dispatch here too.
         if isinstance(self.type, str):
