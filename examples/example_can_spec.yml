@@ -6,9 +6,17 @@ units:
 architectures:
   - lpc11cx4
   - stm32f205
-board:
+computer:
   can_node:
     architecture: lpc11cx4
+    protocol:
+      can:
+        mapping:
+          master: CAN1
+        publish:
+          master:
+            SBG_EKF_Quaternion:
+              period: 100ms
   vcu:
     architecture: stm32f205
   dash:

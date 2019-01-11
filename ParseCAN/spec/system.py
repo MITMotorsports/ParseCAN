@@ -6,9 +6,15 @@ from typing import List, Set
 from .. import plural
 from .protocol import Protocol
 from .computer import Computer
+from .computer.protocol import Participation
 
-def _computer_constr(key, computer):
+def _computer_constr(self, key, computer):
     try:
+        if 'protocol' in computer:
+            for protocol, value in computer['protocol'].items():
+                bus = self.protocol['name'][protocol].bus
+                computer['protocol'][protocol] = Participation(bus=bus, **value)
+
         return Computer(name=key, **computer)
     except Exception as e:
         e.args = ('in computer {}: {}'.format(key, e),)
@@ -22,6 +28,7 @@ def _computer_pre_add(self, computer, metadata):
         if computer.architecture not in metadata.architectures:
             raise ValueError(f'in computer {computer.name}: '
                              f'unknown architecture: {computer.architecture}')
+
 
 _computer_ruleset = plural.RuleSet(dict(add=dict(pre=_computer_pre_add)))
 
@@ -46,20 +53,20 @@ class System:
     protocol: ProtocolUnique = field(default_factory=ProtocolUnique)
 
     def __post_init__(self):
-        computer = self.computer
-        self.computer = ComputerUnique()
-        _computer_ruleset.apply(self.computer, metadata=self)
-
-        if isinstance(computer, dict):
-            computer = [_computer_constr(key, computer[key]) for key in computer]
-        self.computer.extend(computer)
-
         protocol = self.protocol
         self.protocol = ProtocolUnique()
         if isinstance(protocol, dict):
             protocol = [_protocol_constr(key, protocol[key]) for key in protocol]
 
         self.protocol.extend(protocol)
+
+        computer = self.computer
+        self.computer = ComputerUnique()
+        _computer_ruleset.apply(self.computer, metadata=self)
+
+        if isinstance(computer, dict):
+            computer = [_computer_constr(self, key, computer[key]) for key in computer]
+        self.computer.extend(computer)
 
     @classmethod
     def from_yaml(cls, stream):
