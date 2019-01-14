@@ -6,14 +6,16 @@ from typing import List, Set
 from .. import plural
 from .protocol import Protocol
 from .computer import Computer
-from .computer.protocol import Participation
+from .computer.participation import Participation
 
 def _computer_constr(self, key, computer):
     try:
-        if 'protocol' in computer:
-            for protocol, value in computer['protocol'].items():
-                bus = self.protocol['name'][protocol].bus
-                computer['protocol'][protocol] = Participation(bus=bus, **value)
+        if 'participation' in computer:
+            for participationnm, value in computer['participation'].items():
+                protocol = self.protocol['name'][participationnm]
+                computer['participation'][participationnm] = Participation(name=participationnm, protocol=protocol, **value)
+
+            computer['participation'] = computer['participation'].values()
 
         return Computer(name=key, **computer)
     except Exception as e:

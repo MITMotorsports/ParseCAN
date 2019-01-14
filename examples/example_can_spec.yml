@@ -9,14 +9,13 @@ architectures:
 computer:
   can_node:
     architecture: lpc11cx4
-    protocol:
+    participation:
       can:
         mapping:
           master: CAN1
         publish:
           master:
-            SBG_EKF_Quaternion:
-              period: 100ms
+            - SBG_EKF_Quaternion
   vcu:
     architecture: stm32f205
   dash:
