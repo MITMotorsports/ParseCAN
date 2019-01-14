@@ -20,7 +20,7 @@ Definition = Any
 @dataclass
 class Protocol:
     name: str
-    definition: Definition  # TODO: Implement this to specialize `Bus`.
+    definition: Definition = None  # TODO: Implement this to specialize `Bus`.
     bus: BusUnique = field(default_factory=BusUnique)
 
     def __post_init__(self):
