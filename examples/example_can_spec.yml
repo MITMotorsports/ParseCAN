@@ -68,6 +68,30 @@ protocol:
                     three: 2
                     four: 3
                     five: 4
+          TestMultiplexEnum:
+            key: 0x070
+            slice: 50 + 14
+            frame:
+              enum_frame:
+                key: 0
+                atom:
+                  masd:
+                    slice: 0 + 8
+                    type:
+                      type: int8  # if one needs to be explicit for code gen
+                      endianness: big
+                      enum:
+                        one: 0
+                        two: 1
+                        three: 2
+                        four: 3
+                        five: 4
+              other:
+                key: 1
+                atom:
+                  bool_atom:
+                    slice: 0 + 1
+                    type: bool big
           CellTemperatureRange:
             key: 0x016
             period: 101ms
@@ -110,36 +134,36 @@ protocol:
                 slice: 26 + 16
                 type: uint32 big
                 unit: decidegC ** 2
-          # CellVoltageRange:
-          #   key: 0x017
-          #   slice: 60 + 4
-          #   frame:
-          #     summary:
-          #       key: 0
-          #       atom:
-          #         min:
-          #           slice: 0 + 14
-          #           type: uint16 big
-          #           unit: mV
-          #         max:
-          #           slice: 14 + 14
-          #           type: uint16 big
-          #           unit: mV
-          #         sum:
-          #           slice: 28 + 32
-          #           type: uint32 big
-          #           unit: mV
-          #     stats:
-          #       key: 1
-          #       atom:
-          #         mean:
-          #           slice: 0 + 14
-          #           type: uint16 big
-          #           unit: mV
-          #         stddev:
-          #           slice: 14 + 14
-          #           type: uint16 big
-          #           unit: mV
+          CellVoltageRange:
+            key: 0x017
+            slice: 60 + 4
+            frame:
+              summary:
+                key: 0
+                atom:
+                  min:
+                    slice: 0 + 14
+                    type: uint16 big
+                    unit: mV
+                  max:
+                    slice: 14 + 14
+                    type: uint16 big
+                    unit: mV
+                  sum:
+                    slice: 28 + 32
+                    type: uint32 big
+                    unit: mV
+              stats:
+                key: 1
+                atom:
+                  mean:
+                    slice: 0 + 14
+                    type: uint16 big
+                    unit: mV
+                  stddev:
+                    slice: 14 + 14
+                    type: uint16 big
+                    unit: mV
           BMSHeartbeat:
             key: 0x0DF
             period: 103ms
