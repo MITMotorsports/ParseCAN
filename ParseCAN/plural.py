@@ -216,8 +216,6 @@ if __name__ == '__main__':
     b = Enumerator('1', 4)
     c = Enumerator('q', 4)
 
-    print(ManyEnum.attributes)
-
     container = ManyEnum([a])
 
     def post_add(instance, item, metadata=None, **kwargs):
