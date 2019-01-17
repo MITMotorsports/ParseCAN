@@ -57,10 +57,9 @@ protocol:
             key: 0x069  # superset feature to have multiple ids mapping to same frame
             atom:
               asd:
-                slice: 0 + 8
+                slice: 0 + 3
                 # slice: 0 + 2
                 type:
-                  type: int8  # if one needs to be explicit for code gen
                   endianness: big
                   enum:
                     one: 0
@@ -76,9 +75,9 @@ protocol:
                 key: 0
                 atom:
                   masd:
-                    slice: 0 + 8
+                    slice: 0 + 3
                     type:
-                      type: int8  # if one needs to be explicit for code gen
+                      # type: int8  # if one needs to be explicit for code gen
                       endianness: big
                       enum:
                         one: 0

@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from warnings import warn
 
 from ... import parse
 from ...helper import Slice
@@ -29,8 +30,13 @@ class Atom:
         if isinstance(self.type, dict):
             self.type = Type.from_dict(self.type)
 
+        if self.slice.length < self.type.bits():
+            if self.type.isenum():  # is annoying for anything other than enum
+                raise ValueError(f'have {self.slice.length} and need {self.type.bits()} '
+                                 f'bits to represent {self.type}')
+
         if self.slice.length > self.type.bits():
-            raise ValueError('slice allocated is bigger than type expressed')
+            warn('slice allocated is bigger than type expressed')
 
     @classmethod
     def from_str(cls, name, string, **kwargs):
