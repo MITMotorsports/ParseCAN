@@ -57,8 +57,8 @@ class Endianness(Enum):
 
 @dataclass
 class Type:
+    type: str
     endianness: Endianness
-    type: str = ''
     enum: EnumeratorUnique = field(default_factory=EnumeratorUnique)
 
     valid_types = {
@@ -102,7 +102,7 @@ class Type:
 
         if not self.enum:  # TODO: Change when support C++11 enum with type.
             if self.type not in self.valid_types:
-                raise ValueError(f'given type {self.type} is not a recognized typename')
+                raise ValueError('given type is not a recognized typename')
 
         if not isinstance(self.endianness, Endianness):
             self.endianness = Endianness(self.endianness)
@@ -116,7 +116,7 @@ class Type:
             raise ValueError(f'endianess missing from type string {string}')
 
         endianness = Endianness(endianness)
-        return cls(type=type, endianness=endianness)
+        return cls(type, endianness)
 
     @classmethod
     def from_dict(cls, dictionary: dict):
@@ -134,12 +134,6 @@ class Type:
         return bool(self.enum)
 
     def issigned(self) -> bool:
-        if self.isenum():
-            if any(enum.value < 0 for enum in self.enum):
-                return True
-
-            return False
-
         if self.type.startswith('int'):
             return True
 
@@ -167,11 +161,6 @@ class Type:
 
     def bits(self) -> int:
         '''Size, in bits, of this type.'''
-        if self.isenum():
-            maxval = max(enum.value for enum in self.enum)
-
-            return maxval.bit_length()
-
         if self.type == 'bool':
             return 1
 

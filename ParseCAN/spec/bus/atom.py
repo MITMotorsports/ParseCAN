@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from warnings import warn
 
 from ... import parse
 from ...helper import Slice
@@ -30,13 +29,8 @@ class Atom:
         if isinstance(self.type, dict):
             self.type = Type.from_dict(self.type)
 
-        if self.slice.length < self.type.bits():
-            if self.type.isenum():  # is annoying for anything other than enum
-                raise ValueError(f'have {self.slice.length} and need {self.type.bits()} '
-                                 f'bits to represent {self.type}')
-
         if self.slice.length > self.type.bits():
-            warn('slice allocated is bigger than type expressed')
+            raise ValueError('slice allocated is bigger than type expressed')
 
     @classmethod
     def from_str(cls, name, string, **kwargs):
@@ -52,4 +46,22 @@ class Atom:
         return cls(name=name, slice=slice, type=type, unit=unit, **kwargs)
 
     def unpack(self, frame, **kwargs):
-        raise NotImplementedError('not updated yet')
+        # assert isinstance(frame, data.Frame)
+
+        raw = frame[self.slice.start, self.slice.length]
+        if self.type.isenum():
+            retval = self.Type.name
+
+            if kwargs.get('segtuple', False):
+                return retval, self
+
+            if kwargs.get('unittuple', False):
+                return retval, None
+
+            return retval
+
+        clean = self.type.casts[self.type.type](raw, endianness='big' if self.type.endianness.isbig() else 'little')
+        if kwargs.get('segtuple', False):
+            return clean, self
+
+        return clean
