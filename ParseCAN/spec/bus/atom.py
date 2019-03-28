@@ -50,7 +50,8 @@ class Atom:
 
         raw = frame[self.slice.start, self.slice.length]
         if self.type.isenum():
-            retval = self.Type.name
+            # wait this is wrong fix it
+            retval = self.type['value'][raw]
 
             if kwargs.get('segtuple', False):
                 return retval, self

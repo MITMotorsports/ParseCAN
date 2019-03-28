@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
+import numpy as np
 
 from ... import plural, data
 
@@ -149,15 +150,16 @@ class Type:
         return self.type
 
     def dtype(self):  # -> np.dtype:
-        raise NotImplementedError('not updated yet')
-        # if self.isenum():
-        #     '''
-        #     Return a unicode string with length equal to the maximum possible
-        #     length of any of the contained value names.
-        #     '''
-        #     return 'U' + str(max(len(val.name) for val in self.enum))
+        # raise NotImplementedError('not updated yet')
+        if self.isenum():
+            '''
+            Return a unicode string with length equal to the maximum possible
+            length of any of the contained value names.
+            '''
+            # NOTE: This is wrong! Need to fix!
+            return 'U' + str(max(len(val.name) for val in self.enum))
 
-        # return np_dtypes.get(self.c_type, None)
+        return self.type
 
     def bits(self) -> int:
         '''Size, in bits, of this type.'''
