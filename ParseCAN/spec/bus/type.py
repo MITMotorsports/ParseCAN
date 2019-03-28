@@ -149,14 +149,13 @@ class Type:
 
         return self.type
 
-    def dtype(self):  # -> np.dtype:
-        # raise NotImplementedError('not updated yet')
+    def dtype(self): # -> np.dtype:
+        # NOTE: This may have bugs. Test more robstly
         if self.isenum():
             '''
             Return a unicode string with length equal to the maximum possible
             length of any of the contained value names.
             '''
-            # NOTE: This is wrong! Need to fix!
             return 'U' + str(max(len(val.name) for val in self.enum))
 
         return self.type

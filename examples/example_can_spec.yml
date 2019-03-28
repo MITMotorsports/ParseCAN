@@ -60,6 +60,7 @@ protocol:
                 slice: 0 + 3
                 # slice: 0 + 2
                 type:
+                  type: int8 # need to be explicit
                   endianness: big
                   enum:
                     one: 0
@@ -77,7 +78,7 @@ protocol:
                   masd:
                     slice: 0 + 3
                     type:
-                      # type: int8  # if one needs to be explicit for code gen
+                      type: int8  # if one needs to be explicit for code gen
                       endianness: big
                       enum:
                         one: 0
@@ -285,3 +286,41 @@ protocol:
                 slice: 32 + 16
                 type: int16 little
                 unit: cm / (s ** 2)
+          VCUHeartbeat:
+            key: 0x0F3
+            atom:
+              vcu_state:
+                slice: 0 + 3
+                type:
+                  type: int8
+                  endianness: big
+                  enum:
+                    VCU_STATE_ROOT: 0
+                    VCU_STATE_LV: 1
+                    VCU_STATE_PRECHARGING: 2
+                    VCU_STATE_RTD: 3
+                    VCU_STATE_DRIVING: 4
+              error_state:
+                slice: 3 + 3
+                type:
+                  type: int8
+                  endianness: big
+                  enum:
+                    NO_ERROR_STATE: 0
+                    RECOVERABLE_ERROR_STATE: 1
+                    FATAL_ERROR_STATE: 2
+              estop_hit:
+                slice: 6 + 1
+                type: bool little
+              lc_state:
+                slice: 7 + 3
+                type:
+                  type: int8
+                  endianness: big
+                  enum:
+                    BEFORE: 0
+                    SPEEDING_UP: 1
+                    SPEED_CONTROLLER: 2
+                    ZERO_TORQUE: 3
+                    DONE: 4
+
