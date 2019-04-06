@@ -1,35 +1,32 @@
 from pathlib import Path
-
+import ParseCAN as pcn
 
 class Log:
-    # def unpack(self, spec, **kwargs):
-    #     return (spec.unpack(msg, **kwargs) for msg in self)
-    def unpack(self, spec, include_raw = False, **kwargs):
-        def helper():
-            for t_frame in self:
-                # 223 in intersection
-                ret = {}
+    def unpack(self, spec, include_raw=False, **kwargs):
+        # TODO: add multiplex support
+        frames = {}
+        buses = {}
+        bus_unique = spec.protocol['name']['can'].bus
+        for bus_nm in bus_unique['name']:
+            frame_unique = bus_unique['name'][bus_nm].frame
+            for id in frame_unique['key']:
+                frames[id] = frame_unique['key'][id]
+                buses[id] = bus_unique['name'][bus_nm]
 
-                can = spec.protocol['name']['can']
-                bus_unique = can.bus
-                for name in bus_unique['name']:
-                    bus = bus_unique['name'][name]
-                    frame_map = bus.frame['key']
-                    # if t_frame.id == 223:
-                    #     print(t_frame.id, bus.frame['key'][223])
-                    x = frame_map.get(t_frame.id, None)
-
-                    if x:
-                        ret[name] = {x.name: x.unpack(t_frame, **kwargs)}
-                    if include_raw:
-                        yield (t_frame, ret)
-                    else:
-                        yield ret
-
-        yield from helper()
-
-    def unpack_pair_raw(self, spec, **kwargs):
-        yield from self.unpack(spec, include_raw=True, **kwargs)
+        for t_frame in self:
+            # Temporary -- working with incomplete spec. Should throw error
+            if t_frame.id in frames:
+                if include_raw:
+                    yield (buses[t_frame.id].name,
+                            frames[t_frame.id].name,
+                            frames[t_frame.id].unpack(t_frame, **kwargs),
+                            t_frame)
+                else:
+                    yield (buses[t_frame.id].name,
+                            frames[t_frame.id].name,
+                            frames[t_frame.id].unpack(t_frame, **kwargs))
+            # else:
+            #     print('{} not in spec'.format(t_frame.id))
 
 
 class File(Log):

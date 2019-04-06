@@ -31,7 +31,8 @@ class Frame:
         return evil_macros.EXTRACT(as_int, position, length)
 
     def unpack(self, spec, **kwargs):
-        return spec.unpack(self, **kwargs)
+        raise NotImplementedError
+        # return spec.unpack(self, **kwargs)
 
 
 @dataclass

@@ -1,10 +1,12 @@
 from dataclasses import dataclass, field
 from typing import Any, List
 from intervaltree import Interval, IntervalTree  # TODO: Replace it with a simpler local implementation.
+from math import ceil
 
 from ... import plural
 from ...helper import Slice
 from . import Atom
+from ... import data
 
 
 def interval_from_sliceable(item) -> Interval:
@@ -98,9 +100,27 @@ class SingleFrame(Frame):
 
     def unpack(self, frame, **kwargs):
         return {atom.name: atom.unpack(frame, **kwargs) for atom in self.atom}
+        # print(self.pack(**{atomnm: ret[atomnm][0] for atomnm in ret}))
 
-    def pack(self):
-        raise NotImplementedError()
+    # TODO: Fix janky pack with funny endianness
+    def pack(self, by='name', **kwargs):
+        raise NotImplementedError
+        # print(kwargs)
+        # bitstring = 0
+        # # print(bitstring)
+        # for atomnm in kwargs:
+        #     atom = self.atom[by][atomnm]
+        #     bitstring = data.evil_macros.INSERT(kwargs[atomnm], bitstring,
+        #                                         atom.slice.start, atom.slice.length)
+        #     print(kwargs[atomnm], atom.slice.start, atom.slice.length)
+        # # TODO: fix
+        # print('----------', bitstring, len(self))
+        # # figure out why this works when you allocate 2 extra bytes...
+        # byteobj = bitstring.to_bytes(len(self)+2, byteorder='big')
+        # return data.frame.Frame(self.key, byteobj)
+
+    def __len__(self):
+        return ceil(max(atom.slice.start + atom.slice.length for atom in self.atom) / 8)
 
 
 def _check_interval(item: Frame, interval: Interval):
@@ -164,6 +184,10 @@ class MultiplexedFrame(Frame):
             frame = [_frame_constr(k, v) for k, v in frame.items()]
 
         self.frame.extend(frame)
+
+    def unpack(self, frame, **kwargs):
+        mux_id = frame[self.slice.start, self.slice.length]
+        return (self.frame['key'][mux_id].name, self.frame['key'][mux_id].unpack(frame, **kwargs))
 
     def pack(self):
         raise NotImplementedError()

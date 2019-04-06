@@ -46,12 +46,15 @@ class Atom:
         return cls(name=name, slice=slice, type=type, unit=unit, **kwargs)
 
     def unpack(self, frame, **kwargs):
+        # TODO: fix this check
         # assert isinstance(frame, data.Frame)
 
         raw = frame[self.slice.start, self.slice.length]
+
         if self.type.isenum():
             retval = self.type.enum['value'][raw].name
 
+            # TODO: Legacy. Still used, should probably change name at least.
             if kwargs.get('segtuple', False):
                 return retval, self
 
