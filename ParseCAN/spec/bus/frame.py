@@ -128,7 +128,7 @@ class SingleFrame(Frame):
             )
 
         # funny endian shit
-        bitstring //= (2**(64-len(self)*8))
+        bitstring >>= 64-len(self)*8
         byteobj = bitstring.to_bytes(len(self), byteorder='big')
         return byteobj
         # return data.frame.Frame(self.key, byteobj)
