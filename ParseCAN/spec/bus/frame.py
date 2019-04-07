@@ -99,24 +99,38 @@ class SingleFrame(Frame):
         self.atom.extend(atom)
 
     def unpack(self, frame, **kwargs):
-        return {atom.name: atom.unpack(frame, **kwargs) for atom in self.atom}
-        # print(self.pack(**{atomnm: ret[atomnm][0] for atomnm in ret}))
+        ret = {atom.name: atom.unpack(frame, **kwargs) for atom in self.atom}
+        pack_args = {}
+        for atom_nm in ret:
+            val = ret[atom_nm][0]
+            pack_args[atom_nm] = val
+            if ret[atom_nm][1].type.isenum():
+                pack_args[atom_nm] = ret[atom_nm][1].type.enum['name'][val].value
+
+        # can't check equalty because of null char
+        print()
+        print(frame.data)
+        print(self.pack(**pack_args))
+        print()
+
+        return ret
 
     # TODO: Fix janky pack with funny endianness
     def pack(self, by='name', **kwargs):
-        raise NotImplementedError
-        # print(kwargs)
-        # bitstring = 0
-        # # print(bitstring)
-        # for atomnm in kwargs:
-        #     atom = self.atom[by][atomnm]
-        #     bitstring = data.evil_macros.INSERT(kwargs[atomnm], bitstring,
-        #                                         atom.slice.start, atom.slice.length)
-        #     print(kwargs[atomnm], atom.slice.start, atom.slice.length)
-        # # TODO: fix
-        # print('----------', bitstring, len(self))
-        # # figure out why this works when you allocate 2 extra bytes...
-        # byteobj = bitstring.to_bytes(len(self)+2, byteorder='big')
+        bitstring = 0
+        for atomnm in kwargs:
+            atom = self.atom[by][atomnm]
+            bitstring = data.evil_macros.INSERT(
+                kwargs[atomnm],
+                bitstring,
+                atom.slice.start,
+                atom.slice.length
+            )
+
+        # funny endian shit
+        bitstring //= (2**(64-len(self)*8))
+        byteobj = bitstring.to_bytes(len(self), byteorder='big')
+        return byteobj
         # return data.frame.Frame(self.key, byteobj)
 
     def __len__(self):
