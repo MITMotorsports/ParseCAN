@@ -5,7 +5,7 @@ from .. import data, spec, plural, parse
 
 class CarSpec:
     def __init__(self, source, name=''):
-        self._source = Path(source)
+        self._source = source
         self.name = name
         # A mapping of bus names to bus objects.
         self.__buses = plural.unique('name', type=spec.bus)
@@ -15,8 +15,13 @@ class CarSpec:
 
     # TODO: Must move to another module
     def parse(self):
-        with self._source.open('r') as f:
-            prem = yaml.safe_load(f)
+
+        # Open file or use it if already open
+        try:
+            with Path(self._source).open('r') as f:
+                prem = yaml.safe_load(f)
+        except TypeError as e:
+            prem = yaml.safe_load(self._source)
 
         if prem['units']:
             for definition in prem['units']:
