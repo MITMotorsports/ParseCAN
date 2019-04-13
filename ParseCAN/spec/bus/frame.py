@@ -191,30 +191,26 @@ class MultiplexedFrame(Frame):
 
     def unpack(self, frame, **kwargs):
         mux_id = frame[self.slice.start, self.slice.length]
-        # subframe_nm, unp = self.frame['key'][mux_id].unpack(frame, **kwargs)
-        # return (self.name + '.' + subframe_nm,
-        #         unp)
         return (self.name,
                 self.frame['key'][mux_id].unpack(frame, **kwargs))
 
-    def pack(self, id_tup, by='name', **kwargs):
-        bitstring = 0
-        frame = self
+    def pack(self, id_tup, bitstring=0, length=None, by='name', **kwargs):
+        # get top level length
+        if length is None:
+            length = len(self)
 
-        while isinstance(frame, MultiplexedFrame):
-            name = id_tup[0]
-            id_tup = id_tup[1]
-            bitstring = data.evil_macros.INSERT(
-                    frame.frame[by][name].key,
-                    bitstring,
-                    frame.slice.start,
-                    frame.slice.length
-                )
-            frame = frame.frame[by][name]
-
+        name = id_tup[0]
+        id_tup = id_tup[1]
+        bitstring = data.evil_macros.INSERT(
+                self.frame[by][name].key,
+                bitstring,
+                self.slice.start,
+                self.slice.length
+            )
+        frame = self.frame[by][name]
         return frame.pack(id_tup=id_tup,
                             bitstring=bitstring,
-                            length=len(self),
+                            length=length,
                             by=by,
                             **kwargs)
 
