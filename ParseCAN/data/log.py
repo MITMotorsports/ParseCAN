@@ -6,36 +6,35 @@ class Log:
         # TODO: add multiplex support
 
         # Precompute which frame and bus each frame_id belongs to
+        # Top level frame ids are unique
         frames = {}
         buses = {}
         bus_unique = spec.protocol['name']['can'].bus
         for bus_nm in bus_unique['name']:
             frame_unique = bus_unique['name'][bus_nm].frame
             for id in frame_unique['key']:
+                # paranoid check
+                # assert id not in frames
                 frames[id] = frame_unique['key'][id]
-                buses[id] = bus_unique['name'][bus_nm]
+                buses[id] = bus_unique['name'][bus_nm].name
 
         for t_frame in self:
-            # Temporary -- working with incomplete spec. Should throw error
+            # Temporary -- working with incomplete spec. Should remove
+            # check and throw error
             if t_frame.id in frames:
-                msg_nm = [buses[t_frame.id].name, frames[t_frame.id].name]
-                frame_unp = frames[t_frame.id].unpack(t_frame, **kwargs)
-
-                if isinstance(frames[t_frame.id], pcn.spec.frame.MultiplexedFrame):
-                    # print('MUXFUX')
-                    msg_nm.append(frame_unp[0])
-                    frame_unp = frame_unp[1]
+                bus_nm = buses[t_frame.id]
+                frame_nm, frame_unp = frames[t_frame.id].unpack(t_frame, **kwargs)
+                msg_nm = bus_nm + '.' + frame_nm
 
                 if include_raw:
-                    yield ('.'.join(msg_nm),
+                    yield (msg_nm,
                             frame_unp,
                             t_frame)
                 else:
-                    yield ('.'.join(msg_nm),
-                            frame_unp,
-                            frames[t_frame.id].unpack(t_frame, **kwargs))
+                    yield (msg_nm,
+                            frame_unp)
             # else:
-            #     print('{} not in spec'.format(t_frame.id))
+            #     print('id {} not in spec'.format(t_frame.id))
 
 
 class File(Log):

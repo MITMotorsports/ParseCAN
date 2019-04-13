@@ -99,21 +99,25 @@ class SingleFrame(Frame):
         self.atom.extend(atom)
 
     def unpack(self, frame, **kwargs):
-        ret = {atom.name: atom.unpack(frame, **kwargs) for atom in self.atom}
-        pack_args = {}
-        for atom_nm in ret:
-            val = ret[atom_nm][0]
-            pack_args[atom_nm] = val
-            if ret[atom_nm][1].type.isenum():
-                pack_args[atom_nm] = ret[atom_nm][1].type.enum['name'][val].value
+        return (self.name,
+                {atom.name: atom.unpack(frame, **kwargs)
+                    for atom in self.atom}
+                )
+        # pack_args = {}
+        # for atom_nm in ret:
+        #     val = ret[atom_nm][0]
+        #     pack_args[atom_nm] = val
+        #     if ret[atom_nm][1].type.isenum():
+        #         pack_args[atom_nm] = ret[atom_nm][1].type.enum['name'][val].value
 
-        # can't check equalty because of null char
-        print()
-        print(frame.data)
-        print(self.pack(**pack_args))
-        print()
+        # # can't check equalty because of null char
+        # print()
+        # print(pack_args)
+        # print(self.pack(**pack_args).data)
+        # print(frame.data)
+        # print()
 
-        return ret
+        # return ret
 
     # TODO: Fix janky pack with funny endianness
     def pack(self, by='name', **kwargs):
@@ -127,11 +131,11 @@ class SingleFrame(Frame):
                 atom.slice.length
             )
 
-        # funny endian shit
-        bitstring >>= 64-len(self)*8
-        byteobj = bitstring.to_bytes(len(self), byteorder='big')
-        return byteobj
-        # return data.frame.Frame(self.key, byteobj)
+        # bitstring >>= (64-len(self)*8)
+        byteobj = bitstring.to_bytes(8, byteorder='big')
+        print(bitstring, len(self))
+        # return byteobj
+        return data.frame.Frame(self.key, byteobj)
 
     def __len__(self):
         return ceil(max(atom.slice.start + atom.slice.length for atom in self.atom) / 8)
@@ -142,7 +146,8 @@ def _check_interval(item: Frame, interval: Interval):
         for x in item.atom.intervaltree[interval.begin : interval.end]:
             yield x.data
     elif isinstance(item, MultiplexedFrame):
-        sliceoverlap = interval.overlaps(item.slice.begin, item.slice.end)
+        # Why doesn't TestMultiplexEnum trigger this
+        sliceoverlap = interval.overlaps(item.slice.start, item.slice.start + item.slice.length)
         if sliceoverlap:
             yield sliceoverlap
 
@@ -201,7 +206,9 @@ class MultiplexedFrame(Frame):
 
     def unpack(self, frame, **kwargs):
         mux_id = frame[self.slice.start, self.slice.length]
-        return (self.frame['key'][mux_id].name, self.frame['key'][mux_id].unpack(frame, **kwargs))
+        subframe_nm, unp = self.frame['key'][mux_id].unpack(frame, **kwargs)
+        return (self.name + '.' + subframe_nm,
+                unp)
 
     def pack(self):
         raise NotImplementedError()

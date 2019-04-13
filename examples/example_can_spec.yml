@@ -92,6 +92,42 @@ protocol:
                   bool_atom:
                     slice: 0 + 1
                     type: bool big
+          TestNestedMultiplex:
+            key: 0x071
+            slice: 50 + 14
+            frame:
+              sub_mux_frame1:
+                key: 0
+                slice: 36 + 14
+                frame:
+                  first_frame:
+                    key: 1
+                    atom:
+                      a:
+                        slice: 0 + 3
+                        type:  int8 big
+                  second_frame:
+                    key: 2
+                    atom:
+                      b:
+                        slice: 0 + 1
+                        type: bool big
+              sub_mux_frame2:
+                key: 1
+                slice: 36 + 14
+                frame:
+                  third_frame:
+                    key: 1
+                    atom:
+                      a:
+                        slice: 0 + 3
+                        type:  int8 big
+                  fourth_frame:
+                    key: 2
+                    atom:
+                      b:
+                        slice: 0 + 1
+                        type: bool big
           CellTemperatureRange:
             key: 0x016
             period: 101ms
