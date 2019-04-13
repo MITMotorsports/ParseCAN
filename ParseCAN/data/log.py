@@ -7,32 +7,40 @@ class Log:
 
         # Precompute which frame and bus each frame_id belongs to
         # Top level frame ids are unique
-        frames = {}
-        buses = {}
+        frame_map = {}
+        bus_map = {}
         bus_unique = spec.protocol['name']['can'].bus
         for bus_nm in bus_unique['name']:
             frame_unique = bus_unique['name'][bus_nm].frame
             for id in frame_unique['key']:
                 # paranoid check
-                # assert id not in frames
-                frames[id] = frame_unique['key'][id]
-                buses[id] = bus_unique['name'][bus_nm].name
+                # assert id not in frame_map
+                frame_map[id] = frame_unique['key'][id]
+                bus_map[id] = bus_unique['name'][bus_nm].name
 
         for t_frame in self:
-            # Temporary -- working with incomplete spec. Should remove
-            # check and throw error
-            if t_frame.id in frames:
-                bus_nm = buses[t_frame.id]
-                frame_nm, frame_unp = frames[t_frame.id].unpack(t_frame, **kwargs)
-                msg_nm = bus_nm + '.' + frame_nm
+            # Temporary -- working with incomplete spec.
+            # Should remove check and throw error
+            if t_frame.id in frame_map:
+                bus_nm = bus_map[t_frame.id]
+
+                msg_nm = [bus_nm]
+                unp = frame_map[t_frame.id].unpack(t_frame, **kwargs)
+                while isinstance(unp[1], tuple):
+                    msg_nm.append(unp[0])
+                    unp = unp[1]
+
+                msg_nm.append(unp[0])
+                msg_nm = '.'.join(msg_nm)
+                frame_unp = unp[1]
 
                 if include_raw:
                     yield (msg_nm,
-                            frame_unp,
-                            t_frame)
+                           frame_unp,
+                           t_frame)
                 else:
                     yield (msg_nm,
-                            frame_unp)
+                           frame_unp)
             # else:
             #     print('id {} not in spec'.format(t_frame.id))
 

@@ -102,26 +102,13 @@ class SingleFrame(Frame):
         return (self.name,
                 {atom.name: atom.unpack(frame, **kwargs)
                     for atom in self.atom}
-                )
-        # pack_args = {}
-        # for atom_nm in ret:
-        #     val = ret[atom_nm][0]
-        #     pack_args[atom_nm] = val
-        #     if ret[atom_nm][1].type.isenum():
-        #         pack_args[atom_nm] = ret[atom_nm][1].type.enum['name'][val].value
+            )
 
-        # # can't check equalty because of null char
-        # print()
-        # print(pack_args)
-        # print(self.pack(**pack_args).data)
-        # print(frame.data)
-        # print()
+    def pack(self, id_tup=(), bitstring=0, length=None, by='name', **kwargs):
+        assert id_tup is ()
+        if length is None:
+            length = len(self)
 
-        # return ret
-
-    # TODO: Fix janky pack with funny endianness
-    def pack(self, by='name', **kwargs):
-        bitstring = 0
         for atomnm in kwargs:
             atom = self.atom[by][atomnm]
             bitstring = data.evil_macros.INSERT(
@@ -131,10 +118,8 @@ class SingleFrame(Frame):
                 atom.slice.length
             )
 
-        # bitstring >>= (64-len(self)*8)
-        byteobj = bitstring.to_bytes(8, byteorder='big')
-        print(bitstring, len(self))
-        # return byteobj
+        bitstring >>= (64 - length*8)
+        byteobj = bitstring.to_bytes(length, byteorder='big')
         return data.frame.Frame(self.key, byteobj)
 
     def __len__(self):
@@ -206,9 +191,38 @@ class MultiplexedFrame(Frame):
 
     def unpack(self, frame, **kwargs):
         mux_id = frame[self.slice.start, self.slice.length]
-        subframe_nm, unp = self.frame['key'][mux_id].unpack(frame, **kwargs)
-        return (self.name + '.' + subframe_nm,
-                unp)
+        # subframe_nm, unp = self.frame['key'][mux_id].unpack(frame, **kwargs)
+        # return (self.name + '.' + subframe_nm,
+        #         unp)
+        return (self.name,
+                self.frame['key'][mux_id].unpack(frame, **kwargs))
 
-    def pack(self):
-        raise NotImplementedError()
+    def pack(self, id_tup, by='name', **kwargs):
+        bitstring = 0
+        frame = self
+
+        while isinstance(frame, MultiplexedFrame):
+            name = id_tup[0]
+            id_tup = id_tup[1]
+            bitstring = data.evil_macros.INSERT(
+                    frame.frame[by][name].key,
+                    bitstring,
+                    frame.slice.start,
+                    frame.slice.length
+                )
+            frame = frame.frame[by][name]
+
+        return frame.pack(id_tup=id_tup,
+                            bitstring=bitstring,
+                            length=len(self),
+                            by=by,
+                            **kwargs)
+
+    def __len__(self):
+        # paranoid length
+        # return ceil(
+        #             max(self.slice.start+self.slice.length, 
+        #                   max(len(frame) for frame in self.frame))/8
+        #         )
+        # assuming mux id is at end of frame
+        return ceil( (self.slice.start+self.slice.length)/8 ) 
