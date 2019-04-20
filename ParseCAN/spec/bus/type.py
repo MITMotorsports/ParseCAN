@@ -150,7 +150,6 @@ class Type:
         return self.type
 
     def dtype(self): # -> np.dtype:
-        # NOTE: This may have bugs. Test more robstly
         if self.isenum():
             '''
             Return a unicode string with length equal to the maximum possible
@@ -191,3 +190,6 @@ class Type:
                 stop = stop >> 1
 
         return range(start, stop)
+
+    def clean(self, raw):
+        return self.casts[self.type](raw, endianness='big' if self.endianness.isbig() else 'little')

@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from ... import parse
 from ...helper import Slice
 from .type import Type
+from ...data.frame import Frame
 
 # TODO: Figure out why this breaks dict generation.
 # class Unit(str):
@@ -46,24 +47,23 @@ class Atom:
         return cls(name=name, slice=slice, type=type, unit=unit, **kwargs)
 
     def unpack(self, frame, **kwargs):
-        # TODO: fix this check
-        # assert isinstance(frame, data.Frame)
+        assert isinstance(frame, Frame)
 
         raw = frame[self.slice.start, self.slice.length]
 
         if self.type.isenum():
             retval = self.type.enum['value'][raw].name
 
-            # TODO: Legacy. Still used, should probably change name at least.
-            if kwargs.get('segtuple', False):
-                return retval, self
+            # REMOVED: now return object in frame
+            # if kwargs.get('segtuple', False):
+            #     return retval, self
 
             if kwargs.get('unittuple', False):
-                return retval, None
+                return retval, self.unit
 
             return retval
 
-        clean = self.type.casts[self.type.type](raw, endianness='big' if self.type.endianness.isbig() else 'little')
+        clean = self.type.clean(raw)
         if kwargs.get('segtuple', False):
             return clean, self
 
