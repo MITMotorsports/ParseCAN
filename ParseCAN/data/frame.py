@@ -1,9 +1,10 @@
 from . import evil_macros
 from dataclasses import dataclass
 from typing import T, Union
+from ..spec.bus import Bus
 bitarray = int
 
-__all__ = ['Frame', 'FrameTimed']
+__all__ = ['Frame', 'FrameTimed', 'FrameBus', 'FrameTimedBus']
 
 
 @dataclass
@@ -34,3 +35,11 @@ class Frame:
 @dataclass
 class FrameTimed(Frame):
     time: T
+
+@dataclass
+class FrameBus(Frame):
+    bus: Bus
+
+@dataclass
+class FrameTimedBus(FrameTimed, FrameBus):
+    pass
