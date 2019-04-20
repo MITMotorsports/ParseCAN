@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from ... import parse
 from ...helper import Slice
 from .type import Type
-from ...data.frame import Frame
+# from ...data.frame import Frame # circular import with FrameBus
 
 # TODO: Figure out why this breaks dict generation.
 # class Unit(str):
@@ -47,7 +47,7 @@ class Atom:
         return cls(name=name, slice=slice, type=type, unit=unit, **kwargs)
 
     def unpack(self, frame, **kwargs):
-        assert isinstance(frame, Frame)
+        # assert isinstance(frame, Frame)
 
         raw = frame[self.slice.start, self.slice.length]
 
