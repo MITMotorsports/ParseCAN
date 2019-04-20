@@ -99,10 +99,7 @@ class SingleFrame(Frame):
         self.atom.extend(atom)
 
     def unpack(self, frame, **kwargs):
-        return (self.name,
-                {atom.name: atom.unpack(frame, **kwargs)
-                    for atom in self.atom}
-            )
+        return (self, [(atom, atom.unpack(frame, **kwargs)) for atom in self.atom])
 
     def pack(self, id_tup=(), bitstring=0, length=None, by='name', **kwargs):
         assert id_tup is ()
@@ -191,7 +188,7 @@ class MultiplexedFrame(Frame):
 
     def unpack(self, frame, **kwargs):
         mux_id = frame[self.slice.start, self.slice.length]
-        return (self.name,
+        return (self,
                 self.frame['key'][mux_id].unpack(frame, **kwargs))
 
     def pack(self, id_tup, bitstring=0, length=None, by='name', **kwargs):
@@ -215,10 +212,5 @@ class MultiplexedFrame(Frame):
                             **kwargs)
 
     def __len__(self):
-        # paranoid length
-        # return ceil(
-        #             max(self.slice.start+self.slice.length, 
-        #                   max(len(frame) for frame in self.frame))/8
-        #         )
-        # assuming mux id is at end of frame
+        # TODO: make this more robust assmues mux id at end of frame
         return ceil( (self.slice.start+self.slice.length)/8 ) 
