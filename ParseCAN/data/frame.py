@@ -30,10 +30,6 @@ class Frame:
 
         return evil_macros.EXTRACT(as_int, position, length)
 
-    def unpack(self, spec, **kwargs):
-        raise NotImplementedError
-        # return spec.unpack(self, **kwargs)
-
 
 @dataclass
 class FrameTimed(Frame):
