@@ -108,10 +108,10 @@ class SingleFrame(Frame):
         return data.frame.Frame(self.key, byteobj)
 
     def to_bitstring(self, bitstring=0, by='name', **kwargs):
-        for atomnm in kwargs:
-            atom = self.atom[by][atomnm]
+        for atom_id in kwargs:
+            atom = self.atom[by][atom_id]
             bitstring = data.evil_macros.INSERT(
-                kwargs[atomnm],
+                kwargs[atom_id],
                 bitstring,
                 atom.slice.start,
                 atom.slice.length
@@ -191,19 +191,20 @@ class MultiplexedFrame(Frame):
                 self.frame['key'][mux_id].unpack(frame, **kwargs))
 
     def pack(self, id_tup, by='name', **kwargs):
+        # Currently, 'by' applies to both frame_id and atom_id args
         bitstring = 0
         frame = self
 
         while isinstance(frame, MultiplexedFrame):
-            name = id_tup[0]
+            id = id_tup[0]
             id_tup = id_tup[1]
             bitstring = data.evil_macros.INSERT(
-                    frame.frame[by][name].key,
+                    frame.frame[by][id].key,
                     bitstring,
                     frame.slice.start,
                     frame.slice.length
                 )
-            frame = frame.frame[by][name]
+            frame = frame.frame[by][id]
 
         length = len(self)
         bitstring = frame.to_bitstring(bitstring=bitstring, **kwargs) >> (64 - length*8)
@@ -211,5 +212,6 @@ class MultiplexedFrame(Frame):
         return data.frame.Frame(self.key, byteobj)
 
     def __len__(self):
-        # TODO: make this more robust assmues mux id at end of frame
-        return ceil( (self.slice.start+self.slice.length)/8 ) 
+        return max( ceil( (self.slice.start+self.slice.length)/8),
+                    max( len(frame) for frame in self.frame )
+                )
