@@ -102,6 +102,7 @@ class SingleFrame(Frame):
         return (self, [(atom, atom.unpack(frame, **kwargs)) for atom in self.atom])
 
     def pack(self, bitstring = 0, by='name', **kwargs):
+        # TODO: add support for FrameTimedBus and parents
         length = len(self)
         bitstring = self.to_bitstring(bitstring, **kwargs) >> (64 - length*8)
         byteobj = bitstring.to_bytes(length, byteorder='big')
@@ -191,6 +192,7 @@ class MultiplexedFrame(Frame):
                 self.frame['key'][mux_id].unpack(frame, **kwargs))
 
     def pack(self, id_tup, by='name', **kwargs):
+        # TODO: add support for FrameTimedBus and parents
         # Currently, 'by' applies to both frame_id and atom_id args
         bitstring = 0
         frame = self

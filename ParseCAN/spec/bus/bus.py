@@ -8,6 +8,7 @@ from .frame import SingleFrame, MultiplexedFrame, FrameUnique, _frame_constr
 @dataclass
 class Bus:
     name: str
+    id: int
     baudrate: int
     version: str = '2.0B'
     extended: bool = False

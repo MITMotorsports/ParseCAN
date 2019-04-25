@@ -1,5 +1,5 @@
 from . import evil_macros
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import T, Union
 from ..spec.bus import Bus
 bitarray = int
@@ -38,7 +38,7 @@ class FrameTimed(Frame):
 
 @dataclass
 class FrameBus(Frame):
-    bus: Bus
+    bus: Bus = field(repr=False)
 
 @dataclass
 class FrameTimedBus(FrameTimed, FrameBus):
