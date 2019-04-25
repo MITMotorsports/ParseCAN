@@ -48,7 +48,14 @@ protocol:
           size: (dlc) B
           quantum: 1 B
     bus:
+      imu:
+        id: 0
+        version: 2.0B
+        baudrate: 500000
+        extended: false
+        frame: {}
       master:
+        id: 1
         version: 2.0B
         baudrate: 500000
         extended: false
