@@ -18,5 +18,4 @@ class Computer:
     participation: ParticipationUnique = field(default_factory=ParticipationUnique)
 
     def __post_init__(self):
-        print(self.participation)
         self.participation = ParticipationUnique(self.participation)

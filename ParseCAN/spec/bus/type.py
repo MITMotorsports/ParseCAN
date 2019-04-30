@@ -58,8 +58,8 @@ class Endianness(Enum):
 
 @dataclass
 class Type:
-    type: str
     endianness: Endianness
+    type: str = ''
     enum: EnumeratorUnique = field(default_factory=EnumeratorUnique)
 
     valid_types = {
@@ -117,7 +117,7 @@ class Type:
             raise ValueError(f'endianess missing from type string {string}')
 
         endianness = Endianness(endianness)
-        return cls(type, endianness)
+        return cls(type=type, endianness=endianness)
 
     @classmethod
     def from_dict(cls, dictionary: dict):
@@ -161,6 +161,11 @@ class Type:
 
     def bits(self) -> int:
         '''Size, in bits, of this type.'''
+        if self.isenum():
+            maxval = max(enum.value for enum in self.enum)
+
+            return maxval.bit_length()
+
         if self.type == 'bool':
             return 1
 

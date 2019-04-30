@@ -15,7 +15,7 @@ Unit = str
 class Atom:
     name: str
     slice: Slice
-    type: Type
+    type: Type = ''
     unit: Unit = field(default_factory=Unit)
 
     def __post_init__(self):
@@ -29,6 +29,11 @@ class Atom:
 
         if isinstance(self.type, dict):
             self.type = Type.from_dict(self.type)
+
+        if self.slice.length < self.type.bits():
+            if self.type.isenum():  # is annoying for anything other than enum
+                raise ValueError(f'have {self.slice.length} and need {self.type.bits()} '
+                                 f'bits to represent {self.type}')
 
         if self.slice.length > self.type.bits():
             raise ValueError('slice allocated is bigger than type expressed')
