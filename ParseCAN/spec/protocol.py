@@ -14,7 +14,7 @@ def _bus_constr(key, bus):
         raise
 
 
-BusUnique = plural.Unique[Bus].make('BusUnique', ['name', 'id'], main='name')
+BusUnique = plural.Unique[Bus].make('BusUnique', ['name'], main='name')
 Definition = Any
 
 @dataclass

@@ -14,7 +14,7 @@ class Log:
                     msg_nm.append(unp[0].name)
                     unp = unp[1]
 
-                msg_nm = '.'.join(msg_nm)
+                msg_nm = '__'.join(msg_nm)
 
                 if include_raw:
                     yield (msg_nm,

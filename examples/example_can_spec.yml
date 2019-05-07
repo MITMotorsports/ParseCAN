@@ -39,7 +39,7 @@ protocol:
           frame:
             key: fields.data
       frame:
-        id:
+        key:
           size: (29 if bus.extended else 11) B
         dlc:
           size: 1 B
@@ -49,13 +49,11 @@ protocol:
           quantum: 1 B
     bus:
       imu:
-        id: 0
         version: 2.0B
         baudrate: 500000
         extended: false
         frame: {}
       master:
-        id: 1
         version: 2.0B
         baudrate: 500000
         extended: false
