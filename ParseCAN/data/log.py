@@ -3,7 +3,7 @@ import ParseCAN as pcn
 
 class Log:
     def unpack(self, spec, include_raw=False, **kwargs):
-        for t_frame in self:
+        for t_frame in filter(bool, self):
             # TEMPORARY. Testing with incomplete spec!
             # Remove check and throw error in final version!
             if t_frame.id in t_frame.bus.frame['key']:
