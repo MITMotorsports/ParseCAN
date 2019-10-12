@@ -39,7 +39,7 @@ protocol:
           frame:
             key: fields.data
       frame:
-        id:
+        key:
           size: (29 if bus.extended else 11) B
         dlc:
           size: 1 B
@@ -48,6 +48,11 @@ protocol:
           size: (dlc) B
           quantum: 1 B
     bus:
+      imu:
+        version: 2.0B
+        baudrate: 500000
+        extended: false
+        frame: {}
       master:
         version: 2.0B
         baudrate: 500000
@@ -60,6 +65,7 @@ protocol:
                 slice: 0 + 3
                 # slice: 0 + 2
                 type:
+                  type: int8 # need to be explicit
                   endianness: big
                   enum:
                     one: 0
@@ -77,7 +83,7 @@ protocol:
                   masd:
                     slice: 0 + 3
                     type:
-                      # type: int8  # if one needs to be explicit for code gen
+                      type: int8  # if one needs to be explicit for code gen
                       endianness: big
                       enum:
                         one: 0
@@ -91,6 +97,42 @@ protocol:
                   bool_atom:
                     slice: 0 + 1
                     type: bool big
+          TestNestedMultiplex:
+            key: 0x071
+            slice: 50 + 14
+            frame:
+              sub_mux_frame1:
+                key: 0
+                slice: 36 + 14
+                frame:
+                  first_frame:
+                    key: 1
+                    atom:
+                      a:
+                        slice: 0 + 3
+                        type:  int8 big
+                  second_frame:
+                    key: 2
+                    atom:
+                      b:
+                        slice: 0 + 1
+                        type: bool big
+              sub_mux_frame2:
+                key: 1
+                slice: 36 + 14
+                frame:
+                  third_frame:
+                    key: 1
+                    atom:
+                      a:
+                        slice: 0 + 3
+                        type:  int8 big
+                  fourth_frame:
+                    key: 2
+                    atom:
+                      b:
+                        slice: 0 + 1
+                        type: bool big
           CellTemperatureRange:
             key: 0x016
             period: 101ms
@@ -285,3 +327,41 @@ protocol:
                 slice: 32 + 16
                 type: int16 little
                 unit: cm / (s ** 2)
+          VCUHeartbeat:
+            key: 0x0F3
+            atom:
+              vcu_state:
+                slice: 0 + 3
+                type:
+                  type: int8
+                  endianness: big
+                  enum:
+                    VCU_STATE_ROOT: 0
+                    VCU_STATE_LV: 1
+                    VCU_STATE_PRECHARGING: 2
+                    VCU_STATE_RTD: 3
+                    VCU_STATE_DRIVING: 4
+              error_state:
+                slice: 3 + 3
+                type:
+                  type: int8
+                  endianness: big
+                  enum:
+                    NO_ERROR_STATE: 0
+                    RECOVERABLE_ERROR_STATE: 1
+                    FATAL_ERROR_STATE: 2
+              estop_hit:
+                slice: 6 + 1
+                type: bool little
+              lc_state:
+                slice: 7 + 3
+                type:
+                  type: int8
+                  endianness: big
+                  enum:
+                    BEFORE: 0
+                    SPEEDING_UP: 1
+                    SPEED_CONTROLLER: 2
+                    ZERO_TORQUE: 3
+                    DONE: 4
+

@@ -1,10 +1,12 @@
 from dataclasses import dataclass, field
 from typing import Any, List
 from intervaltree import Interval, IntervalTree  # TODO: Replace it with a simpler local implementation.
+from math import ceil
 
 from ... import plural
 from ...helper import Slice
 from . import Atom
+from ... import data
 
 
 def interval_from_sliceable(item) -> Interval:
@@ -97,10 +99,28 @@ class SingleFrame(Frame):
         self.atom.extend(atom)
 
     def unpack(self, frame, **kwargs):
-        return {atom.name: atom.unpack(frame, **kwargs) for atom in self.atom}
+        return (self, [(atom, atom.unpack(frame, **kwargs)) for atom in self.atom])
 
-    def pack(self):
-        raise NotImplementedError()
+    def pack(self, bitstring = 0, by='name', **kwargs):
+        # TODO: add support for FrameTimedBus and parents
+        length = len(self)
+        bitstring = self.to_bitstring(bitstring, **kwargs) >> (64 - length*8)
+        byteobj = bitstring.to_bytes(length, byteorder='big')
+        return data.frame.Frame(self.key, byteobj)
+
+    def to_bitstring(self, bitstring=0, by='name', **kwargs):
+        for atom_id in kwargs:
+            atom = self.atom[by][atom_id]
+            bitstring = data.evil_macros.INSERT(
+                kwargs[atom_id],
+                bitstring,
+                atom.slice.start,
+                atom.slice.length
+            )
+        return bitstring
+
+    def __len__(self):
+        return ceil(max(atom.slice.start + atom.slice.length for atom in self.atom) / 8)
 
 
 def _check_interval(item: Frame, interval: Interval):
@@ -108,7 +128,8 @@ def _check_interval(item: Frame, interval: Interval):
         for x in item.atom.intervaltree[interval.begin : interval.end]:
             yield x.data
     elif isinstance(item, MultiplexedFrame):
-        sliceoverlap = interval.overlaps(item.slice.begin, item.slice.end)
+        # Why doesn't TestMultiplexEnum trigger this
+        sliceoverlap = interval.overlaps(item.slice.start, item.slice.start + item.slice.length)
         if sliceoverlap:
             yield sliceoverlap
 
@@ -165,5 +186,34 @@ class MultiplexedFrame(Frame):
 
         self.frame.extend(frame)
 
-    def pack(self):
-        raise NotImplementedError()
+    def unpack(self, frame, **kwargs):
+        mux_id = frame[self.slice.start, self.slice.length]
+        return (self,
+                self.frame['key'][mux_id].unpack(frame, **kwargs))
+
+    def pack(self, id_tup, by='name', **kwargs):
+        # TODO: add support for FrameTimedBus and parents
+        # Currently, 'by' applies to both frame_id and atom_id args
+        bitstring = 0
+        frame = self
+
+        while isinstance(frame, MultiplexedFrame):
+            id = id_tup[0]
+            id_tup = id_tup[1]
+            bitstring = data.evil_macros.INSERT(
+                    frame.frame[by][id].key,
+                    bitstring,
+                    frame.slice.start,
+                    frame.slice.length
+                )
+            frame = frame.frame[by][id]
+
+        length = len(self)
+        bitstring = frame.to_bitstring(bitstring=bitstring, **kwargs) >> (64 - length*8)
+        byteobj = bitstring.to_bytes(length, byteorder='big')
+        return data.frame.Frame(self.key, byteobj)
+
+    def __len__(self):
+        return max( ceil( (self.slice.start+self.slice.length)/8),
+                    max( len(frame) for frame in self.frame )
+                )

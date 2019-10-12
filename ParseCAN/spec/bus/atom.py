@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
-from warnings import warn
 
 from ... import parse
 from ...helper import Slice
 from .type import Type
+# from ...data.frame import Frame # circular import with FrameBus
 
 # TODO: Figure out why this breaks dict generation.
 # class Unit(str):
@@ -15,7 +15,7 @@ Unit = str
 class Atom:
     name: str
     slice: Slice
-    type: Type
+    type: Type = ''
     unit: Unit = field(default_factory=Unit)
 
     def __post_init__(self):
@@ -36,7 +36,7 @@ class Atom:
                                  f'bits to represent {self.type}')
 
         if self.slice.length > self.type.bits():
-            warn('slice allocated is bigger than type expressed')
+            raise ValueError('slice allocated is bigger than type expressed')
 
     @classmethod
     def from_str(cls, name, string, **kwargs):
@@ -52,4 +52,24 @@ class Atom:
         return cls(name=name, slice=slice, type=type, unit=unit, **kwargs)
 
     def unpack(self, frame, **kwargs):
-        raise NotImplementedError('not updated yet')
+        # assert isinstance(frame, Frame)
+
+        raw = frame[self.slice.start, self.slice.length]
+
+        if self.type.isenum():
+            retval = self.type.enum['value'][raw].name
+
+            # REMOVED: now return object in frame
+            # if kwargs.get('segtuple', False):
+            #     return retval, self
+
+            if kwargs.get('unittuple', False):
+                return retval, self.unit
+
+            return retval
+
+        clean = self.type.clean(raw)
+        if kwargs.get('segtuple', False):
+            return clean, self
+
+        return clean

@@ -21,3 +21,6 @@ class Bus:
             frame = [_frame_constr(k, v) for k, v in frame.items()]
 
         self.frame.extend(frame)
+
+    def unpack(self, frame, **kwargs):
+        return self.frame['key'][frame.id].unpack(frame, **kwargs)

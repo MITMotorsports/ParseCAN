@@ -1,9 +1,10 @@
 from . import evil_macros
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import T, Union
+from ..spec.bus import Bus
 bitarray = int
 
-__all__ = ['Frame', 'FrameTimed']
+__all__ = ['Frame', 'FrameTimed', 'FrameBus', 'FrameTimedBus']
 
 
 @dataclass
@@ -30,10 +31,15 @@ class Frame:
 
         return evil_macros.EXTRACT(as_int, position, length)
 
-    def unpack(self, spec, **kwargs):
-        return spec.unpack(self, **kwargs)
-
 
 @dataclass
 class FrameTimed(Frame):
     time: T
+
+@dataclass
+class FrameBus(Frame):
+    bus: Bus = field(repr=False)
+
+@dataclass
+class FrameTimedBus(FrameTimed, FrameBus):
+    pass

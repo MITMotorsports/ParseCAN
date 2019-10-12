@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
+import numpy as np
 
 from ... import plural, data
 
@@ -102,7 +103,7 @@ class Type:
 
         if not self.enum:  # TODO: Change when support C++11 enum with type.
             if self.type not in self.valid_types:
-                raise ValueError(f'given type {self.type} is not a recognized typename')
+                raise ValueError('given type is not a recognized typename')
 
         if not isinstance(self.endianness, Endianness):
             self.endianness = Endianness(self.endianness)
@@ -134,12 +135,6 @@ class Type:
         return bool(self.enum)
 
     def issigned(self) -> bool:
-        if self.isenum():
-            if any(enum.value < 0 for enum in self.enum):
-                return True
-
-            return False
-
         if self.type.startswith('int'):
             return True
 
@@ -154,16 +149,15 @@ class Type:
 
         return self.type
 
-    def dtype(self):  # -> np.dtype:
-        raise NotImplementedError('not updated yet')
-        # if self.isenum():
-        #     '''
-        #     Return a unicode string with length equal to the maximum possible
-        #     length of any of the contained value names.
-        #     '''
-        #     return 'U' + str(max(len(val.name) for val in self.enum))
+    def dtype(self): # -> np.dtype:
+        if self.isenum():
+            '''
+            Return a unicode string with length equal to the maximum possible
+            length of any of the contained value names.
+            '''
+            return 'U' + str(max(len(val.name) for val in self.enum))
 
-        # return np_dtypes.get(self.c_type, None)
+        return self.type
 
     def bits(self) -> int:
         '''Size, in bits, of this type.'''
@@ -201,3 +195,6 @@ class Type:
                 stop = stop >> 1
 
         return range(start, stop)
+
+    def clean(self, raw):
+        return self.casts[self.type](raw, endianness='big' if self.endianness.isbig() else 'little')
