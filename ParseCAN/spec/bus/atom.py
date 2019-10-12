@@ -57,7 +57,11 @@ class Atom:
         raw = frame[self.slice.start, self.slice.length]
 
         if self.type.isenum():
-            retval = self.type.enum['value'][raw].name
+            try:
+                retval = self.type.enum['value'][raw].name
+            except KeyError as e:
+                e.args = (f'on {self} got exception {e}',)
+                raise
 
             # REMOVED: now return object in frame
             # if kwargs.get('segtuple', False):
