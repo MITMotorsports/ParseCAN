@@ -24,7 +24,7 @@ def xframe_to_frame(xframe):
     raw = xframe['rf_data']
 
     return data.Frame(
-                can_id=int.from_bytes(raw[:2], 'big'),
+                id=int.from_bytes(raw[:2], 'big'),
                 data=raw[2:]
             )
 

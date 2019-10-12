@@ -1,5 +1,4 @@
 from .bus import *
-from .board import BoardType as board
-from .Car import CarSpec as car
-
-__all__ = ['bus', 'board']
+from .computer import Computer
+from .system import System
+from ..helper import Slice

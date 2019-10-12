@@ -1,6 +1,3 @@
-from . import evil_macros
-from . import Log as log
-from .Race import Race as race
-from .Frame import *
+from . import log, frame, evil_macros
 
-__all__ = ['race', 'log']
+__all__ = ['log', 'frame']
