@@ -62,30 +62,6 @@ class Type:
     type: str = ''
     enum: EnumeratorUnique = field(default_factory=EnumeratorUnique)
 
-    valid_types = {
-        'bool',
-        'int8',
-        'uint8',
-        'int16',
-        'uint16',
-        'int32',
-        'uint32',
-        'int64',
-        'uint64',
-    }
-
-    casts = {
-        'bool': lambda x, **kw: bool(x),
-        'int8': data.evil_macros.cast_gen('b'),
-        'uint8': data.evil_macros.cast_gen('B'),
-        'int16': data.evil_macros.cast_gen('h'),
-        'uint16': data.evil_macros.cast_gen('H'),
-        'int32': data.evil_macros.cast_gen('i'),
-        'uint32': data.evil_macros.cast_gen('I'),
-        'int64': data.evil_macros.cast_gen('q'),
-        'uint64': data.evil_macros.cast_gen('Q'),
-    }
-
     def __post_init__(self):
         enum = self.enum
         self.enum = EnumeratorUnique()
@@ -102,7 +78,7 @@ class Type:
         self.enum.extend(enum)
 
         if not self.enum:  # TODO: Change when support C++11 enum with type.
-            if self.type not in self.valid_types:
+            if self.type not in data.evil_macros.CASTS:
                 raise ValueError('given type is not a recognized typename')
 
         if not isinstance(self.endianness, Endianness):
@@ -197,4 +173,4 @@ class Type:
         return range(start, stop)
 
     def clean(self, raw):
-        return self.casts[self.type](raw, endianness='big' if self.endianness.isbig() else 'little')
+        return data.evil_macros.CASTS[self.type](raw, endianness=self.endianness)

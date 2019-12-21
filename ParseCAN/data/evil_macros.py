@@ -12,7 +12,7 @@ fmttolen = {
 }
 
 
-def CAST(type, num, endianness):
+def cast(type, num, endianness):
     d = '>' if endianness == 'big' else '<'
 
     inbytes = num.to_bytes(fmttolen[type], 'big')
@@ -21,9 +21,22 @@ def CAST(type, num, endianness):
 
 def cast_gen(type):
     def closure(x, **kwargs):
-        return CAST(type, num=x, **kwargs)
+        return cast(type, num=x, **kwargs)
 
     return closure
+
+
+CASTS = {
+    'bool': lambda x, **kw: bool(x),
+    'int8': cast_gen('b'),
+    'uint8': cast_gen('B'),
+    'int16': cast_gen('h'),
+    'uint16': cast_gen('H'),
+    'int32': cast_gen('i'),
+    'uint32': cast_gen('I'),
+    'int64': cast_gen('q'),
+    'uint64': cast_gen('Q'),
+}
 
 
 def RPAD(n, l):
