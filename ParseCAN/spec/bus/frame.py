@@ -5,7 +5,7 @@ from math import ceil
 
 from ... import plural
 from ...helper import Slice
-from . import Atom
+from . import Atom, Endianness, Type
 from ... import data
 
 
@@ -172,6 +172,7 @@ _mux_frame_ruleset = plural.RuleSet(dict(add=dict(pre=_mux_frame_pre_add,
 @dataclass
 class MultiplexedFrame(Frame):
     slice: Slice
+    type: Type = ''
     frame: FrameUnique = field(default_factory=FrameUnique)
 
     def __post_init__(self):
@@ -186,8 +187,12 @@ class MultiplexedFrame(Frame):
 
         self.frame.extend(frame)
 
+        if not isinstance(self.endianness, Endianness):
+            self.endianness = Endianness(self.endianness)
+
     def unpack(self, frame, **kwargs):
-        mux_id = frame[self.slice.start, self.slice.length]
+        raw = frame[self.slice.start, self.slice.length]
+        mux_id = data.evil_macros.CASTS[self.type](raw, endianness=self.endianness)
         return (self,
                 self.frame['key'][mux_id].unpack(frame, **kwargs))
 
