@@ -18,6 +18,7 @@ ParticipationCapabilitiesUnique = plural.Unique[ParticipationCapabilities].make(
 @dataclass
 class Architecture:
     name: str
+    family: str
     participation: ParticipationCapabilitiesUnique = field(default_factory=ParticipationCapabilitiesUnique)
 
     def __post_init__(self):
