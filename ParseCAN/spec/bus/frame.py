@@ -187,7 +187,9 @@ class MultiplexedFrame(Frame):
 
         self.frame.extend(frame)
 
-        if isinstance(self.type, str):
+        if self.type is None:
+            self.type = Type.from_str('uint8 big')
+        elif isinstance(self.type, str):
             self.type = Type.from_str(self.type)
         elif isinstance(self.type, dict):
             self.type = Type.from_dict(self.type)
@@ -197,7 +199,7 @@ class MultiplexedFrame(Frame):
 
     def unpack(self, frame, **kwargs):
         raw = frame[self.slice.start, self.slice.length]
-        mux_id = data.evil_macros.CASTS[self.type](raw, endianness=self.type.endianness)
+        mux_id = data.evil_macros.CASTS[self.type.type](raw, endianness=self.type.endianness)
         return (self,
                 self.frame['key'][mux_id].unpack(frame, **kwargs))
 
