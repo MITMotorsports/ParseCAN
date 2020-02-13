@@ -26,9 +26,10 @@ class Atom:
         # TODO: Get a multiple dispatch here too.
         if isinstance(self.type, str):
             self.type = Type.from_str(self.type)
-
-        if isinstance(self.type, dict):
+        elif isinstance(self.type, dict):
             self.type = Type.from_dict(self.type)
+        elif not isinstance(self.type, Type):
+            raise ValueError('unparseable type: {}'.format(self.type))
 
         if self.slice.length < self.type.bits():
             if self.type.isenum():  # is annoying for anything other than enum

@@ -3,9 +3,19 @@ units:
   - newtonmeter = N * m = J = Nm
   - tick = 3 ms
   - RPM = 360 deg / min
-architectures:
-  - lpc11cx4
-  - stm32f205
+architecture:
+  stm32f413:
+    participation:
+      can:
+        buses:
+          - CAN_1
+          - CAN_2
+          - CAN_3
+  lpc11cx4:
+    participation:
+      can:
+        buses:
+          - CAN_1
 computer:
   can_node:
     architecture: lpc11cx4
@@ -17,7 +27,7 @@ computer:
           master:
             - SBG_EKF_Quaternion
   vcu:
-    architecture: stm32f205
+    architecture: stm32f413
   dash:
     architecture: lpc11cx4
 protocol:
@@ -75,7 +85,7 @@ protocol:
                     five: 4
           TestMultiplexEnum:
             key: 0x070
-            slice: 50 + 14
+            slice: 50 + 8
             frame:
               enum_frame:
                 key: 0
@@ -99,11 +109,11 @@ protocol:
                     type: bool big
           TestNestedMultiplex:
             key: 0x071
-            slice: 50 + 14
+            slice: 50 + 8  # no frame key field can be longer than 8 bits right now
             frame:
               sub_mux_frame1:
                 key: 0
-                slice: 36 + 14
+                slice: 36 + 8
                 frame:
                   first_frame:
                     key: 1
@@ -119,7 +129,7 @@ protocol:
                         type: bool big
               sub_mux_frame2:
                 key: 1
-                slice: 36 + 14
+                slice: 36 + 8
                 frame:
                   third_frame:
                     key: 1
@@ -342,7 +352,7 @@ protocol:
                     VCU_STATE_RTD: 3
                     VCU_STATE_DRIVING: 4
               error_state:
-                slice: 3 + 3
+                slice: 3 + 2
                 type:
                   type: int8
                   endianness: big

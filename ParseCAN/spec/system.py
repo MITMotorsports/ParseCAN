@@ -5,8 +5,7 @@ from typing import List, Set
 
 from .. import plural
 from .protocol import Protocol
-from .computer import Computer
-from .computer.participation import Participation
+from .computer import Computer, Participation, Architecture
 
 def _computer_constr(self, key, computer):
     try:
@@ -27,7 +26,7 @@ ComputerUnique = plural.Unique[Computer].make('ComputerUnique', ['name'], main='
 
 def _computer_pre_add(self, computer, metadata):
     if computer.architecture:
-        if computer.architecture not in metadata.architectures:
+        if computer.architecture not in metadata.architecture['name']:
             raise ValueError(f'in computer {computer.name}: '
                              f'unknown architecture: {computer.architecture}')
 
@@ -46,19 +45,41 @@ def _protocol_constr(key, protocol):
 ProtocolUnique = plural.Unique[Protocol].make('ProtocolUnique', ['name'], main='name')
 
 
+def _architecture_constr(key, architecture):
+    try:
+        return Architecture(name=key, **architecture)
+    except Exception as e:
+        e.args = ('in architecture {}: {}'.format(key, e),)
+
+        raise
+
+ArchitectureUnique = plural.Unique[Architecture].make('ArchitectureUnique', ['name'], main='name')
+
+
 @dataclass
 class System:
     name: str
-    architectures: Set[str]
     units: Set[str]
-    computer: ComputerUnique = field(default_factory=ComputerUnique)
+    architecture: ComputerUnique = field(default_factory=ComputerUnique)
     protocol: ProtocolUnique = field(default_factory=ProtocolUnique)
+    computer: ComputerUnique = field(default_factory=ComputerUnique)
 
     def __post_init__(self):
+        architecture = self.architecture
+        self.architecture = ArchitectureUnique()
+        if isinstance(architecture, dict):
+            architecture = [_architecture_constr(key, architecture[key]) for key in architecture]
+        else:
+            raise ValueError('unparseable architectures: {}'.format(architecture))
+
+        self.architecture.extend(architecture)
+
         protocol = self.protocol
         self.protocol = ProtocolUnique()
         if isinstance(protocol, dict):
             protocol = [_protocol_constr(key, protocol[key]) for key in protocol]
+        else:
+            raise ValueError('unparseable protocols: {}'.format(protocol))
 
         self.protocol.extend(protocol)
 
@@ -68,6 +89,9 @@ class System:
 
         if isinstance(computer, dict):
             computer = [_computer_constr(self, key, computer[key]) for key in computer]
+        else:
+            raise ValueError('unparseable computers: {}'.format(computer))
+
         self.computer.extend(computer)
 
     @classmethod

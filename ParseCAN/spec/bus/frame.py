@@ -172,7 +172,7 @@ _mux_frame_ruleset = plural.RuleSet(dict(add=dict(pre=_mux_frame_pre_add,
 @dataclass
 class MultiplexedFrame(Frame):
     slice: Slice
-    type: Type = ''
+    type: Type = None
     frame: FrameUnique = field(default_factory=FrameUnique)
 
     def __post_init__(self):
@@ -187,12 +187,17 @@ class MultiplexedFrame(Frame):
 
         self.frame.extend(frame)
 
-        if not isinstance(self.endianness, Endianness):
-            self.endianness = Endianness(self.endianness)
+        if isinstance(self.type, str):
+            self.type = Type.from_str(self.type)
+        elif isinstance(self.type, dict):
+            self.type = Type.from_dict(self.type)
+        elif not isinstance(self.type, Type):
+            if len(self.slice) > 8:
+                raise ValueError('unparseable type: {}'.format(self.type))
 
     def unpack(self, frame, **kwargs):
         raw = frame[self.slice.start, self.slice.length]
-        mux_id = data.evil_macros.CASTS[self.type](raw, endianness=self.endianness)
+        mux_id = data.evil_macros.CASTS[self.type](raw, endianness=self.type.endianness)
         return (self,
                 self.frame['key'][mux_id].unpack(frame, **kwargs))
 
