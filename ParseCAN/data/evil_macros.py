@@ -1,4 +1,5 @@
 import struct
+from ..spec.bus.type import Endianness
 
 fmttolen = {
     'b': 1,
@@ -13,8 +14,7 @@ fmttolen = {
 
 
 def cast(type, num, endianness):
-    d = '>' if endianness == 'big' else '<'
-
+    d = '>' if endianness == Endianness.BIG or endianness == 'big' else '<'
     inbytes = num.to_bytes(fmttolen[type], 'big')
     return struct.unpack(d + type, inbytes)[0]
 
