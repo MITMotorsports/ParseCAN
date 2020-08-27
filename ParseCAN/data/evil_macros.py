@@ -68,3 +68,7 @@ def INSERT(inp, out, start, leng):
 
 def EXTRACT(inp, start, leng):
     return (((inp) >> START_IDX(start, leng)) & ONES(leng))
+
+def REVERSE_BITS(raw, leng):
+    format = '{{:0{}b}}'.format(leng)
+    return int(format.format(raw)[::-1], 2)
