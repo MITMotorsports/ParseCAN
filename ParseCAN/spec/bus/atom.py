@@ -1,8 +1,10 @@
 from dataclasses import dataclass, field
+from warnings import warn
 
 from ... import parse
 from ...helper import Slice
 from .type import Type
+from ...data import evil_macros
 # from ...data.frame import Frame # circular import with FrameBus
 
 # TODO: Figure out why this breaks dict generation.
@@ -37,7 +39,7 @@ class Atom:
                                  f'bits to represent {self.type}')
 
         if self.slice.length > self.type.bits():
-            raise ValueError('slice allocated is bigger than type expressed')
+            warn('slice allocated {0} bits is bigger than type expressed of {1} bits'.format(self.slice.length, self.type.bits()))
 
     @classmethod
     def from_str(cls, name, string, **kwargs):
@@ -58,11 +60,16 @@ class Atom:
         raw = frame[self.slice.start, self.slice.length]
 
         if self.type.isenum():
+            if not self.type.endianness.isbig():
+                corrected = evil_macros.REVERSE_BITS(raw, self.slice.length)
+            else:
+                corrected = raw
             try:
-                retval = self.type.enum['value'][raw].name
+                retval = self.type.enum['value'][corrected].name
             except KeyError as e:
-                e.args = (f'on {self} got exception {e}',)
-                raise
+                e.args = (f'on {self.name} got exception {e.__repr__()}',)
+                warn(str(e))
+                retval = 'INVALID_ENUM_{}'.format(corrected)
 
             # REMOVED: now return object in frame
             # if kwargs.get('segtuple', False):
