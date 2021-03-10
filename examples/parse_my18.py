@@ -4,9 +4,9 @@ sys.path.append('../ParseCAN')
 import csv
 from pathlib import Path
 from itertools import chain
-from ParseCAN import spec, data, parse
+from ParseCAN.examples.ParseCAN_old import spec, data, parse
 import numpy as np
-from log_parsers import *
+from .log_parsers import *
 
 car = spec.car('can_spec_my18.yml')
 
@@ -66,8 +66,9 @@ def log_to_npz(logfile, parser, outfile, dimensionless=False, raw=False):
         arr.dtype.names = [x[0] for x in dtypes[msg]]
         writers[msg] = arr
     # print([list(x) for x in writers.values()])
-
+    # print(writers)
     np.savez(outfile, **writers)
+
     return None
 
 def parse_my18(logfile, outfile):

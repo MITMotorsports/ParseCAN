@@ -4,7 +4,7 @@ sys.path.append('../ParseCAN')
 import re
 import datetime as dt
 import time
-from ParseCAN import parse, data
+from ParseCAN.examples.ParseCAN_old import parse, data
 
 
 def static_vars(**kwargs):

@@ -20,6 +20,7 @@ def number(num, unit=False):
 
     - If `unit` is truthy the number will be forced to have a unit.
     '''
+    # print(num, unit)
     if isinstance(num, ureg.Quantity):
         if isinstance(unit, (str, ureg.Quantity)):
             return num.to(unit)
