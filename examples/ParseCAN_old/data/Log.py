@@ -7,12 +7,20 @@ class Log:
     def __init__(self, source, parser):
         self.src = Path(source)
         self.parser = parser
+        self.length = 0
+        self.parsed = 0
+        with self.src.open('r') as f:
+            for l in f:
+                self.length += 1
 
     def __iter__(self):
         '''
         Returns an iterator of the valid outputs of self.parser.
         '''
-        return filter(bool, map(self.parser, self.src.open('r')))
+        def parse_progress(line):
+            self.parsed += 1
+            return self.parser(line)
+        return filter(bool, map(parse_progress, self.src.open('r')))
 
     def unpack(self, spec, **kwargs):
         return ((msg, spec.unpack(msg, **kwargs)) for msg in self)
