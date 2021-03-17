@@ -39,7 +39,7 @@ def log_to_npz(logfile, parser, outfile, dimensionless=False, raw=False, progres
     for raw, parsed in unp:
         if not parsed:
             continue
-        if log.parsed % 1000 == 0: progress_callback(log.parsed/log.length)
+        if log.parsed % 1000 == 0 and progress_callback is not None: progress_callback(log.parsed/log.length)
         for msg in parsed['can0']:
             if msg not in writers:
                 # print(msg)
