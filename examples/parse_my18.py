@@ -4,13 +4,13 @@ sys.path.append('../ParseCAN')
 import csv
 from pathlib import Path
 from itertools import chain
-from ParseCAN import spec, data, parse
+from ParseCAN.examples.ParseCAN_old import spec, data, parse
 import numpy as np
-from log_parsers import *
+from .log_parsers import *
 
 car = spec.car('can_spec_my18.yml')
 
-def log_to_npz(logfile, parser, outfile, dimensionless=False, raw=False):
+def log_to_npz(logfile, parser, outfile, dimensionless=False, raw=False, progress_callback=None):
     logfile = Path(logfile)
 
     log = data.log(logfile, parser)
@@ -39,7 +39,7 @@ def log_to_npz(logfile, parser, outfile, dimensionless=False, raw=False):
     for raw, parsed in unp:
         if not parsed:
             continue
-
+        if log.parsed % 1000 == 0 and progress_callback is not None: progress_callback(log.parsed/log.length)
         for msg in parsed['can0']:
             if msg not in writers:
                 # print(msg)
@@ -66,13 +66,14 @@ def log_to_npz(logfile, parser, outfile, dimensionless=False, raw=False):
         arr.dtype.names = [x[0] for x in dtypes[msg]]
         writers[msg] = arr
     # print([list(x) for x in writers.values()])
-
+    # print(writers)
     np.savez(outfile, **writers)
+
     return None
 
-def parse_my18(logfile, outfile):
-    log_to_npz(logfile, tsvlog_parser, outfile, dimensionless=True)
+def parse_my18(logfile, outfile, progress_callback=None):
+    log_to_npz(logfile, tsvlog_parser, outfile, dimensionless=True, progress_callback=progress_callback)
 
 if __name__ == '__main__':
 
-    log_to_npz("133202.TSV", tsvlog_parser, 'out/', dimensionless=True)
+    parse_my18("133202.TSV", "out.npz")

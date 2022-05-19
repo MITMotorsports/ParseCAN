@@ -1,7 +1,10 @@
+import sys
+sys.path.append('../ParseCAN')
+
 import re
 import datetime as dt
 import time
-from ParseCAN import parse, data
+from ParseCAN.examples.ParseCAN_old import parse, data
 
 
 def static_vars(**kwargs):
@@ -19,13 +22,13 @@ def pcantrc_parser(line):
         return None
 
     timestr = m.group(2)
-    idstr = m.group(4)
+    can_idstr = m.group(4)
     datastr = m.group(6).replace(' ', '')
 
     return data.FrameTimed(
                time=int(timestr) / 1000,  # in seconds
-               id=int(idstr, 16),
-               data=bytes.fromhex(datastr)
+               can_id=int(can_idstr, 16),
+               data=parse.hexstr_to_bytes(datastr)
            )
 
 
@@ -51,10 +54,10 @@ def tsvlog_parser(line):
         tsvlog_parser.inittime = time.mktime(datetime.timetuple())
         return None
 
-    timestr, busstr, idstr, datastr = m
+    timestr, busstr, can_idstr, datastr = m
 
     return data.FrameTimed(
                time=int(timestr) / 1000 + tsvlog_parser.inittime,  # POSIX time
-               id=int(idstr, 16),
-               data=bytes.fromhex(datastr)
+               can_id=int(can_idstr, 16),
+               data=parse.hexstr_to_bytes(datastr)
            )
