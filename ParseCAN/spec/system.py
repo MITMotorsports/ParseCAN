@@ -1,7 +1,7 @@
 import yaml
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Set
+from typing import List, Set, Dict
 
 from .. import plural
 from .protocol import Protocol
@@ -60,6 +60,7 @@ ArchitectureUnique = plural.Unique[Architecture].make('ArchitectureUnique', ['na
 class System:
     name: str
     units: Set[str]
+    unit_types: Dict[str, str]
     architecture: ComputerUnique = field(default_factory=ComputerUnique)
     protocol: ProtocolUnique = field(default_factory=ProtocolUnique)
     computer: ComputerUnique = field(default_factory=ComputerUnique)
