@@ -66,6 +66,9 @@ class System:
     computer: ComputerUnique = field(default_factory=ComputerUnique)
 
     def __post_init__(self):
+        if not isinstance(self.unit_types, dict):
+            self.unit_types = {}
+
         architecture = self.architecture
         self.architecture = ArchitectureUnique()
         if isinstance(architecture, dict):
@@ -98,4 +101,6 @@ class System:
     @classmethod
     def from_yaml(cls, stream):
         spec = yaml.safe_load(stream)
+        if 'unit_types' not in spec:
+            spec['unit_types'] = None
         return cls(**spec)
