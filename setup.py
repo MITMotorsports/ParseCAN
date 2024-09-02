@@ -11,6 +11,5 @@ setup(
         "PyYAML",
         "pint",
         "numpy",
-
     ],
 )
