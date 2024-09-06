@@ -98,6 +98,10 @@ class System:
 
         self.computer.extend(computer)
 
+        for bus in self.protocol['name']['can'].bus['name'].values():
+            for frame in bus.frame['name'].values():
+                frame.resolve_mirrors(self)
+
     @classmethod
     def from_yaml(cls, stream):
         spec = yaml.safe_load(stream)
