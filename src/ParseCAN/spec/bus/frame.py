@@ -69,7 +69,7 @@ FrameUnique = plural.Unique[Frame].make('FrameUnique', ['name', 'key'], main='na
 def _frame_constr(key, frame):
     if isinstance(frame, dict):
         try:
-            if 'atom' in frame:
+            if 'atom' in frame or 'mirror_frame' in frame:
                 return SingleFrame(name=key, **frame)
 
             if 'frame' in frame:
@@ -88,15 +88,33 @@ def _frame_constr(key, frame):
 class SingleFrame(Frame):
     period: Any = None
     atom: AtomUnique = field(default_factory=AtomUnique)
+    mirror_frame: str | None = None
+    mirror_bus: str | None = None
 
     def __post_init__(self):
         atom = self.atom
         self.atom = AtomUnique()  # TODO: Add a modifier to the constructor using fields?
 
+        assert (self.mirror_frame is None) == (self.mirror_bus is None), f"Mirror frames have to specify both a frame and a bus! ({self.name})"
+
         if isinstance(atom, dict):
+            assert self.mirror_frame is None, f"Cannot define an atom and a mirror for frame {self.name}!"
             atom = [_atom_constr(k, v) for k, v in atom.items()]
+        else:
+            assert self.mirror_frame is not None, f"Expecting a valid atom or a mirror for frame {self.name}!"
 
         self.atom.extend(atom)
+
+    def resolve_mirrors(self, system):
+        if self.mirror_frame is not None and self.mirror_bus is not None:
+            if self.mirror_bus in system.protocol['name']['can'].bus['name']:
+                bus = system.protocol['name']['can'].bus['name'][self.mirror_bus]
+                if self.mirror_frame in bus.frame['name']:
+                    selected_frame = bus.frame['name'][self.mirror_frame]
+                    if isinstance(selected_frame, SingleFrame) and selected_frame.mirror_frame is None:
+                        self.atom = selected_frame.atom
+                        return
+            assert False, f"Unable to find mirror {self.mirror_frame} for frame {self.name}!"
 
     def unpack(self, frame, **kwargs):
         return (self, [(atom, atom.unpack(frame, **kwargs)) for atom in self.atom])
