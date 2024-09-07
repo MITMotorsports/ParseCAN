@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Any
 
-from .. import plural
-from .bus import Bus
+from ParseCAN import plural
+from ParseCAN.spec.bus import Bus
 
 
 def _bus_constr(key, bus):
