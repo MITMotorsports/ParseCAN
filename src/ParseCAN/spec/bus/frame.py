@@ -3,10 +3,10 @@ from typing import Any, List
 from intervaltree import Interval, IntervalTree  # TODO: Replace it with a simpler local implementation.
 from math import ceil
 
-from ... import plural
-from ...helper import Slice
-from . import Atom, Endianness, Type
-from ... import data
+from ParseCAN import plural
+from ParseCAN.helper import Slice
+from ParseCAN.spec.bus import Atom, Endianness, Type
+from ParseCAN import data
 
 
 def interval_from_sliceable(item) -> Interval:

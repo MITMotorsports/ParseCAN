@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Sequence, Union, Mapping
 
-from ... import spec, plural
-from .frame import SingleFrame, MultiplexedFrame, FrameUnique, _frame_constr
+from ParseCAN import spec, plural
+from ParseCAN.spec.bus.frame import SingleFrame, MultiplexedFrame, FrameUnique, _frame_constr
 
 
 @dataclass

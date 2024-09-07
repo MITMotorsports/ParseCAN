@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 
-from ... import parse
-from ...helper import Slice
-from .type import Type
+from ParseCAN import parse
+from ParseCAN.helper import Slice
+from ParseCAN.spec.bus.type import Type
 # from ...data.frame import Frame # circular import with FrameBus
 
 # TODO: Figure out why this breaks dict generation.

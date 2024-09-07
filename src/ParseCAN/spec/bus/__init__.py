@@ -1,4 +1,4 @@
-from .atom import Atom
-from .type import Type, Endianness, Enumerator
-from .frame import Frame
-from .bus import Bus
+from ParseCAN.spec.bus.atom import Atom
+from ParseCAN.spec.bus.type import Type, Endianness, Enumerator
+from ParseCAN.spec.bus.frame import Frame
+from ParseCAN.spec.bus.bus import Bus

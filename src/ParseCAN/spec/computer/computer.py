@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict
 
-from ... import plural
-from ..protocol import Protocol
-from .participation import Participation
+from ParseCAN import plural
+from ParseCAN.spec.protocol import Protocol
+from ParseCAN.spec.computer.participation import Participation
 
 
 ParticipationUnique = plural.Unique[Participation].make('ParticipationUnique', ['name'], main='name')

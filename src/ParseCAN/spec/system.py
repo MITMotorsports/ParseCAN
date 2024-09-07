@@ -3,9 +3,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Set, Dict
 
-from .. import plural
-from .protocol import Protocol
-from .computer import Computer, Participation, Architecture
+from ParseCAN import plural
+from ParseCAN.spec.protocol import Protocol
+from ParseCAN.spec.computer import Computer, Participation, Architecture
 
 def _computer_constr(self, key, computer):
     try:
