@@ -6,6 +6,7 @@ from typing import List, Set, Dict
 from .. import plural
 from .protocol import Protocol
 from .computer import Computer, Participation, Architecture
+from .bus.frame import SingleFrame
 
 def _computer_constr(self, key, computer):
     try:
@@ -100,7 +101,8 @@ class System:
 
         for bus in self.protocol['name']['can'].bus['name'].values():
             for frame in bus.frame['name'].values():
-                frame.resolve_mirrors(self)
+                if isinstance(frame, SingleFrame):
+                    frame.resolve_mirrors(self)
 
     @classmethod
     def from_yaml(cls, stream):
