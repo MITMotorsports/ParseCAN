@@ -31,10 +31,14 @@ class Participation:
         return True
 
     def validate_pubsub(self, pubsub):
+        if pubsub is None:
+            return {}
         self.validate_busdict(pubsub)
 
         framedict = {}
         for busnm, frames in pubsub.items():
+            if frames is None:
+                continue
             for framenm in set(frames):  # TODO: maybe warn about duplicates
                 if framenm not in self.protocol.bus['name'][busnm].frame['name']:
                     raise ValueError(f'frame {framenm} does not exist in bus {busnm}')
