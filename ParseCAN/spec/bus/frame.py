@@ -88,8 +88,8 @@ def _frame_constr(key, frame):
 class SingleFrame(Frame):
     period: Any = None
     atom: AtomUnique = field(default_factory=AtomUnique)
-    mirror_frame: str | None = None
-    mirror_bus: str | None = None
+    mirror_frame: str = None
+    mirror_bus: str = None
 
     def __post_init__(self):
         atom = self.atom
