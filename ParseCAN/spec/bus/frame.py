@@ -105,6 +105,9 @@ class SingleFrame(Frame):
 
         self.atom.extend(atom)
 
+    def length(self):
+        return len(self)
+
     def resolve_mirrors(self, system):
         if self.mirror_frame is not None and self.mirror_bus is not None:
             if self.mirror_bus in system.protocol['name']['can'].bus['name']:
