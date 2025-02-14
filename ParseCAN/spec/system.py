@@ -13,7 +13,7 @@ def _computer_constr(self, key, computer):
         if 'participation' in computer:
             for participationnm, value in computer['participation'].items():
                 protocol = self.protocol['name'][participationnm]
-                computer['participation'][participationnm] = Participation(name=participationnm, protocol=protocol, **value)
+                computer['participation'][participationnm] = Participation(name=participationnm, computer_name=key, protocol=protocol, **value)
 
             computer['participation'] = computer['participation'].values()
 

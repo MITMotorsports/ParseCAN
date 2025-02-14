@@ -6,7 +6,7 @@ from ..protocol import Protocol
 from .participation import Participation
 
 
-ParticipationUnique = plural.Unique[Participation].make('ParticipationUnique', ['name'], main='name')
+ParticipationUnique = plural.Unique[Participation].make('ParticipationUnique', ['name', 'computer_name'], main='name')
 
 
 @dataclass
