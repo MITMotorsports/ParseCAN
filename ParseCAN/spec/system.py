@@ -103,6 +103,9 @@ class System:
             for frame in bus.frame['name'].values():
                 if isinstance(frame, SingleFrame):
                     frame.resolve_mirrors(self)
+                    for atom in frame.atom.values():
+                        atom.resolve_mirrors(self)
+                        atom.validate_slice()
 
     @classmethod
     def from_yaml(cls, stream):
