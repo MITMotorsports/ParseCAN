@@ -14,13 +14,18 @@ class Bus:
     frame: FrameUnique = field(default_factory=FrameUnique)
 
     def __post_init__(self):
-        frame = self.frame
-        self.frame = FrameUnique()
-
-        if isinstance(frame, dict):
-            frame = [_frame_constr(k, v) for k, v in frame.items()]
-
-        self.frame.extend(frame)
+        last_key = 0
+        if isinstance(self.frame, dict):
+            extend_frame = []
+            for k, v in self.frame.items():
+                new_key = v['key']
+                if(new_key <= last_key):
+                    raise Exception(f'Found out of order CAN IDs: {hex(last_key)}, {hex(new_key)}')
+                last_key = new_key
+                extend_frame.append(_frame_constr(k, v))
+            self.frame = FrameUnique()
+            self.frame.extend(extend_frame)
+        
 
     def unpack(self, frame, **kwargs):
         return self.frame['key'][frame.id].unpack(frame, **kwargs)
